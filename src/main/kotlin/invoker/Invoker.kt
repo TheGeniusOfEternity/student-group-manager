@@ -11,6 +11,8 @@ object Invoker {
         commands["help"] = HelpCmd()
         commands["info"] = InfoCmd()
         commands["show"] = ShowCmd()
+        commands["insert"] = InsertCmd()
+        commands["update"] = UpdateCmd()
         commands["exit"] = ExitCmd()
     }
     fun run(commandName: String, args: List<String>) {

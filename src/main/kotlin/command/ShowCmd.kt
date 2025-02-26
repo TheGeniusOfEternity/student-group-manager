@@ -7,7 +7,6 @@ class ShowCmd: Command {
         if (args.isEmpty()) {
             Receiver.getStudyGroups().forEach{
                 println(it.value.toString())
-                println()
             }
         } else {
             println("show: Too many arguments")

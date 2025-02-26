@@ -48,6 +48,10 @@ object Receiver {
         return stdGroupCollection
     }
 
+    fun addStudyGroup(key: Long, studyGroup: StudyGroup) {
+        stdGroupCollection[key] = studyGroup
+    }
+
     fun getCollectionInfo(): CollectionInfo {
         return collectionInfo
     }
