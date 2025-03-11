@@ -57,4 +57,12 @@ object Receiver {
         stdGroupCollection.remove(key)
         CollectionInfo.updateElementsCount()
     }
+
+    /**
+     * Clear [stdGroupCollection]
+     */
+    fun clearStudyGroups() {
+        stdGroupCollection.clear()
+        CollectionInfo.updateElementsCount()
+    }
 }

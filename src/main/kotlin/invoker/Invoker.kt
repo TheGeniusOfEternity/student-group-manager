@@ -6,6 +6,8 @@ import kotlin.collections.HashMap
 
 /**
  * Singleton class-handler, invokes all commands
+ *
+ * @property commands List of all existing commands
  */
 object Invoker {
     val commands: HashMap<String, Command> = HashMap()
@@ -17,6 +19,7 @@ object Invoker {
         commands["update"] = UpdateCmd()
         commands["remove"] = RemoveCmd()
         commands["exit"] = ExitCmd()
+        commands["clear"] = ClearCmd()
         commands["history"] = HistoryCmd()
     }
 
