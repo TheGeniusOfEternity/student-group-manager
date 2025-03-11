@@ -1,27 +1,44 @@
 package collection
 
 import java.time.LocalDate
+import commands.Command
+import receiver.Receiver
 
-class CollectionInfo (
-    private val createdDate: LocalDate = LocalDate.now(),
-    private var elementsCount: Int = 0,
-    private val collectionType: String = "TreeMap",
+/**
+ * Singleton class-storage of program
+ */
+object CollectionInfo {
+    private val createdDate: LocalDate = LocalDate.now()
+    private var elementsCount: Int = 0
+    private const val COLLECTION_TYPES: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
-) {
-    init {
-        require(elementsCount >= 0) { "elementsCount can't be negative" }
-    }
 
-    fun getElementCount(): Int {
+    /**
+     * @return [elementsCount] of elements in collection
+     */
+    fun getElementsCount(): Int {
         return elementsCount
     }
 
-    fun incrementElementCount() {
-        elementsCount++
+    /**
+     * update [elementsCount]
+     */
+    fun updateElementsCount() {
+        elementsCount = Receiver.getStudyGroups().size
     }
 
+    /**
+     * @return [commandsHistory]
+     */
+    fun getCommandHistory(): Array<String> {
+        return commandsHistory
+    }
+
+    /**
+     * @param commandName Name of executed [Command]
+     */
     fun updateCommandHistory(commandName: String) {
-        var currIndex = commandsHistory.indexOfFirst { it.isEmpty() }
+        val currIndex = commandsHistory.indexOfFirst { it.isEmpty() }
 
         if (currIndex == -1) {
             for (i in 0 until commandsHistory.size - 2) {
@@ -34,13 +51,16 @@ class CollectionInfo (
     }
 
     override fun toString(): String {
-        return "Type: $collectionType\n" +
+        return "Type: $COLLECTION_TYPES\n" +
                 "Created Date: $createdDate\n" +
                 "Elements count: $elementsCount\n" +
-                "Commands history: ${commandsHistory.commandsList()}\n"
+                "Commands history: ${commandsList()}\n"
     }
 
-    private fun <T>Array<T>.commandsList(): String {
+    /**
+     * @return [commandsHistory] string representation
+     */
+    fun commandsList(): String {
         var output = ""
         commandsHistory.forEach {
             if (it.isNotEmpty()) {

@@ -1,22 +1,28 @@
-package command
+package commands
+import GroupData
+import collection.StudyGroup
 import receiver.Receiver
-import receiver.Validator
-import kotlin.collections.ArrayList
+import handlers.InsertInputHandler
+import validators.PropertyValidator
 
+/**
+ * Starts insertion process: user manually step by step enters new [StudyGroup] data
+ */
 class InsertCmd : Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
-            val validator = Validator()
-            val newGroupData = ArrayList<String>()
-            if (validator.valueIsValid(args[0], "id")) {
+            val insertInputHandler = InsertInputHandler()
+            val propertyValidator = PropertyValidator()
+            val newGroupData = GroupData()
+            if (propertyValidator.validateData(Pair("id", args[0]))) {
                 if (Receiver.getStudyGroups()[args[0].toLong()] == null) {
-                    newGroupData.add(args[0])
-                    val newGroup = validator.validateInsertInput("collection.StudyGroup", newGroupData)
+                    newGroupData.add(Pair("id", args[0]))
+                    val newGroup = insertInputHandler.handle(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
                         println("Successfully added new group, type 'show' to see all groups")
                     } else {
-                        println("update error: group data can't be validated")
+                        println("insert error: group data can't be validated")
                     }
                 } else {
                     var input: String

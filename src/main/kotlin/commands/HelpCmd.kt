@@ -1,7 +1,10 @@
-package command
+package commands
 
 import invoker.Invoker
 
+/**
+ * Shows description of all commands
+ */
 class HelpCmd: Command {
     override fun execute(args: List<String>) {
         if (args.isEmpty()) {

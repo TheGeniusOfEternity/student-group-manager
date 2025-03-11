@@ -1,17 +1,25 @@
-package command
+package commands
 
+import GroupData
+import Property
 import receiver.Receiver
-import receiver.Validator
+import validators.PropertyValidator
+import collection.StudyGroup
+import handlers.InsertInputHandler
 
+/**
+ * Update [StudyGroup] by its id, works similar to [InsertCmd]
+ */
 class UpdateCmd : Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
-            val validator = Validator()
-            val newGroupData = ArrayList<String>()
-            if (validator.valueIsValid(args[0], "id")) {
-                if (Receiver.getStudyGroups()[args[0].toLong()] != null) {
-                    newGroupData.add(args[0])
-                    val newGroup = validator.validateInsertInput("collection.StudyGroup", newGroupData)
+            val insertInputHandler = InsertInputHandler()
+            val propertyValidator = PropertyValidator()
+            val newGroupData = GroupData()
+            if (propertyValidator.validateData(Property("id", args[0]))) {
+                if (Receiver.getStudyGroup(args[0].toLong()) != null) {
+                    newGroupData.add(Property("id", args[0]))
+                    val newGroup = insertInputHandler.handle(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
                         println("Successfully updated new group, type 'show' to see all groups")

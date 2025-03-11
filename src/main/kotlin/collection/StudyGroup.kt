@@ -4,15 +4,18 @@ import annotations.Nested
 import annotations.Pos
 import java.time.LocalDate
 
+/**
+ * Class of study group, element of [CollectionInfo]
+ */
 class StudyGroup(
-    @Pos(1) private var id: Long,
-    @Pos(2) var name: String,
-    @Pos(3) @Nested private var coordinates: Coordinates,
-    @Pos(4) private var studentsCount: Int,
-    @Pos(5) private var transferredStudents: Long?,
-    @Pos(6) private var averageMark: Int?,
-    @Pos(7) private var formOfEducation: FormOfEducation?,
-    @Pos(8) @Nested private var groupAdmin: Person?
+    @Pos(10) private var id: Long,
+    @Pos(20) var name: String,
+    @Pos(30) @Nested private var coordinates: Coordinates,
+    @Pos(40) private var studentsCount: Int,
+    @Pos(50) private var transferredStudents: Long?,
+    @Pos(60) private var averageMark: Int?,
+    @Pos(70) private var formOfEducation: FormOfEducation?,
+    @Pos(80) @Nested private var groupAdmin: Person?
 ) {
     init {
         require(id > 0) { "id must be greater than zero" }
@@ -23,8 +26,11 @@ class StudyGroup(
         require(averageMark == null || averageMark!! > 0)
             { "averageMark must be greater than zero" }
     }
-    private var creationDate: LocalDate = LocalDate.now()
+    @Pos(90) private var creationDate: LocalDate = LocalDate.now()
 
+    /**
+     * @return id of this StudyGroup
+     */
     fun getId(): Long {
         return id
     }
@@ -70,6 +76,9 @@ class StudyGroup(
     }
 
 
+    /**
+     * @return [StudyGroup] string representation
+     */
     override fun toString(): String {
         return "Student Group #" + id + "\n" +
                 "Creation Date: " + creationDate + "\n" +

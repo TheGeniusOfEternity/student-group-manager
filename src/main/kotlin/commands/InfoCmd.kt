@@ -1,11 +1,14 @@
-package command
-
+package commands
 import receiver.Receiver
+import collection.CollectionInfo
 
+/**
+ * Shows info about Collection, storing in [Receiver]
+ */
 class InfoCmd: Command {
     override fun execute(args: List<String>) {
         if (args.isEmpty()) {
-            print(Receiver.getCollectionInfo().toString())
+            print(CollectionInfo.toString())
         } else {
             println("info: Too many arguments")
         }

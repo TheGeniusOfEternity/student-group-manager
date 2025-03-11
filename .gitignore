@@ -1,4 +1,5 @@
 .gradle
+gradlew.bat
 .idea
 build/
 !gradle/wrapper/gradle-wrapper.jar

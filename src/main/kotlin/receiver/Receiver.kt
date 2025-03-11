@@ -1,58 +1,60 @@
 package receiver
 
 import collection.*
-import java.io.FileReader
-import java.io.IOException
+import handlers.ReadFileHandler
 import java.util.*
 
+/**
+ * Singleton class, store for all study groups
+ * @property stdGroupCollection Collection of [StudyGroup] (Main storage)
+ */
 object Receiver {
     private val stdGroupCollection: TreeMap<Long, StudyGroup> = TreeMap()
-    private val collectionInfo: CollectionInfo = CollectionInfo()
 
-    fun readFileData(fileName: String) {
-        try {
-            val fileReader = FileReader(fileName)
-            val validator = Validator()
-            var index: Int = fileReader.read()
-            val currentGroupData: ArrayList<String> = ArrayList()
-            var currentField = ""
-            while (index != -1) {
-                when (val c: Char = index.toChar()) {
-                    ';' -> {
-                        currentGroupData.add(currentField)
-                        currentField = ""
-                    }
-                    '\n' -> {
-                        currentGroupData.add(currentField)
-                        currentField = ""
-                        val currentGroup: StudyGroup = validator.validateGroupData(currentGroupData)
-                        stdGroupCollection[currentGroup.getId()] = currentGroup
-                        collectionInfo.incrementElementCount()
-                        currentGroupData.clear()
-                    }
-                    '"' -> {
-                        currentField += ""
-                    }
-                    else -> {
-                        currentField += c
-                    }
-                }
-                index = fileReader.read()
+    /**
+     * Load studyGroups from file via [ReadFileHandler.handle]
+     * @param filename - path to file
+     */
+    fun loadFromFile(filename: String) {
+        val fileDataReader = ReadFileHandler()
+        fileDataReader.handle(filename, "")?.forEach { group ->
+            if (group != null) {
+                stdGroupCollection[group.getId()] = group
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
+        CollectionInfo.updateElementsCount()
+        println("file was loaded successfully")
     }
 
+    /**
+     * Get all stored study groups
+     */
     fun getStudyGroups(): TreeMap<Long, StudyGroup> {
         return stdGroupCollection
     }
 
-    fun addStudyGroup(key: Long, studyGroup: StudyGroup) {
-        stdGroupCollection[key] = studyGroup
+    /**
+     * Get [StudyGroup] by key (id)
+     */
+    fun getStudyGroup(id: Long): StudyGroup? {
+        return stdGroupCollection[id]
     }
 
-    fun getCollectionInfo(): CollectionInfo {
-        return collectionInfo
+    /**
+     * Add new [StudyGroup] to [stdGroupCollection]
+     * @param key Id of new study group
+     * @param studyGroup new [StudyGroup]
+     */
+    fun addStudyGroup(key: Long, studyGroup: StudyGroup) {
+        stdGroupCollection[key] = studyGroup
+        CollectionInfo.updateElementsCount()
+    }
+
+    /**
+     * Remove [StudyGroup] from [stdGroupCollection] by its key (id)
+     */
+    fun removeStudyGroup(key: Long) {
+        stdGroupCollection.remove(key)
+        CollectionInfo.updateElementsCount()
     }
 }
