@@ -1,6 +1,7 @@
 package collection
 
 import annotations.Pos
+import java.text.SimpleDateFormat
 import java.util.Date
 
 /**
@@ -20,7 +21,7 @@ class Person (
      */
     override fun toString(): String {
         return "- Name: $name\n" +
-                "- Birthday: $birthday\n" +
+                "- Birthday: ${SimpleDateFormat("dd.MM.yyyy").format(birthday)}\n" +
                 "- Nationality: $nationality\n"
     }
 }

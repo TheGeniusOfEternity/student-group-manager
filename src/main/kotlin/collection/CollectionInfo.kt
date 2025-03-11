@@ -12,8 +12,9 @@ object CollectionInfo {
     private var elementsCount: Int = 0
     private const val COLLECTION_TYPES: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
-
+    private var defaultFileName: String = "src.csv"
     /**
+     * Get count of elements in collection
      * @return [elementsCount] of elements in collection
      */
     fun getElementsCount(): Int {
@@ -21,7 +22,22 @@ object CollectionInfo {
     }
 
     /**
-     * update [elementsCount]
+     * Update [defaultFileName]
+     */
+    fun updateDefaultFileName(newFileName: String) {
+        defaultFileName = newFileName
+    }
+
+    /**
+     * Get output file name by default
+     * @return [defaultFileName]
+     */
+    fun getDefaultFileName(): String {
+        return defaultFileName
+    }
+
+    /**
+     * Update [elementsCount]
      */
     fun updateElementsCount() {
         elementsCount = Receiver.getStudyGroups().size

@@ -64,7 +64,7 @@ class ReadFileHandler : Handler<String> {
                             propPos = 10
                         }
                     }
-                    '"' -> {
+                    '\'' -> {
                         currentField += ""
                     }
                     else -> {

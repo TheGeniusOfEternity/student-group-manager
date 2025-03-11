@@ -20,6 +20,7 @@ object Invoker {
         commands["remove"] = RemoveCmd()
         commands["exit"] = ExitCmd()
         commands["clear"] = ClearCmd()
+        commands["save"] = SaveCmd()
         commands["history"] = HistoryCmd()
     }
 

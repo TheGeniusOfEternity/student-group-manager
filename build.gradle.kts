@@ -1,11 +1,8 @@
 plugins {
     application
     kotlin("jvm") version "2.0.10"
+    id("org.jetbrains.dokka-javadoc") version "2.0.0"
     id("org.jetbrains.dokka") version "2.0.0"
-}
-
-tasks.dokkaJavadoc {
-    outputDirectory.set(buildDir.resolve("javadoc"))
 }
 
 tasks.dokkaHtml {

@@ -7,13 +7,14 @@ import java.text.SimpleDateFormat
 class GroupDataValidator : Validator<GroupData> {
     override fun validateData(data: GroupData): StudyGroup? {
         val propertyValidator = PropertyValidator()
+        val formatter = SimpleDateFormat("dd.MM.yyyy")
         data.forEach { pair ->
             val (property, value) = pair
             if (!propertyValidator.validateData(Pair(property, value))) return null
         }
         val groupAdmin: Person? = if (data.size != 11) null else Person(
             data[8].second!!,
-            SimpleDateFormat("dd.mm.yyyy").parse(data[9].second),
+            formatter.parse(data[9].second),
             if (data[10].second.isNullOrEmpty()) null else Country.valueOf(data[10].second!!.uppercase())
         )
 

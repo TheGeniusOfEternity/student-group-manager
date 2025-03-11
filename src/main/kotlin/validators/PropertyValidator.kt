@@ -101,10 +101,11 @@ class PropertyValidator: Validator<Property> {
             "birthday" -> {
                 try {
                     if (data.second.isNullOrEmpty()) return true
-                    SimpleDateFormat("dd.mm.yyyy").parse(data.second)
+                    val formatter = SimpleDateFormat("dd.MM.yyyy")
+                    formatter.parse(data.second)
                     return true
                 } catch (e: Exception) {
-                    println("validation error: incorrect date format\nShould use dd.mm.yyyy format")
+                    println("validation error: incorrect date format\nShould use dd.MM.yyyy format")
                     return false
                 }
             }
