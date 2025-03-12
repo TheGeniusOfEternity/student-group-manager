@@ -7,7 +7,7 @@ import validators.GroupDataValidator
 import validators.PropertyValidator
 import kotlin.reflect.KClass
 
-class InsertInputHandler: Handler<GroupData> {
+class InsertInputHandler: Handler<GroupData, String> {
     /**
      * Handle user's input on Insert command and creates GroupData
      *

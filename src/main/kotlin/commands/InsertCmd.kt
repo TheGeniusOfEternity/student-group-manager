@@ -1,5 +1,6 @@
 package commands
 import GroupData
+import State
 import collection.StudyGroup
 import receiver.Receiver
 import handlers.InsertInputHandler
@@ -11,6 +12,7 @@ import validators.PropertyValidator
 class InsertCmd : Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
+            State.source = InputSource.CONSOLE
             val insertInputHandler = InsertInputHandler()
             val propertyValidator = PropertyValidator()
             val newGroupData = GroupData()

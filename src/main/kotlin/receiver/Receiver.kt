@@ -1,7 +1,7 @@
 package receiver
 
 import collection.*
-import handlers.ReadFileHandler
+import handlers.ReadDataFileHandler
 import java.util.*
 
 /**
@@ -12,12 +12,12 @@ object Receiver {
     private val stdGroupCollection: TreeMap<Long, StudyGroup> = TreeMap()
 
     /**
-     * Load studyGroups from file via [ReadFileHandler.handle]
+     * Load studyGroups from file via [ReadDataFileHandler.handle]
      * @param filename - path to file
      */
     fun loadFromFile(filename: String) {
-        val fileDataReader = ReadFileHandler()
-        fileDataReader.handle(filename, "")?.forEach { group ->
+        val fileDataReader = ReadDataFileHandler()
+        fileDataReader.handle(filename, null)?.forEach { group ->
             if (group != null) {
                 stdGroupCollection[group.getId()] = group
             }

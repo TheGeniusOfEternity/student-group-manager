@@ -2,6 +2,8 @@ package parsers
 
 import GroupData
 import Property
+import collection.CollectionInfo
+import invoker.Invoker
 import java.io.FileReader
 
 /**
@@ -48,5 +50,43 @@ class InputParser: Parser<FileReader> {
             index = data.read()
         }
         return groupsData
+    }
+
+    fun parseScript(data: FileReader){
+        var index: Int = data.read()
+        var currLine = ""
+        val prevLines = CollectionInfo.getOpenedFileName()!!.second ?: 0
+        var linesCount = 0
+        while (index != -1) {
+            when (val c: Char = index.toChar()) {
+                '\n' -> {
+                    if (currLine.isNotEmpty() && linesCount > prevLines) {
+                        val query: List<String> = currLine.trim().split(" ")
+                        val commandName = query.first()
+                        Invoker.run(commandName, query.drop(1))
+                        State.source = InputSource.FILE
+                        CollectionInfo.setOpenedFilename(Pair(CollectionInfo.getOpenedFileName()!!.first, linesCount))
+                    }
+                    currLine = ""
+                    linesCount++
+                }
+                else -> {
+                    currLine += c
+                }
+            }
+            index = data.read()
+        }
+        State.source = InputSource.CONSOLE
+        CollectionInfo.removeOpenedFileName()
+    }
+
+    fun parseCommand() {
+        val commandName: String
+        val input = readlnOrNull()
+        if (!input.isNullOrEmpty()) {
+            val query: List<String> = input.trim().split(" ")
+            commandName = query.first()
+            Invoker.run(commandName, query.drop(1))
+        }
     }
 }

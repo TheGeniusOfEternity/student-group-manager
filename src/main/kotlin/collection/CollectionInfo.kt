@@ -12,7 +12,8 @@ object CollectionInfo {
     private var elementsCount: Int = 0
     private const val COLLECTION_TYPES: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
-    private var defaultFileName: String = "src.csv"
+    private var defaultFileName: String = "src/main/resources/data/src.csv"
+    private var openedFileName: Pair<String, Int?>? = null
     /**
      * Get count of elements in collection
      * @return [elementsCount] of elements in collection
@@ -34,6 +35,28 @@ object CollectionInfo {
      */
     fun getDefaultFileName(): String {
         return defaultFileName
+    }
+
+    /**
+     * Update [openedFileName]
+     */
+    fun setOpenedFilename(newFileName: Pair<String, Int?>) {
+        openedFileName = newFileName
+    }
+
+    /**
+     * Get output file name by default
+     * @return [openedFileName]
+     */
+    fun getOpenedFileName(): Pair<String, Int?>? {
+        return openedFileName
+    }
+
+    /**
+     * Clears opened filename on file's close
+     */
+    fun removeOpenedFileName() {
+        openedFileName = null
     }
 
     /**
@@ -75,7 +98,8 @@ object CollectionInfo {
                 "Created Date: $createdDate\n" +
                 "Elements count: $elementsCount\n" +
                 "Commands history: ${commandsList()}\n" +
-                "Default file name: $defaultFileName\n"
+                "Default file name: $defaultFileName\n" +
+                "Opened file name: ${openedFileName?.first}\n"
     }
 
     /**

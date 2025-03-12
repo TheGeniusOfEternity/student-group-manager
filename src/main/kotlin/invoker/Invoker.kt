@@ -23,6 +23,7 @@ object Invoker {
         commands["save"] = SaveCmd()
         commands["history"] = HistoryCmd()
         commands["remove_lower"] = RemoveLowerCmd()
+        commands["execute_script"] = ExecuteScriptCmd()
     }
 
     /**
