@@ -8,6 +8,7 @@ import java.io.FileReader
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.system.exitProcess
 
 /**
  * A type alias for a list of [Property], used for representing collections of text data.
@@ -18,8 +19,14 @@ typealias GroupData = ArrayList<Pair<String, String?>>
  */
 typealias Property = Pair<String, String?>
 
+/**
+ * Singleton object for storing program state
+ * @property source - data source from what program should read data
+ * @property isRunning - check if program is running or not
+ */
 object State {
     var source: InputSource = InputSource.CONSOLE
+    var isRunning = false
 }
 
 enum class InputSource {
@@ -33,9 +40,10 @@ fun main() {
     val inputParser = InputParser()
     val readScriptFileHandler = ReadScriptFileHandler()
     val readDataFileHandler = ReadDataFileHandler()
+    State.isRunning = true
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
-        while (true) {
+        while (State.isRunning) {
             when (State.source) {
                 InputSource.FILE -> {
                     val openedFileName = CollectionInfo.getOpenedFileName()
@@ -57,6 +65,7 @@ fun main() {
                 }
             }
         }
+        exitProcess(0)
     } catch (e: IOException) {
         e.printStackTrace()
     }

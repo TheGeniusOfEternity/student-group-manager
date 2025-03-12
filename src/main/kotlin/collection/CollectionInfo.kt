@@ -10,7 +10,7 @@ import receiver.Receiver
 object CollectionInfo {
     private val createdDate: LocalDate = LocalDate.now()
     private var elementsCount: Int = 0
-    private const val COLLECTION_TYPES: String = "TreeMap"
+    private const val COLLECTION_TYPE: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
     private var defaultFileName: String = "src/main/resources/data/src.csv"
     private var openedFileName: Pair<String, Int?>? = null
@@ -94,7 +94,7 @@ object CollectionInfo {
      * @return  [CollectionInfo] string representation
      */
     override fun toString(): String {
-        return "Type: $COLLECTION_TYPES\n" +
+        return "Type: $COLLECTION_TYPE\n" +
                 "Created Date: $createdDate\n" +
                 "Elements count: $elementsCount\n" +
                 "Commands history: ${commandsList()}\n" +

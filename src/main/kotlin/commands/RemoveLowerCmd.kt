@@ -8,15 +8,21 @@ import receiver.Receiver
 class RemoveLowerCmd: Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
-            val groups = Receiver.getStudyGroups().filter { it.key < args[0].toInt() }
-            if (groups.isNotEmpty()) {
-                groups.forEach { group ->
-                    Receiver.removeStudyGroup(key = group.key)
+            val comparedGroup = Receiver.getStudyGroup(args[0].toLong())
+            if (comparedGroup != null) {
+                val groups = Receiver.getStudyGroups().filter { it.value < comparedGroup }
+                if (groups.isNotEmpty()) {
+                    groups.forEach { group ->
+                        Receiver.removeStudyGroup(key = group.key)
+                    }
+                    println("All groups with studentsCount less than ${comparedGroup.getStudentsCount()} were successfully removed")
+                } else {
+                    println("remove_lower error: no less groups found")
                 }
-                println("All groups with id's less that ${args[0]} were successfully removed")
             } else {
-                println("remove_lower error: no less groups found")
+                println("remove_lower error: group #${args[0]} not found")
             }
+
         } else {
             println("remove_lower error: invalid count of arguments")
         }

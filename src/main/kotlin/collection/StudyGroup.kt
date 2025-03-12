@@ -16,7 +16,7 @@ class StudyGroup(
     @Pos(60) private var averageMark: Int?,
     @Pos(70) private var formOfEducation: FormOfEducation?,
     @Pos(80) @Nested private var groupAdmin: Person?
-) {
+): Comparable<StudyGroup> {
     init {
         require(id > 0) { "id must be greater than zero" }
         require(name.isNotBlank()) { "Name cannot be blank" }
@@ -28,6 +28,10 @@ class StudyGroup(
     }
     @Pos(90) private var creationDate: LocalDate = LocalDate.now()
 
+    override fun compareTo(other: StudyGroup): Int {
+        return studentsCount.compareTo(other.studentsCount)
+    }
+
     /**
      * @return id of this StudyGroup
      */
@@ -35,46 +39,9 @@ class StudyGroup(
         return id
     }
 
-    fun setId(id: Long): StudyGroup {
-        this.id = id
-        return this
+    fun getStudentsCount(): Int {
+        return studentsCount
     }
-
-    fun setName(name: String): StudyGroup {
-        this.name = name
-        return this
-    }
-
-    fun setCoordinates(coordinates: Coordinates): StudyGroup {
-        this.coordinates = coordinates
-        return this
-    }
-
-    fun setStudentsCount(count: Int): StudyGroup {
-        this.studentsCount = count
-        return this
-    }
-
-    fun setTransferredStudents(count: Long?): StudyGroup {
-        this.transferredStudents = count
-        return this
-    }
-
-    fun setAverageMark(avgMark: Int?): StudyGroup {
-        this.averageMark = avgMark
-        return this
-    }
-
-    fun setFormOfEducation(formOfEducation: FormOfEducation): StudyGroup {
-        this.formOfEducation = formOfEducation
-        return this
-    }
-
-    fun setGroupAdmin(groupAdmin: Person): StudyGroup {
-        this.groupAdmin = groupAdmin
-        return this
-    }
-
 
     /**
      * @return [StudyGroup] string representation
