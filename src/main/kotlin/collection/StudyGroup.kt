@@ -40,17 +40,24 @@ class StudyGroup(
     }
 
     /**
-     * @return count of students of the group
+     * @return [studentsCount] of the group
      */
     fun getStudentsCount(): Int {
         return studentsCount
     }
 
     /**
-     * @return transferred student of the group
+     * @return [transferredStudents] of the group
      */
     fun getTransferredStudents(): Long? {
         return transferredStudents
+    }
+
+    /**
+     * @return [averageMark] of study group
+     */
+    fun getAverageMark(): Int? {
+        return averageMark
     }
 
 
