@@ -2,6 +2,9 @@ package commands
 
 import receiver.Receiver
 
+/**
+ * Removes study groups with given transferred students amount
+ */
 class RemoveByTransfStudsCmd: Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
@@ -13,8 +16,6 @@ class RemoveByTransfStudsCmd: Command {
                     Receiver.removeStudyGroup(groups[groups.keys.minOf { it }]!!.getId())
                     println("group #${groups[groups.keys.minOf { it }]!!.getId()} was successfully removed")
                 }
-
-
             } catch (e: NumberFormatException) {
                 println("remove_any_by_transferred_students error: invalid number")
             }
