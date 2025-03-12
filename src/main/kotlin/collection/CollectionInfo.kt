@@ -12,7 +12,7 @@ object CollectionInfo {
     private var elementsCount: Int = 0
     private const val COLLECTION_TYPE: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
-    private var defaultFileName: String = "src/main/resources/data/src.csv"
+    private var defaultFileName: String = "data/src.csv"
     private var openedFileName: Pair<String, Int?>? = null
     /**
      * Get count of elements in collection

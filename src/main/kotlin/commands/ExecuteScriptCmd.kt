@@ -11,7 +11,7 @@ class ExecuteScriptCmd: Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
             val readScriptFileHandler = ReadScriptFileHandler()
-            val filename = "src/main/resources/scripts/${args[0]}"
+            val filename = "scripts/${args[0]}"
             if (File(filename).exists()) {
                 if (CollectionInfo.getOpenedFileName()?.first != filename) {
                     readScriptFileHandler.handle(filename, null)
