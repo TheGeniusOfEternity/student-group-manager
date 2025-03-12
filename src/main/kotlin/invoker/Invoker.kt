@@ -24,6 +24,7 @@ object Invoker {
         commands["history"] = HistoryCmd()
         commands["remove_lower"] = RemoveLowerCmd()
         commands["execute_script"] = ExecuteScriptCmd()
+        commands["remove_any_by_transferred_students"] = RemoveByTransfStudsCmd()
     }
 
     /**

@@ -39,9 +39,20 @@ class StudyGroup(
         return id
     }
 
+    /**
+     * @return count of students of the group
+     */
     fun getStudentsCount(): Int {
         return studentsCount
     }
+
+    /**
+     * @return transferred student of the group
+     */
+    fun getTransferredStudents(): Long? {
+        return transferredStudents
+    }
+
 
     /**
      * @return [StudyGroup] string representation

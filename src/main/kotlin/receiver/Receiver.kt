@@ -23,7 +23,6 @@ object Receiver {
             }
         }
         CollectionInfo.updateElementsCount()
-        println("file was loaded successfully")
     }
 
     /**

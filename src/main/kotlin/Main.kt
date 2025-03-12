@@ -48,7 +48,7 @@ fun main() {
                 InputSource.FILE -> {
                     val openedFileName = CollectionInfo.getOpenedFileName()
                     if (openedFileName != null) {
-                        if (CollectionInfo.getOpenedFileName()!!.first.contains("resources/data/")) {
+                        if (CollectionInfo.getOpenedFileName()!!.first.contains("data/")) {
                             readDataFileHandler.handle(openedFileName.first, openedFileName.second)
                         } else {
                             readScriptFileHandler.handle(openedFileName.first, openedFileName.second)
