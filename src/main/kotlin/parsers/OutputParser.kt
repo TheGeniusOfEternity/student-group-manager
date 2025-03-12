@@ -26,9 +26,15 @@ class OutputParser: Parser<ArrayList<GroupData>> {
         data.forEach {groupData ->
             var row = "";
             groupData.forEach {property ->
-                row += "${property.second};"
+                if (property.first != "creationDate") {
+                    if (property.second == "null") {
+                        row += ";"
+                    } else {
+                        row += "${property.second};"
+                    }
+                }
             }
-            result = result + row.dropLast(2)+ "\n"
+            result = result + row.dropLast(1) + "\n"
         }
         return result
     }
@@ -52,13 +58,9 @@ class OutputParser: Parser<ArrayList<GroupData>> {
             } else {
                 if (property.name == "birthday") {
                     groupData.add(Property(property.name, SimpleDateFormat("dd.MM.yyyy").format(property.get(obj)!!)))
-                } else if (property.get(obj) == null || property.name == "creationDate") {
-                    groupData.add(Property(property.name, ""))
                 } else if (property.returnType == String::class.createType()) {
                     groupData.add(Property(property.name, "'${property.get(obj).toString()}'"))
-                }
-
-                else {
+                } else {
                     groupData.add(Property(property.name, property.get(obj).toString()))
                 }
             }

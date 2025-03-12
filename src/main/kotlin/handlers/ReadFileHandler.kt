@@ -3,6 +3,7 @@ package handlers
 import GroupData
 import Property
 import collection.StudyGroup
+import parsers.InputParser
 import validators.GroupDataValidator
 import java.io.FileReader
 import java.io.IOException
@@ -24,59 +25,20 @@ class ReadFileHandler : Handler<String> {
         try {
             val fileReader = FileReader(data)
             val groupDataValidator = GroupDataValidator()
+            val inputParser = InputParser()
             val groups = ArrayList<StudyGroup?>()
-            var index: Int = fileReader.read()
-            val currentGroupData: GroupData = GroupData()
-            var currentField = ""
-            var className = "collection.StudyGroup"
-            var propPos = 10
-            while (index != -1) {
-                when (val c: Char = index.toChar()) {
-                    ';' -> {
-                        val propName = groupDataValidator.getPropertyNameForValidation(propPos, className)
-                        if (propName != null) {
-                            if (propName.name == "coordinates" || propName.name == "groupAdmin") {
-                                className = propName.returnType.toString().split("?")[0]
-                                propPos++
-                                continue
-                            } else if (className != "collection.StudyGroup") {
-                                currentGroupData.add(Property(propName.name, currentField))
-                                currentField = ""
-                                propPos++
-                            } else {
-                                currentGroupData.add(Property(propName.name, currentField))
-                                currentField = ""
-                                propPos += 10
-                            }
-                        } else {
-                            className = "collection.StudyGroup"
-                            propPos = ceil(propPos.toDouble() / 10).toInt() * 10
-                            continue
-                        }
-                    }
-                    '\n' -> {
-                        val propName = groupDataValidator.getPropertyNameForValidation(propPos, className)
-                        if (propName != null) {
-                            currentGroupData.add(Property(propName.name, currentField))
-                            currentField = ""
-                            groups.add(groupDataValidator.validateData(currentGroupData))
-                            currentGroupData.clear()
-                            propPos = 10
-                        }
-                    }
-                    '\'' -> {
-                        currentField += ""
-                    }
-                    else -> {
-                        currentField += c
-                    }
+            val groupsData = inputParser.parse(fileReader)
+            groupsData.forEach{groupData ->
+                val group = groupDataValidator.validateData(groupData)
+                if (group != null) {
+                    println("Group #${groupData[0].second} has been loaded")
+                    groups.add(group)
                 }
-                index = fileReader.read()
             }
             return groups
         } catch (e: IOException) {
             println("read $data error: no such file found")
+            return null
         }
-        return null
     }
 }

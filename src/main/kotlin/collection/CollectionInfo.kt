@@ -66,11 +66,16 @@ object CollectionInfo {
         }
     }
 
+    /**
+     * Get info about collection
+     * @return  [CollectionInfo] string representation
+     */
     override fun toString(): String {
         return "Type: $COLLECTION_TYPES\n" +
                 "Created Date: $createdDate\n" +
                 "Elements count: $elementsCount\n" +
-                "Commands history: ${commandsList()}\n"
+                "Commands history: ${commandsList()}\n" +
+                "Default file name: $defaultFileName\n"
     }
 
     /**
