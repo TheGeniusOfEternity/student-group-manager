@@ -46,18 +46,23 @@ fun main() {
         while (State.isRunning) {
             when (State.source) {
                 InputSource.FILE -> {
-                    val openedFileName = CollectionInfo.getOpenedFileName()
-                    if (openedFileName != null) {
-                        if (CollectionInfo.getOpenedFileName()!!.first.contains("data/")) {
-                            readDataFileHandler.handle(openedFileName.first, openedFileName.second)
+                    val openedFiles = CollectionInfo.getOpenedFiles()
+                    if (openedFiles.size != 0) {
+                        if (openedFiles.lastElement().first.contains("data/")) {
+                            readDataFileHandler.handle(
+                                openedFiles.lastElement().first,
+                                openedFiles.lastElement().second,
+                            )
                         } else {
-                            readScriptFileHandler.handle(openedFileName.first, openedFileName.second)
+                            readScriptFileHandler.handle(
+                                openedFiles.lastElement().first,
+                                openedFiles.lastElement().second,
+                            )
                         }
                     } else {
                         println("program's state error: no file opened")
                         State.source = InputSource.CONSOLE
                     }
-
                 }
                 InputSource.CONSOLE -> {
                     print("& ")

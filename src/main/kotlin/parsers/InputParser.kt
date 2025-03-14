@@ -52,10 +52,10 @@ class InputParser: Parser<FileReader> {
         return groupsData
     }
 
-    fun parseScript(data: FileReader){
+    fun parseScript(data: FileReader, fileName: String){
         var index: Int = data.read()
         var currLine = ""
-        val prevLines = CollectionInfo.getOpenedFileName()!!.second ?: 0
+        val prevLines = CollectionInfo.getFileByName(fileName)?.second ?: -1
         var linesCount = 0
         while (index != -1) {
             when (val c: Char = index.toChar()) {
@@ -65,7 +65,7 @@ class InputParser: Parser<FileReader> {
                         val commandName = query.first()
                         Invoker.run(commandName, query.drop(1))
                         State.source = InputSource.FILE
-                        CollectionInfo.setOpenedFilename(Pair(CollectionInfo.getOpenedFileName()!!.first, linesCount))
+                        CollectionInfo.updateOpenedFile(fileName, linesCount)
                     }
                     currLine = ""
                     linesCount++
@@ -77,7 +77,7 @@ class InputParser: Parser<FileReader> {
             index = data.read()
         }
         State.source = InputSource.CONSOLE
-        CollectionInfo.removeOpenedFileName()
+        CollectionInfo.removeOpenedFile()
     }
 
     fun parseCommand() {

@@ -13,10 +13,10 @@ class ExecuteScriptCmd: Command {
             val readScriptFileHandler = ReadScriptFileHandler()
             val filename = "scripts/${args[0]}"
             if (File(filename).exists()) {
-                if (CollectionInfo.getOpenedFileName()?.first != filename) {
+                if (CollectionInfo.getOpenedFiles().none { it.first.contains(filename) }) {
                     readScriptFileHandler.handle(filename, null)
                 } else {
-                    println("execute_script error: infinite loop")
+                    println("execute_script error: file ${args[0]} is already opened at the moment")
                 }
 
             } else {

@@ -13,11 +13,17 @@ application {
     mainClass = "MainKt"
 }
 
-group = "org.example"
-version = "1.0-SNAPSHOT"
+group = "org.itmo"
+version = "1.0-alpha"
 
 repositories {
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17)) // Set JDK version (e.g., Java 17)
+    }
 }
 
 dependencies {

@@ -3,6 +3,7 @@ package collection
 import java.time.LocalDate
 import commands.Command
 import receiver.Receiver
+import java.util.*
 
 /**
  * Singleton class-storage of program
@@ -13,7 +14,7 @@ object CollectionInfo {
     private const val COLLECTION_TYPE: String = "TreeMap"
     private val commandsHistory: Array<String> = Array(11) {""}
     private var defaultFileName: String = "data/src.csv"
-    private var openedFileName: Pair<String, Int?>? = null
+    private var openedFiles: Stack<Pair<String, Int?>> = Stack()
     /**
      * Get count of elements in collection
      * @return [elementsCount] of elements in collection
@@ -38,25 +39,43 @@ object CollectionInfo {
     }
 
     /**
-     * Update [openedFileName]
+     * Add new opened file into [openedFiles]
      */
-    fun setOpenedFilename(newFileName: Pair<String, Int?>) {
-        openedFileName = newFileName
+    fun addOpenedFile(newFile: Pair<String, Int?>) {
+        openedFiles.add(newFile)
     }
 
     /**
-     * Get output file name by default
-     * @return [openedFileName]
+     * Get currently opened files
+     * @return [openedFiles]
      */
-    fun getOpenedFileName(): Pair<String, Int?>? {
-        return openedFileName
+    fun getOpenedFiles(): Stack<Pair<String, Int?>> {
+        return openedFiles
+    }
+
+    /**
+     * Returns file by its name
+     * @return [Pair] of filename and index where program was paused reading
+     */
+    fun getFileByName(fileName: String): Pair<String, Int?>? {
+        openedFiles.forEach { if (it.first == fileName) return it }
+        return null
+    }
+
+    fun updateOpenedFile(filename: String, newIndex: Int) {
+        openedFiles.forEach {
+            if (it.first == filename) {
+                this.removeOpenedFile()
+                this.addOpenedFile(Pair(filename, newIndex))
+            }
+        }
     }
 
     /**
      * Clears opened filename on file's close
      */
-    fun removeOpenedFileName() {
-        openedFileName = null
+    fun removeOpenedFile() {
+        openedFiles.removeLast()
     }
 
     /**
@@ -99,7 +118,7 @@ object CollectionInfo {
                 "Elements count: $elementsCount\n" +
                 "Commands history: ${commandsList()}\n" +
                 "Default file name: $defaultFileName\n" +
-                "Opened file name: ${openedFileName?.first}\n"
+                "Opened files: ${openedFilesList()}\n"
     }
 
     /**
@@ -110,6 +129,19 @@ object CollectionInfo {
         commandsHistory.forEach {
             if (it.isNotEmpty()) {
                 output += "$it, "
+            }
+        }
+        return output
+    }
+
+    /**
+     * @return [openedFiles] with only filenames
+     */
+    fun openedFilesList(): String {
+        var output = ""
+        openedFiles.forEach {
+            if (it != null) {
+                output += "${it.first}, "
             }
         }
         return output

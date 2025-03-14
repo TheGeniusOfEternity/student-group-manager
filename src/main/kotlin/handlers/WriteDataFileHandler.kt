@@ -17,10 +17,9 @@ class WriteDataFileHandler: Handler<TreeMap<Long, StudyGroup>, String> {
      */
     override fun handle(data: TreeMap<Long, StudyGroup>, option: String) {
         try {
-            val groups = Receiver.getStudyGroups()
-            val writer = BufferedOutputStream(FileOutputStream("data/$option"))
+            val writer = BufferedOutputStream(FileOutputStream(option))
             val outputParser = OutputParser()
-            val groupsData = outputParser.generateGroupsData(groups)
+            val groupsData = outputParser.generateGroupsData(data)
             val res = outputParser.parse(groupsData)
             val bytes = res.toByteArray()
             writer.write(bytes)

@@ -21,7 +21,7 @@ class ReadDataFileHandler : Handler<String, Int?> {
     override fun handle(data: String, option: Int?): ArrayList<StudyGroup?>? {
         try {
             val fileReader = FileReader(data)
-            CollectionInfo.setOpenedFilename(Pair(data, option))
+            CollectionInfo.addOpenedFile(Pair(data, option))
             val groupDataValidator = GroupDataValidator()
             val inputParser = InputParser()
             val groups = ArrayList<StudyGroup?>()
@@ -35,7 +35,7 @@ class ReadDataFileHandler : Handler<String, Int?> {
             }
             State.source = InputSource.CONSOLE
             fileReader.close()
-            CollectionInfo.removeOpenedFileName()
+            CollectionInfo.removeOpenedFile()
             return groups
         } catch (e: IOException) {
             println("read $data error: no such file found")

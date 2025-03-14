@@ -1,18 +1,26 @@
 package handlers
 
 import collection.CollectionInfo
-import commands.Command
 import parsers.InputParser
 import java.io.FileReader
 import java.io.IOException
 
+/**
+ * Reads data from script files
+ */
 class ReadScriptFileHandler: Handler<String, Int?> {
+    /**
+     * Reads script files
+     * @param data Filename
+     * @param option Lines of file count, that were already read
+     * @return Was file read or not
+     */
     override fun handle(data: String, option: Int?): Boolean {
         try {
             val fileReader = FileReader(data)
-            CollectionInfo.setOpenedFilename(Pair(data, option))
+            CollectionInfo.addOpenedFile(Pair(data, option))
             val inputParser = InputParser()
-            inputParser.parseScript(fileReader)
+            inputParser.parseScript(fileReader, data)
             return true
 
         } catch (e: IOException) {
