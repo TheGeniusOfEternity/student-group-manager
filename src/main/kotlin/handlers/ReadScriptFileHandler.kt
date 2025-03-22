@@ -19,8 +19,7 @@ class ReadScriptFileHandler: Handler<String, Int?> {
         try {
             val fileReader = FileReader(data)
             CollectionInfo.addOpenedFile(Pair(data, option))
-            val inputParser = InputParser()
-            inputParser.parseScript(fileReader, data)
+            InputParser.parseScript(fileReader, data)
             return true
 
         } catch (e: IOException) {

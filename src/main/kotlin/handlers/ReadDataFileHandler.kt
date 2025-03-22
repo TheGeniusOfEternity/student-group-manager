@@ -23,9 +23,8 @@ class ReadDataFileHandler : Handler<String, Int?> {
             val fileReader = FileReader(data)
             CollectionInfo.addOpenedFile(Pair(data, option))
             val groupDataValidator = GroupDataValidator()
-            val inputParser = InputParser()
             val groups = ArrayList<StudyGroup?>()
-            val groupsData = inputParser.parse(fileReader)
+            val groupsData = InputParser.parse(fileReader)
             groupsData.forEach{groupData ->
                 val group = groupDataValidator.validateData(groupData)
                 if (group != null) {

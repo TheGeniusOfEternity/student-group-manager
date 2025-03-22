@@ -2,7 +2,6 @@ package handlers
 
 import collection.StudyGroup
 import parsers.OutputParser
-import receiver.Receiver
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.IOException
@@ -18,9 +17,8 @@ class WriteDataFileHandler: Handler<TreeMap<Long, StudyGroup>, String> {
     override fun handle(data: TreeMap<Long, StudyGroup>, option: String) {
         try {
             val writer = BufferedOutputStream(FileOutputStream(option))
-            val outputParser = OutputParser()
-            val groupsData = outputParser.generateGroupsData(data)
-            val res = outputParser.parse(groupsData)
+            val groupsData = OutputParser.generateGroupsData(data)
+            val res = OutputParser.parse(groupsData)
             val bytes = res.toByteArray()
             writer.write(bytes)
             writer.flush()

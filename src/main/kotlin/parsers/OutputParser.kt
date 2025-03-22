@@ -15,7 +15,7 @@ import kotlin.reflect.jvm.isAccessible
 /**
  * Parses [Receiver.stdGroupCollection] in file
  */
-class OutputParser: Parser<ArrayList<GroupData>> {
+object OutputParser: Parser<ArrayList<GroupData>> {
     /**
      * Convert [GroupData] into row, then concatenate row into one
      * @param data ArrayList of [GroupData]

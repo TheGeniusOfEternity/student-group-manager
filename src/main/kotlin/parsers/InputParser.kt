@@ -9,7 +9,7 @@ import java.io.FileReader
 /**
  * Parser for file input
  */
-class InputParser: Parser<FileReader> {
+object InputParser: Parser<FileReader> {
     /**
      * @param data [FileReader] of reading file
      * @return ArrayList of [GroupData]

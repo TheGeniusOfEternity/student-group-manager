@@ -37,7 +37,6 @@ enum class InputSource {
  * Entry point of the program
  */
 fun main() {
-    val inputParser = InputParser()
     val readScriptFileHandler = ReadScriptFileHandler()
     val readDataFileHandler = ReadDataFileHandler()
     State.isRunning = true
@@ -66,7 +65,7 @@ fun main() {
                 }
                 InputSource.CONSOLE -> {
                     print("& ")
-                    inputParser.parseCommand()
+                    InputParser.parseCommand()
                 }
             }
         }
