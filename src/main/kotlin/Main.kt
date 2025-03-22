@@ -1,4 +1,5 @@
 import collection.CollectionInfo
+import handlers.InputHandler
 import handlers.ReadDataFileHandler
 import handlers.ReadScriptFileHandler
 import invoker.Invoker
@@ -47,17 +48,10 @@ fun main() {
                 InputSource.FILE -> {
                     val openedFiles = CollectionInfo.getOpenedFiles()
                     if (openedFiles.size != 0) {
-                        if (openedFiles.lastElement().first.contains("data/")) {
-                            readDataFileHandler.handle(
-                                openedFiles.lastElement().first,
-                                openedFiles.lastElement().second,
-                            )
-                        } else {
-                            readScriptFileHandler.handle(
-                                openedFiles.lastElement().first,
-                                openedFiles.lastElement().second,
-                            )
-                        }
+                        InputHandler.handle(
+                            openedFiles.lastElement().first,
+                            openedFiles.lastElement().second,
+                        )
                     } else {
                         println("program's state error: no file opened")
                         State.source = InputSource.CONSOLE
