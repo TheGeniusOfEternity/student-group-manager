@@ -1,13 +1,8 @@
 import collection.CollectionInfo
 import handlers.InputHandler
-import handlers.ReadDataFileHandler
-import handlers.ReadScriptFileHandler
-import invoker.Invoker
 import parsers.InputParser
 import receiver.Receiver
-import java.io.FileReader
 import java.io.IOException
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -38,8 +33,6 @@ enum class InputSource {
  * Entry point of the program
  */
 fun main() {
-    val readScriptFileHandler = ReadScriptFileHandler()
-    val readDataFileHandler = ReadDataFileHandler()
     State.isRunning = true
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())

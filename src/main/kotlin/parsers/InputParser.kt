@@ -52,7 +52,13 @@ object InputParser: Parser<FileReader> {
         return groupsData
     }
 
-    fun parseScript(data: FileReader, fileName: String){
+    /**
+     * Parses script files
+     *
+     * @param data - [FileReader]
+     * @param fileName - Name of reading file
+     */
+    fun parseScript(data: FileReader, fileName: String) {
         var index: Int = data.read()
         var currLine = ""
         val prevLines = CollectionInfo.getFileByName(fileName)?.second ?: -1
@@ -76,10 +82,11 @@ object InputParser: Parser<FileReader> {
             }
             index = data.read()
         }
-        State.source = InputSource.CONSOLE
-        CollectionInfo.removeOpenedFile()
     }
 
+    /**
+     * Reads commands and invoke them to execute
+     */
     fun parseCommand() {
         val commandName: String
         val input = readlnOrNull()

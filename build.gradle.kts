@@ -14,7 +14,7 @@ application {
 }
 
 group = "org.itmo"
-version = "1.0-alpha"
+version = "2.0-beta"
 
 repositories {
     mavenCentral()
