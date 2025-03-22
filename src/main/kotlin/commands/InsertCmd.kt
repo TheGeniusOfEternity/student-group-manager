@@ -2,8 +2,8 @@ package commands
 import GroupData
 import State
 import collection.StudyGroup
+import handlers.InputHandler
 import receiver.Receiver
-import handlers.InsertInputHandler
 import validators.PropertyValidator
 
 /**
@@ -13,13 +13,12 @@ class InsertCmd : Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
-            val insertInputHandler = InsertInputHandler()
             val propertyValidator = PropertyValidator()
             val newGroupData = GroupData()
             if (propertyValidator.validateData(Pair("id", args[0]))) {
                 if (Receiver.getStudyGroups()[args[0].toLong()] == null) {
                     newGroupData.add(Pair("id", args[0]))
-                    val newGroup = insertInputHandler.handle(newGroupData, "collection.StudyGroup")
+                    val newGroup = InputHandler.handleUser(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
                         println("Successfully added new group, type 'show' to see all groups")
