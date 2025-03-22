@@ -1,7 +1,7 @@
 package commands
 
 import collection.CollectionInfo
-import handlers.InputHandler
+import handlers.IOHandler
 import java.io.File
 
 /**
@@ -13,7 +13,7 @@ class ExecuteScriptCmd: Command {
             val filename = "scripts/${args[0]}"
             if (File(filename).exists()) {
                 if (CollectionInfo.getOpenedFiles().none { it.first.contains(filename) }) {
-                    InputHandler.handle(filename, null)
+                    IOHandler.handleFileInput(filename, null)
                 } else {
                     println("execute_script error: file ${args[0]} is already opened at the moment")
                 }

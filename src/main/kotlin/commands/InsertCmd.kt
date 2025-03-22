@@ -2,7 +2,7 @@ package commands
 import GroupData
 import State
 import collection.StudyGroup
-import handlers.InputHandler
+import handlers.IOHandler
 import receiver.Receiver
 import validators.PropertyValidator
 
@@ -18,7 +18,7 @@ class InsertCmd : Command {
             if (propertyValidator.validateData(Pair("id", args[0]))) {
                 if (Receiver.getStudyGroups()[args[0].toLong()] == null) {
                     newGroupData.add(Pair("id", args[0]))
-                    val newGroup = InputHandler.handleUser(newGroupData, "collection.StudyGroup")
+                    val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
                         println("Successfully added new group, type 'show' to see all groups")

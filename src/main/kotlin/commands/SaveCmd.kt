@@ -1,7 +1,7 @@
 package commands
 
 import collection.CollectionInfo
-import handlers.WriteDataFileHandler
+import handlers.IOHandler
 import receiver.Receiver
 
 /**
@@ -10,10 +10,9 @@ import receiver.Receiver
 class SaveCmd: Command {
     override fun execute(args: List<String>) {
         if (args.size == 1) {
-            val writeDataFileHandler = WriteDataFileHandler()
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
-                writeDataFileHandler.handle(groups, args[0])
+                IOHandler.handleOutput(groups, args[0])
                 CollectionInfo.updateDefaultFileName(args[0])
                 println("Collection saved successfully, default file is ${args[0]}")
             } else {
@@ -21,10 +20,9 @@ class SaveCmd: Command {
             }
 
         } else if (args.isEmpty()) {
-            val writeDataFileHandler = WriteDataFileHandler()
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
-                writeDataFileHandler.handle(groups, CollectionInfo.getDefaultFileName())
+                IOHandler.handleOutput(groups, CollectionInfo.getDefaultFileName())
                 println("Collection saved successfully, default file is ${CollectionInfo.getDefaultFileName()}")
             } else {
                 println("No groups found to save")

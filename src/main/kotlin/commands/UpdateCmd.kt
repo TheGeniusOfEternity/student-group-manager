@@ -6,8 +6,7 @@ import State
 import receiver.Receiver
 import validators.PropertyValidator
 import collection.StudyGroup
-import handlers.InputHandler
-import parsers.InputParser
+import handlers.IOHandler
 
 /**
  * Update [StudyGroup] by its id, works similar to [InsertCmd]
@@ -21,7 +20,7 @@ class UpdateCmd : Command {
             if (propertyValidator.validateData(Property("id", args[0]))) {
                 if (Receiver.getStudyGroup(args[0].toLong()) != null) {
                     newGroupData.add(Property("id", args[0]))
-                    val newGroup = InputHandler.handleUser(newGroupData, "collection.StudyGroup")
+                    val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
                         println("Successfully updated new group, type 'show' to see all groups")

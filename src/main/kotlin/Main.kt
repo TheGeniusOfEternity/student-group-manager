@@ -1,5 +1,5 @@
 import collection.CollectionInfo
-import handlers.InputHandler
+import handlers.IOHandler
 import parsers.InputParser
 import receiver.Receiver
 import java.io.IOException
@@ -41,7 +41,7 @@ fun main() {
                 InputSource.FILE -> {
                     val openedFiles = CollectionInfo.getOpenedFiles()
                     if (openedFiles.size != 0) {
-                        InputHandler.handle(
+                        IOHandler.handleFileInput(
                             openedFiles.lastElement().first,
                             openedFiles.lastElement().second,
                         )
