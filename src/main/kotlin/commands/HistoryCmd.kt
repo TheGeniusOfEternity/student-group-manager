@@ -2,6 +2,7 @@ package commands
 
 import collection.CollectionInfo
 import collection.CollectionInfo.commandsList
+import handlers.IOHandler
 
 
 /**
@@ -9,10 +10,10 @@ import collection.CollectionInfo.commandsList
  */
 class HistoryCmd : Command {
     override fun execute(args: List<String>) {
-        println("Commands history:\n${commandsList()}")
+        IOHandler printInfo "Commands history:\n${commandsList()}"
     }
 
     override fun describe() {
-        println("history - show 11 last executed commands")
+        IOHandler printInfo "history - show 11 last executed commands"
     }
 }

@@ -1,16 +1,17 @@
 package commands
 import State
+import handlers.IOHandler
 
 /**
  * Stops program running
  */
 class ExitCmd : Command {
     override fun execute(args: List<String>) {
-        println("Exiting console...")
+        IOHandler printInfoLn "Exiting console..."
         State.isRunning = false
     }
 
     override fun describe() {
-        println("exit - stops program running")
+        IOHandler printInfoLn "exit  - stops program running"
     }
 }

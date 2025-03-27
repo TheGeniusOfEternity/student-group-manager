@@ -1,5 +1,6 @@
 package commands
 
+import handlers.IOHandler
 import receiver.Receiver
 
 /**
@@ -11,19 +12,19 @@ class RemoveByTransfStudsCmd: Command {
             try {
                 val groups = Receiver.getStudyGroups().filter { it.value.getTransferredStudents() == args[0].toLong() }
                 if (groups.isEmpty()) {
-                    println("remove_any_by_transferred_students error: no group with such amount")
+                    IOHandler printInfoLn "remove_any_by_transferred_students error: no group with such amount"
                 } else {
                     Receiver.removeStudyGroup(groups[groups.keys.minOf { it }]!!.getId())
-                    println("group #${groups[groups.keys.minOf { it }]!!.getId()} was successfully removed")
+                    IOHandler printInfoLn "group #${groups[groups.keys.minOf { it }]!!.getId()} was successfully removed"
                 }
             } catch (e: NumberFormatException) {
-                println("remove_any_by_transferred_students error: invalid number")
+                IOHandler printInfoLn "remove_any_by_transferred_students error: invalid number"
             }
         } else {
-            println("remove_any_by_transferred_students error: invalid count of arguments")
+            IOHandler printInfoLn "remove_any_by_transferred_students error: invalid count of arguments"
         }
     }
     override fun describe() {
-        println("remove_any_by_transferred_students <transferred_students> - removes element from collection, whose transferred students count equals to given")
+        IOHandler printInfoLn "remove_any_by_transferred_students <transferred_students> - removes element from collection, whose transferred students count equals to given"
     }
 }

@@ -14,20 +14,21 @@ class ExecuteScriptCmd: Command {
             if (File(filename).exists()) {
                 if (CollectionInfo.getOpenedFiles().none { it.first.contains(filename) }) {
                     IOHandler.handleFileInput(filename, null)
+                    IOHandler printInfo "\nEnd of executing script $filename\n\n"
                 } else {
-                    println("execute_script error: file ${args[0]} is already opened at the moment")
+                    IOHandler printInfo "execute_script error: file ${args[0]} is already opened at the moment\n"
                 }
 
             } else {
-                println("execute_script error: file not found: $filename")
+                IOHandler printInfo "execute_script error: file not found: $filename"
             }
 
         } else {
-            println("execute_script error: invalid count of arguments")
+            IOHandler printInfo "execute_script error: invalid count of arguments"
         }
     }
 
     override fun describe() {
-        println("execute_script <filename> - executes commands from the file")
+        IOHandler printInfo "execute_script <filename> - executes commands from the file"
     }
 }

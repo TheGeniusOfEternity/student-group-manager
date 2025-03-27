@@ -1,5 +1,6 @@
 package commands
 
+import handlers.IOHandler
 import receiver.Receiver
 
 /**
@@ -15,13 +16,13 @@ class PrintUniqueAvgMarkCmd: Command {
                     avgMarks.add(mark.toInt())
                 }
             }
-            println("All unique marks: $avgMarks")
+            IOHandler printInfoLn "All unique marks: $avgMarks"
         } else {
-            println("print_unique_average_mark error: invalid count of arguments")
+            IOHandler printInfoLn "print_unique_average_mark error: invalid count of arguments"
         }
     }
 
     override fun describe() {
-        println("print_unique_average_mark - prints all unique average marks from all study groups")
+        IOHandler printInfoLn "print_unique_average_mark - prints all unique average marks from all study groups"
     }
 }

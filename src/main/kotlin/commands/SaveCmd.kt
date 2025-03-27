@@ -12,28 +12,28 @@ class SaveCmd: Command {
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
-                IOHandler.handleOutput(groups, args[0])
+                IOHandler.handleFileOutput(groups, args[0])
                 CollectionInfo.updateDefaultFileName(args[0])
-                println("Collection saved successfully, default file is ${args[0]}")
+                IOHandler printInfo "Collection saved successfully, default file is ${args[0]}"
             } else {
-                println("No groups found to save")
+                IOHandler printInfo "No groups found to save\n"
             }
 
         } else if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
-                IOHandler.handleOutput(groups, CollectionInfo.getDefaultFileName())
-                println("Collection saved successfully, default file is ${CollectionInfo.getDefaultFileName()}")
+                IOHandler.handleFileOutput(groups, CollectionInfo.getDefaultFileName())
+                IOHandler printInfo "Collection saved successfully, default file is ${CollectionInfo.getDefaultFileName()}"
             } else {
-                println("No groups found to save")
+                IOHandler printInfo "No groups found to save\n"
             }
         }
         else {
-            println("save error: invalid arguments.")
+            IOHandler printInfo "save error: invalid arguments.\n"
         }
     }
 
     override fun describe() {
-        println("save <filename> - saves collection into a file")
+        IOHandler printInfo "save <filename> - saves collection into a file"
     }
 }

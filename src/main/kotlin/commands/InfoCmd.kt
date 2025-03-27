@@ -1,6 +1,7 @@
 package commands
 import receiver.Receiver
 import collection.CollectionInfo
+import handlers.IOHandler
 
 /**
  * Shows info about Collection, storing in [Receiver]
@@ -8,13 +9,13 @@ import collection.CollectionInfo
 class InfoCmd: Command {
     override fun execute(args: List<String>) {
         if (args.isEmpty()) {
-            print(CollectionInfo.toString())
+            IOHandler printInfo CollectionInfo.toString()
         } else {
-            println("info: Too many arguments")
+            IOHandler printInfoLn "info: Too many arguments"
         }
     }
 
     override fun describe() {
-        println("info - shows information about collection (type, data initialized, elements count)")
+        IOHandler printInfoLn "info - shows information about collection (type, data initialized, elements count)"
     }
 }

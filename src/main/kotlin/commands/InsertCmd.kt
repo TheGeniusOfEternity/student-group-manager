@@ -21,29 +21,29 @@ class InsertCmd : Command {
                     val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
-                        println("Successfully added new group, type 'show' to see all groups")
+                        IOHandler printInfoLn "Successfully added new group, type 'show' to see all groups"
                     } else {
-                        println("insert error: group data can't be validated")
+                        IOHandler printInfoLn "insert error: group data can't be validated"
                     }
                 } else {
                     var input: String
                     do {
-                        print("insert error: group #${args[0]} already exists, should update? (Y/n): ")
+                        IOHandler printInfoLn "insert error: group #${args[0]} already exists, should update? (Y/n): "
                         input = readln()
                     } while (input != "Y" && input != "n")
                     if (input == "Y") {
                         UpdateCmd().execute(args)
                     } else {
-                        println("insert rejected")
+                        IOHandler printInfoLn "insert rejected"
                     }
                 }
             }
         } else {
-            println("insert: invalid count of arguments")
+            IOHandler printInfoLn "insert: invalid count of arguments"
         }
     }
 
     override fun describe() {
-        println("insert <key> {element} - adds to collection element with <key> id")
+        IOHandler printInfoLn "insert <key> {element} - adds to collection element with <key> id"
     }
 }

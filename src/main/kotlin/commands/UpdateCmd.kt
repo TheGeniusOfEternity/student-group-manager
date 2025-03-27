@@ -23,29 +23,29 @@ class UpdateCmd : Command {
                     val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
                         Receiver.addStudyGroup(args[0].toLong(), newGroup)
-                        println("Successfully updated new group, type 'show' to see all groups")
+                        IOHandler printInfoLn "Successfully updated new group, type 'show' to see all groups"
                     } else {
-                        println("update error: group data can't be validated")
+                        IOHandler printInfoLn "update error: group data can't be validated"
                     }
                 } else {
                     var input: String
                     do {
-                        print("update error: group #${args[0]} not found, should insert? (Y/n): ")
+                        IOHandler printInfo "update error: group #${args[0]} not found, should insert? (Y/n): "
                         input = readln()
                     } while (input != "Y" && input != "n")
                     if (input == "Y") {
                         InsertCmd().execute(args)
                     } else {
-                        println("update rejected")
+                        IOHandler printInfoLn "update rejected"
                     }
                 }
             }
         } else {
-            println("update: invalid count of arguments")
+            IOHandler printInfoLn "update: invalid count of arguments"
         }
     }
 
     override fun describe() {
-        println("update <key> {element} - updates element from collection with provided id")
+        IOHandler printInfoLn "update <key> {element} - updates element from collection with provided id"
     }
 }

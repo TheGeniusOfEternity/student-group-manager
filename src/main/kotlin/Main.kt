@@ -37,24 +37,7 @@ fun main() {
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
-            when (State.source) {
-                InputSource.FILE -> {
-                    val openedFiles = CollectionInfo.getOpenedFiles()
-                    if (openedFiles.size != 0) {
-                        IOHandler.handleFileInput(
-                            openedFiles.lastElement().first,
-                            openedFiles.lastElement().second,
-                        )
-                    } else {
-                        println("program's state error: no file opened")
-                        State.source = InputSource.CONSOLE
-                    }
-                }
-                InputSource.CONSOLE -> {
-                    print("& ")
-                    InputParser.parseCommand()
-                }
-            }
+            IOHandler.handle()
         }
         exitProcess(0)
     } catch (e: IOException) {

@@ -29,6 +29,30 @@ import receiver.Receiver
 
 object IOHandler {
     /**
+     * Main function of i/o handle,
+     * Works only if [State.isRunning] is true
+     */
+    fun handle() {
+        when (State.source) {
+            InputSource.FILE -> {
+                val openedFiles = CollectionInfo.getOpenedFiles()
+                if (openedFiles.size != 0) {
+                    handleFileInput(
+                        openedFiles.lastElement().first,
+                        openedFiles.lastElement().second,
+                    )
+                } else {
+                    IOHandler printInfoLn "program's state error: no file opened"
+                    State.source = InputSource.CONSOLE
+                }
+            }
+            InputSource.CONSOLE -> {
+                IOHandler printInfo "& "
+                InputParser.parseCommand()
+            }
+        }
+    }
+    /**
      * @param filename - Path to the file
      * @param lastLine - Index of last read line of the file
      *
@@ -50,7 +74,7 @@ object IOHandler {
             }
             CollectionInfo.removeOpenedFile()
         } catch (e: IOException) {
-            println("input error: file $filename not found")
+            IOHandler printInfoLn "input error: file $filename not found"
         }
         State.source = InputSource.CONSOLE
         return response
@@ -73,7 +97,7 @@ object IOHandler {
                 if (property.name == "groupAdmin") {
                     var input: String
                     do {
-                        print("${property.name.replaceFirstChar { it.uppercase() }} (Y/n): ")
+                        IOHandler printInfo "${property.name.replaceFirstChar { it.uppercase() }} (Y/n): "
                         input = readln()
                     } while (input != "Y" && input != "n")
                     if (input == "Y") handleUserInput(data, property.returnType.toString().split("?")[0])
@@ -85,10 +109,10 @@ object IOHandler {
                 if (property.name == "id" || property.name == "creationDate") continue
                 var input: String
                 do {
-                    print("${property.name.replaceFirstChar { it.uppercase() }}: ")
+                    IOHandler printInfo "${property.name.replaceFirstChar { it.uppercase() }}: "
                     if ((property.returnType.classifier as? KClass<*>)?.java?.isEnum == true) {
                         val enums = (property.returnType.classifier as? KClass<*>)?.java?.enumConstants?.joinToString(separator = ", ")
-                        print("($enums) ")
+                        IOHandler printInfo "($enums) "
                     }
                     input = readln()
 
@@ -107,7 +131,7 @@ object IOHandler {
      * @param data - [Receiver.stdGroupCollection] all study groups from collection
      * @param filename - name of file that data will be written in
      */
-    fun handleOutput(data: TreeMap<Long, StudyGroup>, filename: String) {
+    fun handleFileOutput(data: TreeMap<Long, StudyGroup>, filename: String) {
         try {
             val writer = BufferedOutputStream(FileOutputStream(filename))
             val groupsData = OutputParser.generateGroupsData(data)
@@ -116,7 +140,10 @@ object IOHandler {
             writer.write(bytes)
             writer.flush()
         } catch (e: IOException) {
-            print(e.message)
+            IOHandler printInfo e.message
         }
     }
+
+    infix fun printInfo(message: String?): Unit = print(message)
+    infix fun printInfoLn(message: String?): Unit = println(message)
 }

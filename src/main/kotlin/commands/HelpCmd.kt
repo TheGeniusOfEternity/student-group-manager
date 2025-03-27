@@ -1,5 +1,6 @@
 package commands
 
+import handlers.IOHandler
 import invoker.Invoker
 
 /**
@@ -8,14 +9,14 @@ import invoker.Invoker
 class HelpCmd: Command {
     override fun execute(args: List<String>) {
         if (args.isEmpty()) {
-            println("Available commands:")
+            IOHandler printInfoLn "Available commands:"
             Invoker.commands.toSortedMap().forEach{ it.value.describe()}
         } else {
-            println("help: too many arguments")
+            IOHandler printInfoLn "help: too many arguments"
         }
     }
 
     override fun describe() {
-        println("help - shows all available commands")
+        IOHandler printInfoLn "help - shows all available commands"
     }
 }

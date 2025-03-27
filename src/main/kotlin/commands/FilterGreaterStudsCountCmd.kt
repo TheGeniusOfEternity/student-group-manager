@@ -1,5 +1,6 @@
 package commands
 
+import handlers.IOHandler
 import receiver.Receiver
 
 /**
@@ -11,19 +12,19 @@ class FilterGreaterStudsCountCmd: Command {
             try {
                 val groups = Receiver.getStudyGroups().filter { it.value.getStudentsCount() > args[0].toLong() }
                 if (groups.isEmpty()) {
-                    println("filter_greater_than_students_count error: no group with such amount")
+                    IOHandler printInfoLn "filter_greater_than_students_count error: no group with such amount"
                 } else {
-                    groups.forEach{ group -> println(group.value.toString()) }
+                    groups.forEach{ group -> IOHandler printInfoLn group.value.toString() }
                 }
             } catch (e: NumberFormatException) {
-                println("filter_greater_than_students_count error: incorrect number format")
+                IOHandler printInfoLn "filter_greater_than_students_count error: incorrect number format"
             }
         } else {
-            println("filter_greater_than_students_count error: invalid count of arguments")
+            IOHandler printInfoLn "filter_greater_than_students_count error: invalid count of arguments"
         }
     }
 
     override fun describe() {
-        println("filter_greater_than_students_count <studentsCount> - shows only groups with greater count of students ")
+        IOHandler printInfoLn "filter_greater_than_students_count <studentsCount> - shows only groups with greater count of students "
     }
 }

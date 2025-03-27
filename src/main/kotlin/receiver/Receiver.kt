@@ -19,7 +19,7 @@ object Receiver {
         IOHandler.handleFileInput(filename, null)?.forEach { group ->
             if (group != null) {
                 stdGroupCollection[group.getId()] = group
-                println("Group #${group.getId()} has been loaded successfully")
+                IOHandler printInfoLn "Group #${group.getId()} has been loaded successfully"
             }
         }
         CollectionInfo.updateElementsCount()

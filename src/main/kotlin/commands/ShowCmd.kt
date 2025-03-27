@@ -1,5 +1,6 @@
 package commands
 import collection.StudyGroup
+import handlers.IOHandler
 import receiver.Receiver
 
 /**
@@ -10,18 +11,18 @@ class ShowCmd: Command {
         if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups();
             if (groups.isEmpty()) {
-                println("No groups found")
+                IOHandler printInfoLn "No groups found"
             } else {
                 groups.forEach { group ->
-                    println(group.value.toString())
+                    IOHandler printInfoLn group.value.toString()
                 }
             }
         } else {
-            println("show: Too many arguments")
+            IOHandler printInfoLn "show: Too many arguments"
         }
     }
 
     override fun describe() {
-        println("show - shows all elements from collection")
+        IOHandler printInfoLn "show - shows all elements from collection"
     }
 }

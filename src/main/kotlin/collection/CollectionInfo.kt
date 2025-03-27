@@ -137,7 +137,7 @@ object CollectionInfo {
     /**
      * @return [openedFiles] with only filenames
      */
-    fun openedFilesList(): String {
+    private fun openedFilesList(): String {
         var output = ""
         openedFiles.forEach {
             if (it != null) {
