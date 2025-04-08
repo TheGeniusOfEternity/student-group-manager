@@ -70,7 +70,6 @@ object InputParser: Parser<FileReader> {
                         val query: List<String> = currLine.trim().split(" ")
                         val commandName = query.first()
                         Invoker.run(commandName, query.drop(1))
-                        State.source = InputSource.FILE
                         CollectionInfo.updateOpenedFile(fileName, linesCount)
                     }
                     currLine = ""

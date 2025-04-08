@@ -30,6 +30,8 @@ java {
 dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("reflect"))
+    implementation("com.rabbitmq:amqp-client:5.18.0")
+    implementation("ch.qos.logback:logback-classic:1.2.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
 }

@@ -1,6 +1,6 @@
-import collection.CollectionInfo
+import ch.qos.logback.classic.LoggerContext
 import handlers.IOHandler
-import receiver.Receiver
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
@@ -16,25 +16,22 @@ typealias Property = Pair<String, String?>
 
 /**
  * Singleton object for storing program state
- * @property source - data source from what program should read data
  * @property isRunning - check if program is running or not
  */
 object State {
-    var source: InputSource = InputSource.CONSOLE
     var isRunning = false
-}
-
-enum class InputSource {
-    FILE, CONSOLE
 }
 
 /**
  * Entry point of the program
  */
 fun main() {
+    val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
+    val logger = loggerContext.getLogger("com.rabbitmq.client.impl.ConsumerWorkService")
+    logger.level = ch.qos.logback.classic.Level.INFO
+
     State.isRunning = true
     try {
-        Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
             IOHandler.handle()
         }

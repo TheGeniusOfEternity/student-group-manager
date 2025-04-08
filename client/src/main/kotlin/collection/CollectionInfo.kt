@@ -15,13 +15,6 @@ object CollectionInfo {
     private val commandsHistory: Array<String> = Array(11) {""}
     private var defaultFileName: String = "data/src.csv"
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
-    /**
-     * Get count of elements in collection
-     * @return [elementsCount] of elements in collection
-     */
-    fun getElementsCount(): Int {
-        return elementsCount
-    }
 
     /**
      * Update [defaultFileName]
@@ -83,13 +76,6 @@ object CollectionInfo {
      */
     fun updateElementsCount() {
         elementsCount = Receiver.getStudyGroups().size
-    }
-
-    /**
-     * @return [commandsHistory]
-     */
-    fun getCommandHistory(): Array<String> {
-        return commandsHistory
     }
 
     /**

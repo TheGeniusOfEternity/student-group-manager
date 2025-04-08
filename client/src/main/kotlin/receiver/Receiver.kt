@@ -12,20 +12,6 @@ object Receiver {
     private val stdGroupCollection: TreeMap<Long, StudyGroup> = TreeMap()
 
     /**
-     * Load studyGroups from file via [IOHandler.handleFileInput]
-     * @param filename - Path to file
-     */
-    fun loadFromFile(filename: String) {
-        IOHandler.handleFileInput(filename, null)?.forEach { group ->
-            if (group != null) {
-                stdGroupCollection[group.getId()] = group
-                IOHandler printInfoLn "Group #${group.getId()} has been loaded successfully"
-            }
-        }
-        CollectionInfo.updateElementsCount()
-    }
-
-    /**
      * Get all stored study groups
      */
     fun getStudyGroups(): TreeMap<Long, StudyGroup> {

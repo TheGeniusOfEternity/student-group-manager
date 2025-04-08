@@ -3,7 +3,6 @@ package handlers
 import GroupData
 import State
 import annotations.Nested
-import collection.CollectionInfo
 import collection.StudyGroup
 import parsers.InputParser
 import parsers.OutputParser
@@ -11,13 +10,9 @@ import validators.GroupDataValidator
 import validators.PropertyValidator
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
-import java.io.FileReader
 import java.io.IOException
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.reflect.KClass
-import commands.InsertCmd
-import commands.UpdateCmd
 import receiver.Receiver
 
 /**
@@ -33,51 +28,8 @@ object IOHandler {
      * Works only if [State.isRunning] is true
      */
     fun handle() {
-        when (State.source) {
-            InputSource.FILE -> {
-                val openedFiles = CollectionInfo.getOpenedFiles()
-                if (openedFiles.size != 0) {
-                    handleFileInput(
-                        openedFiles.lastElement().first,
-                        openedFiles.lastElement().second,
-                    )
-                } else {
-                    IOHandler printInfoLn "program's state error: no file opened"
-                    State.source = InputSource.CONSOLE
-                }
-            }
-            InputSource.CONSOLE -> {
-                IOHandler printInfo "& "
-                InputParser.parseCommand()
-            }
-        }
-    }
-    /**
-     * @param filename - Path to the file
-     * @param lastLine - Index of last read line of the file
-     *
-     * @return [ArrayList] of [StudyGroup] if data file is being read, or null in script file case
-     */
-    fun handleFileInput(filename: String, lastLine: Int?): ArrayList<StudyGroup?>? {
-        var response: ArrayList<StudyGroup?>? = null
-        try {
-            CollectionInfo.addOpenedFile(Pair(filename, lastLine))
-            val fileReader = FileReader(filename)
-            if (CollectionInfo.getOpenedFiles().lastElement().first.contains("data/")) {
-                val groupDataValidator = GroupDataValidator()
-                val groupsData = InputParser.parse(fileReader)
-                response = groupsData.map {groupData ->
-                    groupDataValidator.validateData(groupData)
-                }.toCollection(ArrayList())
-            } else {
-                InputParser.parseScript(fileReader, filename)
-            }
-            CollectionInfo.removeOpenedFile()
-        } catch (e: IOException) {
-            IOHandler printInfoLn "input error: file $filename not found"
-        }
-        State.source = InputSource.CONSOLE
-        return response
+        IOHandler printInfo "& "
+        InputParser.parseCommand()
     }
 
     /**

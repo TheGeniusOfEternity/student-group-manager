@@ -24,13 +24,13 @@ object OutputParser: Parser<ArrayList<GroupData>> {
     override fun parse(data: ArrayList<GroupData>): String {
         var result = ""
         data.forEach {groupData ->
-            var row = "";
+            var row = ""
             groupData.forEach {property ->
                 if (property.first != "creationDate") {
-                    if (property.second == "null") {
-                        row += ";"
+                    row += if (property.second == "null") {
+                        ";"
                     } else {
-                        row += "${property.second};"
+                        "${property.second};"
                     }
                 }
             }
