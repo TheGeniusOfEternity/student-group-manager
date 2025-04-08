@@ -1,4 +1,5 @@
 import collection.CollectionInfo
+import handlers.ConnectionHandler
 import handlers.IOHandler
 import receiver.Receiver
 import java.io.IOException
@@ -33,6 +34,7 @@ enum class InputSource {
  */
 fun main() {
     State.isRunning = true
+    ConnectionHandler.initializeConnection()
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {

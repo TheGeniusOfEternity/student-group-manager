@@ -26,8 +26,6 @@ object Invoker {
             CollectionInfo.updateCommandHistory(commandName)
             command.execute(args)
         } else {
-            ConnectionHandler.sendMessage(commandName)
-            ConnectionHandler.receiveMessage()
         }
     }
 }
