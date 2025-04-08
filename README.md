@@ -16,12 +16,12 @@ This application is implementation of several labs (5-8) of the first-year ITMO 
 
 ## How to run project
 1. Clone repository
-```git clone https://github.com/TheGeniusOfEternity/student-group-manager.git```
+   ```git clone https://github.com/TheGeniusOfEternity/student-group-manager.git```
 2. Go into project dir
-```cd student-group-manager```
+   ```cd student-group-manager```
 3. Build & Run project
-```./gradlew build```
-```./gradlew run```
+   ```./gradlew build```
+   ```./gradlew run```
 
 ## Docs generation
 - Docs are generated via **Dokka** plugin
