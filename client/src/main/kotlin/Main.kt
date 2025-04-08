@@ -1,7 +1,9 @@
 import ch.qos.logback.classic.LoggerContext
+import handlers.ConnectionHandler
 import handlers.IOHandler
 import org.slf4j.LoggerFactory
 import java.io.IOException
+import java.util.logging.ConsoleHandler
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -20,6 +22,8 @@ typealias Property = Pair<String, String?>
  */
 object State {
     var isRunning = false
+    var serverConnection = false
+    var host = "localhost"
 }
 
 /**
@@ -31,9 +35,15 @@ fun main() {
     logger.level = ch.qos.logback.classic.Level.INFO
 
     State.isRunning = true
+    State.serverConnection = ConnectionHandler.initializeConnection()
     try {
         while (State.isRunning) {
-            IOHandler.handle()
+            if (State.serverConnection) {
+                IOHandler.handle()
+            } else {
+                ConnectionHandler.handleConnectionFail()
+            }
+
         }
         exitProcess(0)
     } catch (e: IOException) {
