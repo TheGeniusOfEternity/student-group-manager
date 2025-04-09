@@ -9,7 +9,7 @@ import handlers.IOHandler
  * Shows [CollectionInfo.commandsHistory] - list of last 11 executed commands
  */
 class HistoryCmd : Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         IOHandler printInfo "Commands history:\n${commandsList()}"
     }
 

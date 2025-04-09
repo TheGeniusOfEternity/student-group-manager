@@ -7,7 +7,7 @@ import handlers.IOHandler
  * Shows info about Collection, storing in [Receiver]
  */
 class InfoCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.isEmpty()) {
             IOHandler printInfo CollectionInfo.toString()
         } else {

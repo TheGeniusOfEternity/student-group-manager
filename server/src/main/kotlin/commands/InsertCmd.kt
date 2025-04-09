@@ -10,17 +10,17 @@ import validators.PropertyValidator
  * Starts insertion process: user manually step by step enters new [StudyGroup] data
  */
 class InsertCmd : Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
             val propertyValidator = PropertyValidator()
             val newGroupData = GroupData()
-            if (propertyValidator.validateData(Pair("id", args[0]))) {
-                if (Receiver.getStudyGroups()[args[0].toLong()] == null) {
-                    newGroupData.add(Pair("id", args[0]))
+            if (propertyValidator.validateData(Pair("id", (args[0] as String)))) {
+                if (Receiver.getStudyGroups()[(args[0] as String).toLong()] == null) {
+                    newGroupData.add(Pair("id", (args[0] as String)))
                     val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
-                        Receiver.addStudyGroup(args[0].toLong(), newGroup)
+                        Receiver.addStudyGroup((args[0] as String).toLong(), newGroup)
                         IOHandler printInfoLn "Successfully added new group, type 'show' to see all groups"
                     } else {
                         IOHandler printInfoLn "insert error: group data can't be validated"
@@ -28,7 +28,7 @@ class InsertCmd : Command {
                 } else {
                     var input: String
                     do {
-                        IOHandler printInfoLn "insert error: group #${args[0]} already exists, should update? (Y/n): "
+                        IOHandler printInfoLn "insert error: group #${(args[0] as String)} already exists, should update? (Y/n): "
                         input = readln()
                     } while (input != "Y" && input != "n")
                     if (input == "Y") {

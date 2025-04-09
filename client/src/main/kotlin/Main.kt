@@ -34,8 +34,6 @@ object State {
  */
 fun main() {
     loadProgram()
-
-    if (State.connectedToServer) IOHandler printInfoLn "Connection established"
     try {
         while (State.isRunning) {
             if (State.connectedToServer) {
@@ -43,7 +41,6 @@ fun main() {
             } else {
                 ConnectionHandler.handleConnectionFail()
             }
-
         }
         exitProcess(0)
     } catch (e: IOException) {

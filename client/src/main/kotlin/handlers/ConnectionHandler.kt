@@ -1,22 +1,28 @@
 package handlers
 
 import State
+import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
+import dto.ExecuteCommandDto
+import invoker.Invoker
+import serializers.JsonSerializer
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
+    private const val DATA_REQUESTS = "data-requests"
+    private const val DATA_RESPONSES = "data-responses"
+    private val factory = ConnectionFactory().apply { this.host = State.host }
 
     fun initializeConnection() {
-        val factory = ConnectionFactory().apply { this.host = State.host }
-        var response: String
-
+        var response = ""
+        val latch = CountDownLatch(1)
+        val connection = factory.newConnection()
         try {
-            val connection = factory.newConnection()
             val channel = connection.createChannel()
             if (!connection.isOpen) IOHandler printInfoLn "RabbitMQ is offline"
             channel.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
@@ -26,13 +32,23 @@ object ConnectionHandler {
                 response = String(delivery.body, charset("UTF-8"))
                 if (response == "Yes, I am GOIDA!") {
                     State.connectedToServer = true
+                    latch.countDown()
+                    IOHandler printInfoLn "Connection established"
+                    loadCommandsList()
                 }
             }
             channel.queuePurge(HEALTH_CHECK_REQUESTS)
+            channel.queuePurge(HEALTH_CHECK_RESPONSES)
             channel.basicPublish("", HEALTH_CHECK_REQUESTS, null, "Are you GOIDA?".toByteArray())
             channel.basicConsume(HEALTH_CHECK_RESPONSES, true, deliverCallback) { _: String? -> }
+
+            latch.await(100, TimeUnit.MILLISECONDS)
         } catch (e: Exception) {
             println(e.printStackTrace().toString())
+        } finally {
+            if (response.isEmpty()) {
+                connection.close()
+            }
         }
     }
 
@@ -45,7 +61,6 @@ object ConnectionHandler {
             when (input) {
                 "Y" -> {
                     initializeConnection()
-                    if (State.connectedToServer) IOHandler printInfoLn "Connection established"
                 }
                 "n" -> {
                     State.isRunning = false
@@ -61,31 +76,37 @@ object ConnectionHandler {
         }
     }
 
-    fun sendMessage(msg: String, queueName: String) {
-        val factory = ConnectionFactory()
-        factory.host = State.host
+    private fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>) {
+        val properties = AMQP.BasicProperties.Builder().
+        headers(headers).build()
         factory.newConnection().use { connection ->
             connection.createChannel().use { channel ->
                 channel.queueDeclare(queueName, false, false, false, null)
-                channel.basicPublish("", queueName, null, msg.toByteArray())
-                println(" [x] Sent '$msg'")
+                channel.basicPublish("", queueName, properties, data)
             }
         }
     }
 
-    fun receiveMessage(queueName: String) {
-        val factory = ConnectionFactory()
-        factory.host = State.host
+    private fun receiveMessage(queueName: String, callback: DeliverCallback) {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
         channel.queueDeclare(queueName, false, false, false, null)
-        println(" [*] Waiting for messages. To exit press CTRL+C")
+        channel.basicConsume(queueName, true, callback) { _: String? -> }
+    }
 
+    private fun loadCommandsList() {
+        IOHandler printInfoLn "Getting available commands..."
+        val bytedData = JsonSerializer.serialize(
+            ExecuteCommandDto("get_commands_list", null)
+        )
+        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to null))
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            val message = String(delivery.body, charset("UTF-8"))
-            println(" [x] Received '$message'")
+            val response = JsonSerializer.deserialize<List<String>>(delivery.body)
+            response.forEach{ command ->
+                Invoker.commands[command] = null
+            }
         }
-        channel.basicConsume(queueName, true, deliverCallback) { _: String? -> }
+        receiveMessage(DATA_RESPONSES, deliverCallback)
     }
 }

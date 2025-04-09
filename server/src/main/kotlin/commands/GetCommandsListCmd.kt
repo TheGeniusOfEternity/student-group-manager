@@ -1,19 +1,22 @@
 package commands
 
+import handlers.ConnectionHandler
 import handlers.IOHandler
 import invoker.Invoker
 
 /**
  * Shows description of all commands
  */
-class HelpCmd: Command {
-    override fun execute(args: List<String>) {
+class GetCommandsListCmd: Command {
+    override fun execute(args: List<Any?>) {
         if (args.isEmpty()) {
-            IOHandler printInfoLn "Available commands:"
-            Invoker.commands.toSortedMap().forEach{ it.value.describe()}
+            val commandNames = ArrayList<String>()
+            Invoker.commands.forEach { command -> commandNames.add(command.key) }
+            ConnectionHandler.handleResponse(commandNames)
         } else {
             IOHandler printInfoLn "help: too many arguments"
         }
+        return
     }
 
     override fun describe() {

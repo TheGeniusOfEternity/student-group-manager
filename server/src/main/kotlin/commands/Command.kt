@@ -7,7 +7,7 @@ interface Command {
     /**
      * Initiate command
      */
-    fun execute(args: List<String>)
+    fun execute(args: List<Any?>)
 
     /**
      * Shows command description

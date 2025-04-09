@@ -7,10 +7,10 @@ import receiver.Receiver
  * Removes study groups with given transferred students amount
  */
 class RemoveByTransfStudsCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             try {
-                val groups = Receiver.getStudyGroups().filter { it.value.getTransferredStudents() == args[0].toLong() }
+                val groups = Receiver.getStudyGroups().filter { it.value.getTransferredStudents() == (args[0] as String).toLong() }
                 if (groups.isEmpty()) {
                     IOHandler printInfoLn "remove_any_by_transferred_students error: no group with such amount"
                 } else {

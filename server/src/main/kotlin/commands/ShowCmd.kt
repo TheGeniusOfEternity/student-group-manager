@@ -7,7 +7,7 @@ import receiver.Receiver
  * Shows list of [StudyGroup]
  */
 class ShowCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups();
             if (groups.isEmpty()) {

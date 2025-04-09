@@ -12,13 +12,13 @@ import kotlin.collections.HashMap
 object Invoker {
     val commands: HashMap<String, Command> = HashMap()
     init {
-        commands["help"] = HelpCmd()
+        commands["get_by_id"] = GetByIdCmd()
+        commands["get_commands_list"] = GetCommandsListCmd()
         commands["info"] = InfoCmd()
         commands["show"] = ShowCmd()
         commands["insert"] = InsertCmd()
         commands["update"] = UpdateCmd()
         commands["remove"] = RemoveCmd()
-        commands["exit"] = ExitCmd()
         commands["clear"] = ClearCmd()
         commands["save"] = SaveCmd()
         commands["history"] = HistoryCmd()
@@ -32,7 +32,7 @@ object Invoker {
     /**
      * Initiates [Command] execution
      */
-    fun run(commandName: String, args: List<String>) {
+    fun run(commandName: String, args: List<Any?>) {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)

@@ -7,9 +7,9 @@ import receiver.Receiver
  * Removes all elements from collection, whose id lower than given
  */
 class RemoveLowerCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.size == 1) {
-            val comparedGroup = Receiver.getStudyGroup(args[0].toLong())
+            val comparedGroup = Receiver.getStudyGroup((args[0] as String).toLong())
             if (comparedGroup != null) {
                 val groups = Receiver.getStudyGroups().filter { it.value < comparedGroup }
                 if (groups.isNotEmpty()) {
@@ -21,7 +21,7 @@ class RemoveLowerCmd: Command {
                     IOHandler printInfoLn "remove_lower error: no less groups found"
                 }
             } else {
-                IOHandler printInfoLn "remove_lower error: group #${args[0]} not found"
+                IOHandler printInfoLn "remove_lower error: group #${(args[0] as String)} not found"
             }
 
         } else {

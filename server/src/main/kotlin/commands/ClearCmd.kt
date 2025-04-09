@@ -5,7 +5,7 @@ import receiver.Receiver
  * Clears [Receiver.stdGroupCollection]
  */
 class ClearCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
        if (args.isEmpty()) {
            Receiver.clearStudyGroups()
            IOHandler printInfoLn "Collection was successfully cleared"

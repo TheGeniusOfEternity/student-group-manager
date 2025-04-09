@@ -33,12 +33,11 @@ enum class InputSource {
  * Entry point of the program
  */
 fun main() {
-    State.isRunning = true
     ConnectionHandler.initializeConnection()
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
-            IOHandler.handle()
+            ConnectionHandler.handleRequests()
         }
         exitProcess(0)
     } catch (e: IOException) {

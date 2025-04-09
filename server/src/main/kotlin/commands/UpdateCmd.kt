@@ -12,17 +12,17 @@ import handlers.IOHandler
  * Update [StudyGroup] by its id, works similar to [InsertCmd]
  */
 class UpdateCmd : Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
             val propertyValidator = PropertyValidator()
             val newGroupData = GroupData()
-            if (propertyValidator.validateData(Property("id", args[0]))) {
-                if (Receiver.getStudyGroup(args[0].toLong()) != null) {
-                    newGroupData.add(Property("id", args[0]))
+            if (propertyValidator.validateData(Property("id", (args[0] as String)))) {
+                if (Receiver.getStudyGroup((args[0] as String).toLong()) != null) {
+                    newGroupData.add(Property("id", (args[0] as String)))
                     val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
                     if (newGroup != null) {
-                        Receiver.addStudyGroup(args[0].toLong(), newGroup)
+                        Receiver.addStudyGroup((args[0] as String).toLong(), newGroup)
                         IOHandler printInfoLn "Successfully updated new group, type 'show' to see all groups"
                     } else {
                         IOHandler printInfoLn "update error: group data can't be validated"
@@ -30,7 +30,7 @@ class UpdateCmd : Command {
                 } else {
                     var input: String
                     do {
-                        IOHandler printInfo "update error: group #${args[0]} not found, should insert? (Y/n): "
+                        IOHandler printInfo "update error: group #${(args[0] as String)} not found, should insert? (Y/n): "
                         input = readln()
                     } while (input != "Y" && input != "n")
                     if (input == "Y") {

@@ -8,13 +8,13 @@ import receiver.Receiver
  * Saves [Receiver.stdGroupCollection] into a file
  */
 class SaveCmd: Command {
-    override fun execute(args: List<String>) {
+    override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
-                IOHandler.handleFileOutput(groups, args[0])
-                CollectionInfo.updateDefaultFileName(args[0])
-                IOHandler printInfo "Collection saved successfully, default file is ${args[0]}"
+                IOHandler.handleFileOutput(groups, (args[0] as String))
+                CollectionInfo.updateDefaultFileName((args[0] as String))
+                IOHandler printInfo "Collection saved successfully, default file is ${(args[0] as String)}"
             } else {
                 IOHandler printInfo "No groups found to save\n"
             }

@@ -3,6 +3,7 @@ package invoker
 import collection.CollectionInfo
 import commands.*
 import handlers.ConnectionHandler
+import handlers.IOHandler
 import kotlin.collections.HashMap
 
 /**
@@ -11,7 +12,7 @@ import kotlin.collections.HashMap
  * @property commands List of all existing commands
  */
 object Invoker {
-    val commands: HashMap<String, Command> = HashMap()
+    val commands: HashMap<String, Command?> = HashMap()
     init {
         commands["help"] = HelpCmd()
         commands["exit"] = ExitCmd()
@@ -26,6 +27,7 @@ object Invoker {
             CollectionInfo.updateCommandHistory(commandName)
             command.execute(args)
         } else {
+            IOHandler printInfoLn "Unknown command $commandName"
         }
     }
 }
