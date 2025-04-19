@@ -36,7 +36,7 @@ object Invoker {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)
-            command.execute(args)
+            command.execute(listOf(commandName + args))
         } else {
             println("Command not found: $commandName")
         }

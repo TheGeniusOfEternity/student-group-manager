@@ -28,7 +28,7 @@ class ExecuteScriptCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfo "execute_script <filename> - executes commands from the file"
+    override fun describe(): String {
+        return "execute_script <filename> - executes commands from the file"
     }
 }

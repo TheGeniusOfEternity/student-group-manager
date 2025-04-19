@@ -14,7 +14,7 @@ class ClearCmd: Command {
        }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "clear: erases all study groups from collection"
+    override fun describe(): String {
+        return "clear: erases all study groups from collection"
     }
 }

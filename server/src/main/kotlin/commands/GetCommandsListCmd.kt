@@ -9,9 +9,9 @@ import invoker.Invoker
  */
 class GetCommandsListCmd: Command {
     override fun execute(args: List<Any?>) {
-        if (args.isEmpty()) {
-            val commandNames = ArrayList<String>()
-            Invoker.commands.forEach { command -> commandNames.add(command.key) }
+        if (args.size == 1) {
+            val commandNames = ArrayList<Pair<String, String>>()
+            Invoker.commands.forEach { command -> commandNames.add(Pair(command.key, command.value.describe())) }
             ConnectionHandler.handleResponse(commandNames)
         } else {
             IOHandler printInfoLn "help: too many arguments"
@@ -19,7 +19,7 @@ class GetCommandsListCmd: Command {
         return
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "help - shows all available commands"
+    override fun describe(): String {
+        return "help - shows all available commands"
     }
 }

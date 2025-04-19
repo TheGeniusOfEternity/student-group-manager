@@ -11,7 +11,7 @@ class ExitCmd : Command {
         State.isRunning = false
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "exit  - stops program running"
+    override fun describe(): String {
+        return "exit  - stops program running"
     }
 }

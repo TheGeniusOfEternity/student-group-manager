@@ -29,7 +29,7 @@ class RemoveLowerCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "remove_lower <key> - removes all elements from collection, whose id is lower than given"
+    override fun describe(): String {
+        return "remove_lower <key> - removes all elements from collection, whose id is lower than given"
     }
 }

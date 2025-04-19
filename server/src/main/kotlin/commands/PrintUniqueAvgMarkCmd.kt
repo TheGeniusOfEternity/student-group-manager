@@ -22,7 +22,7 @@ class PrintUniqueAvgMarkCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "print_unique_average_mark - prints all unique average marks from all study groups"
+    override fun describe(): String {
+        return "print_unique_average_mark - prints all unique average marks from all study groups"
     }
 }

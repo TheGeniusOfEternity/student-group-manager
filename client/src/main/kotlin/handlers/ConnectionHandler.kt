@@ -5,6 +5,7 @@ import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
+import commands.ServerCmd
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
@@ -14,8 +15,8 @@ import java.util.concurrent.TimeUnit
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
-    private const val DATA_REQUESTS = "data-requests"
-    private const val DATA_RESPONSES = "data-responses"
+    const val DATA_REQUESTS = "data-requests"
+    const val DATA_RESPONSES = "data-responses"
     private val factory = ConnectionFactory().apply { this.host = State.host }
 
     fun initializeConnection() {
@@ -76,9 +77,8 @@ object ConnectionHandler {
         }
     }
 
-    private fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>) {
-        val properties = AMQP.BasicProperties.Builder().
-        headers(headers).build()
+    fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>) {
+        val properties = AMQP.BasicProperties.Builder().headers(headers).build()
         factory.newConnection().use { connection ->
             connection.createChannel().use { channel ->
                 channel.queueDeclare(queueName, false, false, false, null)
@@ -87,7 +87,7 @@ object ConnectionHandler {
         }
     }
 
-    private fun receiveMessage(queueName: String, callback: DeliverCallback) {
+    fun receiveMessage(queueName: String, callback: DeliverCallback) {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
 
@@ -102,9 +102,9 @@ object ConnectionHandler {
         )
         sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to null))
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            val response = JsonSerializer.deserialize<List<String>>(delivery.body)
+            val response = JsonSerializer.deserialize<List<Pair<String, String>>>(delivery.body)
             response.forEach{ command ->
-                Invoker.commands[command] = null
+                Invoker.commands[command.first] = ServerCmd(command.second)
             }
         }
         receiveMessage(DATA_RESPONSES, deliverCallback)

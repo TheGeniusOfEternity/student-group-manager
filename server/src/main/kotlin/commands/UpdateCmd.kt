@@ -45,7 +45,7 @@ class UpdateCmd : Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "update <key> {element} - updates element from collection with provided id"
+    override fun describe(): String {
+        return "update <key> {element} - updates element from collection with provided id"
     }
 }

@@ -5,22 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
-      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/dto/ExecuteCommandDto.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetByIdCmd.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/kotlin/dto/ExecuteCommandDto.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/src/main/kotlin/serializers/JsonSerializer.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/common/serializers/JsonSerializer.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/common/serializers/StudyGroupJsonSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/Command.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/Command.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/HelpCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/HelpCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExecuteScriptCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExecuteScriptCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExitCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExitCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/FilterGreaterStudsCountCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/FilterGreaterStudsCountCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/HelpCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetByIdCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetByIdCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/HistoryCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/HistoryCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/InfoCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/InfoCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/InsertCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/InsertCmd.kt" afterDir="false" />
@@ -74,8 +73,8 @@
         <option value="Dockerfile" />
         <option value="Kotlin Object" />
         <option value="Kotlin Enum" />
-        <option value="Kotlin Class" />
         <option value="Kotlin Data Class" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -278,7 +277,9 @@
       <workItem from="1744117057507" duration="125000" />
       <workItem from="1744117197483" duration="3904000" />
       <workItem from="1744138923341" duration="24293000" />
-      <workItem from="1744210685461" duration="774000" />
+      <workItem from="1744210685461" duration="13337000" />
+      <workItem from="1744652814850" duration="376000" />
+      <workItem from="1745086271178" duration="2868000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />

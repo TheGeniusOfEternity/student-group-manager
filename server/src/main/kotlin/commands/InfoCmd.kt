@@ -15,7 +15,7 @@ class InfoCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "info - shows information about collection (type, data initialized, elements count)"
+    override fun describe(): String {
+        return "info - shows information about collection (type, data initialized, elements count)"
     }
 }

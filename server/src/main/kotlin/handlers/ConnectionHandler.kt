@@ -1,19 +1,19 @@
 package handlers
 
+import collection.StudyGroup
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
-import kotlin.reflect.typeOf
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
     private const val DATA_REQUESTS = "data-requests"
-    private const val DATA_RESPONSES = "data-responses"
-    private val factory = ConnectionFactory().apply { this.host = "localhost" }
+    const val DATA_RESPONSES = "data-responses"
+    val factory = ConnectionFactory().apply { this.host = "localhost" }
     fun initializeConnection() {
 
         try {
@@ -44,17 +44,18 @@ object ConnectionHandler {
     fun handleRequests() {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
-        var commandRequest: ExecuteCommandDto<*>
+        var commandRequest: ExecuteCommandDto<*>?
         channel.queueDeclare(DATA_REQUESTS, false, false, false, null)
 
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
             commandRequest = when (delivery.properties.headers["paramsType"]) {
-                String -> { JsonSerializer.deserialize<ExecuteCommandDto<String>>(delivery.body) }
-                Long -> { JsonSerializer.deserialize<ExecuteCommandDto<Long>>(delivery.body) }
+                "String" -> { JsonSerializer.deserialize<ExecuteCommandDto<String>>(delivery.body) }
+                "Id" -> { JsonSerializer.deserialize<ExecuteCommandDto<Long>>(delivery.body) }
+                "StudyGroup" -> { JsonSerializer.deserialize<ExecuteCommandDto<StudyGroup>>(delivery.body) }
                 else -> { JsonSerializer.deserialize<ExecuteCommandDto<Nothing>>(delivery.body) }
             }
-            Invoker.run(commandRequest.name,
-                if (commandRequest.params != null) listOf(commandRequest.params) else listOf()
+            Invoker.run(commandRequest!!.name,
+                if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf()
             )
 
         }
@@ -62,19 +63,10 @@ object ConnectionHandler {
         Thread.sleep(Long.MAX_VALUE)
     }
 
-    fun handleResponse(commandResponse: ArrayList<*>) {
+    inline fun <reified T> handleResponse(commandResponse: ArrayList<T>?) {
         val connection = factory.newConnection()
         val channel = connection.createChannel()
-        val bytedResponse = when(commandResponse[0]) {
-            is String -> {
-                JsonSerializer.serialize<ArrayList<String>>(commandResponse
-                    .filterIsInstance<String>() as ArrayList<String>)
-            }
-            else -> {
-                null
-            }
-        }
-
+        val bytedResponse = JsonSerializer.serialize<ArrayList<T>>(commandResponse as ArrayList<T>)
         channel.queueDeclare(DATA_RESPONSES, false, false, false, null)
         channel.basicPublish("", DATA_RESPONSES, null, bytedResponse)
     }

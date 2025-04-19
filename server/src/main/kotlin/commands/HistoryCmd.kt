@@ -13,7 +13,7 @@ class HistoryCmd : Command {
         IOHandler printInfo "Commands history:\n${commandsList()}"
     }
 
-    override fun describe() {
-        IOHandler printInfo "history - show 11 last executed commands"
+    override fun describe(): String {
+        return "history - show 11 last executed commands"
     }
 }

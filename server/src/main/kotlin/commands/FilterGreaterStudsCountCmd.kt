@@ -24,7 +24,7 @@ class FilterGreaterStudsCountCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "filter_greater_than_students_count <studentsCount> - shows only groups with greater count of students "
+    override fun describe(): String {
+        return "filter_greater_than_students_count <studentsCount> - shows only groups with greater count of students "
     }
 }

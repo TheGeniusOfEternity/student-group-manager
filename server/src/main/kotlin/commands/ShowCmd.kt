@@ -22,7 +22,7 @@ class ShowCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "show - shows all elements from collection"
+    override fun describe(): String {
+        return "show - shows all elements from collection"
     }
 }

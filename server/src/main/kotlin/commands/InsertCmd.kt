@@ -43,7 +43,7 @@ class InsertCmd : Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "insert <key> {element} - adds to collection element with <key> id"
+    override fun describe(): String {
+        return "insert <key> {element} - adds to collection element with <key> id"
     }
 }

@@ -25,7 +25,7 @@ class RemoveCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfoLn "remove <key> - removes element by its id"
+    override fun describe(): String {
+        return "remove <key> - removes element by its id"
     }
 }

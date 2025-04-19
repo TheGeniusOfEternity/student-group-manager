@@ -12,5 +12,5 @@ interface Command {
     /**
      * Shows command description
      */
-    fun describe()
+    fun describe(): String
 }

@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
  * @property commands List of all existing commands
  */
 object Invoker {
-    val commands: HashMap<String, Command?> = HashMap()
+    val commands: HashMap<String, Command> = HashMap()
     init {
         commands["help"] = HelpCmd()
         commands["exit"] = ExitCmd()
@@ -25,7 +25,7 @@ object Invoker {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)
-            command.execute(args)
+            command.execute(listOf(commandName) + args)
         } else {
             IOHandler printInfoLn "Unknown command $commandName"
         }

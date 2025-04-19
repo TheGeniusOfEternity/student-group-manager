@@ -37,6 +37,7 @@ fun main() {
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
+            println(State.isRunning.toString())
             ConnectionHandler.handleRequests()
         }
         exitProcess(0)

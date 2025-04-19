@@ -1,9 +1,12 @@
 package commands
 
+import handlers.IOHandler
+
 /**
  * Initialize new command, which has two default options: execute and describe
  */
 interface Command {
+    val description: String
     /**
      * Initiate command
      */
@@ -12,5 +15,7 @@ interface Command {
     /**
      * Shows command description
      */
-    fun describe()
+    fun describe() {
+        IOHandler printInfoLn description
+    }
 }

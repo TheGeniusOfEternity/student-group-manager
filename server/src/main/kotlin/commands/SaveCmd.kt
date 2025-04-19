@@ -33,7 +33,7 @@ class SaveCmd: Command {
         }
     }
 
-    override fun describe() {
-        IOHandler printInfo "save <filename> - saves collection into a file"
+    override fun describe(): String {
+        return "save <filename> - saves collection into a file"
     }
 }

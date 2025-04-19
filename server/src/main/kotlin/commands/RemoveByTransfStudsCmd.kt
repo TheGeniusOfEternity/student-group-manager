@@ -24,7 +24,7 @@ class RemoveByTransfStudsCmd: Command {
             IOHandler printInfoLn "remove_any_by_transferred_students error: invalid count of arguments"
         }
     }
-    override fun describe() {
-        IOHandler printInfoLn "remove_any_by_transferred_students <transferred_students> - removes element from collection, whose transferred students count equals to given"
+    override fun describe(): String {
+        return "remove_any_by_transferred_students <transferred_students> - removes element from collection, whose transferred students count equals to given"
     }
 }
