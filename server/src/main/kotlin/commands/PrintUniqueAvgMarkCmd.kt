@@ -1,5 +1,6 @@
 package commands
 
+import dto.CommandParam
 import handlers.IOHandler
 import receiver.Receiver
 
@@ -8,7 +9,7 @@ import receiver.Receiver
  */
 class PrintUniqueAvgMarkCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.isEmpty()) {
             val avgMarks = mutableListOf<Int?>()
             Receiver.getStudyGroups().forEach { group ->

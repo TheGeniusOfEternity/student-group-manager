@@ -1,15 +1,18 @@
 package collection
 
 import annotations.Pos
+import kotlinx.serialization.Serializable
+import serializers.DateSerializer
 import java.text.SimpleDateFormat
 import java.util.Date
 
 /**
  * Class, representing [StudyGroup.groupAdmin]
  */
+@Serializable
 class Person (
     @Pos(81) private val name: String,
-    @Pos(82) private val birthday: Date?,
+    @Pos(82) @Serializable(DateSerializer::class) private val birthday: Date?,
     @Pos(83) private val nationality: Country?
 ) {
     init {

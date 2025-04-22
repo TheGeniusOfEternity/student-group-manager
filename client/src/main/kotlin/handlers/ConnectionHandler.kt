@@ -25,7 +25,7 @@ object ConnectionHandler {
     fun initializeConnection(userInputLatch: CountDownLatch?) {
         var response = ""
         val latch = CountDownLatch(1)
-        currentConnection = factory.newConnection()
+        currentConnection = factory.newConnection("client")
         try {
             val channel = currentConnection?.createChannel()
             if (!currentConnection?.isOpen!!) IOHandler printInfoLn "RabbitMQ is offline"
@@ -64,6 +64,7 @@ object ConnectionHandler {
             val input = readln()
             when (input) {
                 "Y" -> {
+                    currentConnection?.close()
                     initializeConnection(userInputLatch)
                 }
                 "n" -> {
@@ -88,10 +89,12 @@ object ConnectionHandler {
         channel?.basicPublish("", queueName, properties, data)
     }
 
-    fun receiveMessage(queueName: String, callback: DeliverCallback) {
+    fun receiveMessage(queueName: String, callback: DeliverCallback, latch: CountDownLatch) {
         val channel = currentConnection?.createChannel()
         channel?.queueDeclare(queueName, false, false, false, null)
         channel?.basicConsume(queueName, true, callback) { _: String? ->}
+        latch.await(100, TimeUnit.MILLISECONDS)
+        channel?.close()
     }
 
     private fun loadCommandsList() {
@@ -108,7 +111,6 @@ object ConnectionHandler {
             }
             latch.countDown()
         }
-        receiveMessage(DATA_RESPONSES, deliverCallback)
-        latch.await(100, TimeUnit.MILLISECONDS)
+        receiveMessage(DATA_RESPONSES, deliverCallback, latch)
     }
 }

@@ -6,6 +6,7 @@ import State
 import receiver.Receiver
 import validators.PropertyValidator
 import collection.StudyGroup
+import dto.CommandParam
 import handlers.IOHandler
 
 /**
@@ -13,7 +14,7 @@ import handlers.IOHandler
  */
 class UpdateCmd : Command {
     override val paramTypeName = "Long"
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
             val propertyValidator = PropertyValidator()

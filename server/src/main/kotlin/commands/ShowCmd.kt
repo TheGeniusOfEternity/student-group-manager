@@ -1,26 +1,33 @@
 package commands
 import collection.StudyGroup
+import dto.CommandParam
+import handlers.ConnectionHandler
 import handlers.IOHandler
 import receiver.Receiver
+import java.util.ArrayList
 
 /**
  * Shows list of [StudyGroup]
  */
 class ShowCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
+        var responseMsg = "Collection info: \n\n"
+        val response = ArrayList<String>()
         if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups();
             if (groups.isEmpty()) {
-                IOHandler printInfoLn "No groups found"
+                responseMsg = "No groups found"
             } else {
                 groups.forEach { group ->
-                    IOHandler printInfoLn group.value.toString()
+                    responseMsg += group.value.toString()
                 }
             }
         } else {
-            IOHandler printInfoLn "show: Too many arguments"
+            responseMsg = "show: Too many arguments"
         }
+        response.add(responseMsg)
+        ConnectionHandler.handleResponse(response)
     }
 
     override fun describe(): String {

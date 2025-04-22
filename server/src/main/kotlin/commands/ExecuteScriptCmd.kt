@@ -1,6 +1,7 @@
 package commands
 
 import collection.CollectionInfo
+import dto.CommandParam
 import handlers.IOHandler
 import java.io.File
 
@@ -9,7 +10,7 @@ import java.io.File
  */
 class ExecuteScriptCmd: Command {
     override val paramTypeName = "String"
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
             val filename = "scripts/${(args[0] as String)}"
             if (File(filename).exists()) {

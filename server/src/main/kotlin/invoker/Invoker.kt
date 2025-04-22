@@ -2,6 +2,7 @@ package invoker
 
 import collection.CollectionInfo
 import commands.*
+import dto.CommandParam
 import kotlin.collections.HashMap
 
 /**
@@ -32,7 +33,7 @@ object Invoker {
     /**
      * Initiates [Command] execution
      */
-    fun run(commandName: String, args: List<Any?>) {
+    fun run(commandName: String, args: List<CommandParam?>) {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)

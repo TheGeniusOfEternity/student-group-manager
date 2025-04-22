@@ -15,13 +15,6 @@ object CollectionInfo {
     private val commandsHistory: Array<String> = Array(11) {""}
     private var defaultFileName: String = "data/src.csv"
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
-    /**
-     * Get count of elements in collection
-     * @return [elementsCount] of elements in collection
-     */
-    fun getElementsCount(): Int {
-        return elementsCount
-    }
 
     /**
      * Update [defaultFileName]
@@ -86,13 +79,6 @@ object CollectionInfo {
     }
 
     /**
-     * @return [commandsHistory]
-     */
-    fun getCommandHistory(): Array<String> {
-        return commandsHistory
-    }
-
-    /**
      * @param commandName Name of executed [Command]
      */
     fun updateCommandHistory(commandName: String) {
@@ -118,7 +104,7 @@ object CollectionInfo {
                 "Elements count: $elementsCount\n" +
                 "Commands history: ${commandsList()}\n" +
                 "Default file name: $defaultFileName\n" +
-                "Opened files: ${openedFilesList()}\n"
+                "Opened files: ${openedFilesList()}"
     }
 
     /**

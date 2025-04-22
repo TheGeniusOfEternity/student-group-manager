@@ -1,6 +1,7 @@
 package commands
 
 import dto.CommandInfoDto
+import dto.CommandParam
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import invoker.Invoker
@@ -10,7 +11,7 @@ import invoker.Invoker
  */
 class GetCommandsListCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.isEmpty()) {
             val commandNames = ArrayList<CommandInfoDto>()
             Invoker.commands.forEach { command ->

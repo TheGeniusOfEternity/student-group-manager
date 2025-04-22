@@ -2,6 +2,7 @@ package dto
 
 import kotlinx.serialization.Serializable
 
+
 /*
     Dto with command info from server to client
  */

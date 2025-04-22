@@ -1,5 +1,7 @@
 package commands
 
+import dto.CommandParam
+
 /**
  * Initialize new command, which has two default options: execute and describe
  */
@@ -8,7 +10,7 @@ interface Command {
     /**
      * Initiate command
      */
-    fun execute(args: List<Any?>)
+    fun execute(args: List<CommandParam?>)
 
     /**
      * Shows command description

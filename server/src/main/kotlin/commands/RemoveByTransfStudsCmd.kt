@@ -1,5 +1,6 @@
 package commands
 
+import dto.CommandParam
 import handlers.IOHandler
 import receiver.Receiver
 
@@ -8,7 +9,7 @@ import receiver.Receiver
  */
 class RemoveByTransfStudsCmd: Command {
     override val paramTypeName = "Long"
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
             try {
                 val groups = Receiver.getStudyGroups().filter { it.value.getTransferredStudents() == (args[0] as String).toLong() }

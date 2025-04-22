@@ -1,6 +1,7 @@
 package commands
 import receiver.Receiver
 import collection.CollectionInfo
+import dto.CommandParam
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import java.util.ArrayList
@@ -10,7 +11,7 @@ import java.util.ArrayList
  */
 class InfoCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.isEmpty()) {
             val collectionInfo = ArrayList<String>()
             collectionInfo.add(CollectionInfo.toString())

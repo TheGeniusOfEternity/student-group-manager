@@ -3,6 +3,7 @@ package parsers
 import GroupData
 import Property
 import collection.CollectionInfo
+import dto.CommandParam
 import invoker.Invoker
 import java.io.FileReader
 
@@ -69,7 +70,9 @@ object InputParser: Parser<FileReader> {
                     if (currLine.isNotEmpty() && linesCount > prevLines) {
                         val query: List<String> = currLine.trim().split(" ")
                         val commandName = query.first()
-                        Invoker.run(commandName, query.drop(1))
+                        val params: ArrayList<CommandParam?> = ArrayList()
+                        query.drop(1).forEach{ param -> params.add(CommandParam.LongParam(param.toLong()))}
+                        Invoker.run(commandName, params)
                         State.source = InputSource.FILE
                         CollectionInfo.updateOpenedFile(fileName, linesCount)
                     }
@@ -93,7 +96,9 @@ object InputParser: Parser<FileReader> {
         if (!input.isNullOrEmpty()) {
             val query: List<String> = input.trim().split(" ")
             commandName = query.first()
-            Invoker.run(commandName, query.drop(1))
+            val params: ArrayList<CommandParam?> = ArrayList()
+            query.drop(1).forEach{ param -> params.add(CommandParam.LongParam(param.toLong()))}
+            Invoker.run(commandName, params)
         }
     }
 }

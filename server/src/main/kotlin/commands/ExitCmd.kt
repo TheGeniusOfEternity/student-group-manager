@@ -1,5 +1,6 @@
 package commands
 import State
+import dto.CommandParam
 import handlers.IOHandler
 
 /**
@@ -7,7 +8,7 @@ import handlers.IOHandler
  */
 class ExitCmd : Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         IOHandler printInfoLn "Exiting console..."
         State.isRunning = false
     }

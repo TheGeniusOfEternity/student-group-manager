@@ -9,6 +9,7 @@ import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
@@ -20,7 +21,7 @@ object ConnectionHandler {
     fun initializeConnection() {
 
         try {
-            currentConnection = factory.newConnection()
+            currentConnection = factory.newConnection("server")
             val channel = currentConnection?.createChannel()
             val latch = CountDownLatch(1)
 
@@ -44,22 +45,20 @@ object ConnectionHandler {
 
     fun handleRequests() {
         val channel = currentConnection?.createChannel()
-        var commandRequest: ExecuteCommandDto<*>?
+        val latch = CountDownLatch(1)
+        var commandRequest: ExecuteCommandDto?
         channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
 
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            commandRequest = when (delivery.properties.headers["paramsType"]) {
-                "String" -> { JsonSerializer.deserialize<ExecuteCommandDto<String>>(delivery.body) }
-                "Id" -> { JsonSerializer.deserialize<ExecuteCommandDto<Long>>(delivery.body) }
-                "StudyGroup" -> { JsonSerializer.deserialize<ExecuteCommandDto<StudyGroup>>(delivery.body) }
-                else -> { JsonSerializer.deserialize<ExecuteCommandDto<Nothing>>(delivery.body) }
-            }
+            commandRequest = JsonSerializer.deserialize<ExecuteCommandDto>(delivery.body)
             Invoker.run(commandRequest!!.name,
                 if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf()
             )
+            latch.countDown()
         }
         channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
-        Thread.sleep(Long.MAX_VALUE)
+        latch.await(1000, TimeUnit.MILLISECONDS)
+        channel?.close()
     }
 
     inline fun <reified T> handleResponse(commandResponse: ArrayList<T>?) {
@@ -67,5 +66,6 @@ object ConnectionHandler {
         val bytedResponse = JsonSerializer.serialize<ArrayList<T>>(commandResponse as ArrayList<T>)
         channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
         channel?.basicPublish("", DATA_RESPONSES, null, bytedResponse)
+        channel?.close()
     }
 }

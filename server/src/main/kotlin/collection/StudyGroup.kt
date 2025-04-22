@@ -1,12 +1,15 @@
 package collection
 
+import LocalDateSerializer
 import annotations.Nested
 import annotations.Pos
+import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 /**
  * Class of study group, element of [CollectionInfo]
  */
+@Serializable
 class StudyGroup(
     @Pos(10) private var id: Long,
     @Pos(20) var name: String,
@@ -26,7 +29,7 @@ class StudyGroup(
         require(averageMark == null || averageMark!! > 0)
             { "averageMark must be greater than zero" }
     }
-    @Pos(90) private var creationDate: LocalDate = LocalDate.now()
+    @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now()
 
     override fun compareTo(other: StudyGroup): Int {
         return studentsCount.compareTo(other.studentsCount)

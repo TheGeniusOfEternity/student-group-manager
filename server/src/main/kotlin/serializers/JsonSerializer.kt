@@ -1,16 +1,27 @@
 package serializers
 
+import collection.StudyGroup
+import dto.CommandParam
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
 /**
  * Serializes / deserializes objects for exchanging with server
  */
 object JsonSerializer{
-    val jsonSerializer: Json
-        get() = Json {
-            ignoreUnknownKeys = true
+    private val module = SerializersModule {
+        polymorphic(CommandParam::class) {
+            subclass(CommandParam.LongParam::class)
+            subclass(CommandParam.StudyGroupParam::class)
         }
+    }
+    val jsonSerializer = Json {
+        serializersModule = module
+        classDiscriminator = "type" // optional, default is "type"
+    }
     /**
      * Serializes [T] to [ByteArray] for sending to server
      * @param obj - [T], that is needed to be serialized for sending

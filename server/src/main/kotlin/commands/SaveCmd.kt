@@ -1,6 +1,7 @@
 package commands
 
 import collection.CollectionInfo
+import dto.CommandParam
 import handlers.IOHandler
 import receiver.Receiver
 
@@ -9,7 +10,7 @@ import receiver.Receiver
  */
 class SaveCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<Any?>) {
+    override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {
