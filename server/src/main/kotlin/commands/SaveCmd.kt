@@ -8,6 +8,7 @@ import receiver.Receiver
  * Saves [Receiver.stdGroupCollection] into a file
  */
 class SaveCmd: Command {
+    override val paramTypeName = null
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()

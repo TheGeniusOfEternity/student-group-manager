@@ -8,6 +8,7 @@ import java.io.File
  * Executes commands from the file
  */
 class ExecuteScriptCmd: Command {
+    override val paramTypeName = "String"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             val filename = "scripts/${(args[0] as String)}"

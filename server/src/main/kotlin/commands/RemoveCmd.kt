@@ -8,6 +8,7 @@ import receiver.Receiver
  * Removes [StudyGroup] from [Receiver.stdGroupCollection]
  */
 class RemoveCmd: Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             try {

@@ -7,6 +7,7 @@ import invoker.Invoker
  * Shows description of all commands
  */
 class HelpCmd: Command {
+    override val paramTypeName = null
     override val description: String = "help - shows all available commands"
     override fun execute(args: List<String>) {
         if (args.size == 1) {

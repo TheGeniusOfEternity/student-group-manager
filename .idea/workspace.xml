@@ -5,14 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
-      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/dto/CommandInfoDto.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/DateSerializer.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/LocalDateSerializer.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/main/kotlin/dto/CommandInfoDto.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/client/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/Coordinates.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/collection/Coordinates.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/Person.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/collection/Person.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/Command.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/Command.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/HelpCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/HelpCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/dto/ExecuteCommandDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/dto/ExecuteCommandDto.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExecuteScriptCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExecuteScriptCmd.kt" afterDir="false" />
@@ -57,7 +66,12 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand />
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="student-group-manager-server" type="f1a62948:ProjectNode" />
+              </path>
+            </expand>
             <select />
           </tree_state>
         </projects_view>
@@ -71,10 +85,10 @@
         <option value="Kotlin Interface" />
         <option value="JUnit5 Test Class" />
         <option value="Dockerfile" />
-        <option value="Kotlin Object" />
         <option value="Kotlin Enum" />
         <option value="Kotlin Data Class" />
         <option value="Kotlin Class" />
+        <option value="Kotlin Object" />
       </list>
     </option>
   </component>
@@ -111,39 +125,43 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;Gradle.Build client.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build server.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Build student-group-manager.executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.Tests in 'student-group-manager.test'.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.Lol.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.MainKt.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.Project Start.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.Start Serenity Client.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.Start Serenity Server.executor&quot;: &quot;Run&quot;,
-    &quot;Kotlin.Start Serenity.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary&quot;: &quot;JUnit5&quot;,
-    &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/maksim/Code/JavaITMO/student-group-manager/server/src/main/kotlin/commands&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;/Users/maksim/Code/JavaITMO/student-group-manager/src/main/kotlin/Main.kt&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "Gradle.Build client.executor": "Run",
+    "Gradle.Build server.executor": "Run",
+    "Gradle.Build student-group-manager.executor": "Run",
+    "Gradle.Tests in 'student-group-manager.test'.executor": "Run",
+    "Gradle.client [run].executor": "Run",
+    "Kotlin.Lol.executor": "Run",
+    "Kotlin.MainKt.executor": "Run",
+    "Kotlin.Project Start.executor": "Run",
+    "Kotlin.Start Serenity Client.executor": "Run",
+    "Kotlin.Start Serenity Server.executor": "Run",
+    "Kotlin.Start Serenity.executor": "Run",
+    "Kotlin.Unnamed.executor": "Run",
+    "Kotlin.client.executor": "Run",
+    "Kotlin.server.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/maksim/Code/JavaITMO/student-group-manager",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "/Users/maksim/Code/JavaITMO/student-group-manager/src/main/kotlin/Main.kt",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CreateClassDialog.RecentsKey">
       <recent name="kotlin" />
@@ -178,8 +196,11 @@
     <key name="CreateTestDialog.RecentsKey">
       <recent name="collection" />
     </key>
+    <key name="CopyKotlinDeclarationDialog.RECENTS_KEY">
+      <recent name="dto" />
+    </key>
   </component>
-  <component name="RunManager" selected="Kotlin.Start Serenity Client">
+  <component name="RunManager" selected="Kotlin.client">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -202,34 +223,30 @@
       <RunAsTest>true</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration name="Start Serenity Client" type="JetRunConfigurationType">
-      <envs>
-        <env name="TERM" value="xterm-256color" />
-      </envs>
+    <configuration name="client" type="JetRunConfigurationType" temporary="true">
       <option name="MAIN_CLASS_NAME" value="MainKt" />
       <module name="student-group-manager-client.main" />
       <shortenClasspath name="NONE" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/client" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Start Serenity Server" type="JetRunConfigurationType">
+    <configuration name="server" type="JetRunConfigurationType">
       <option name="MAIN_CLASS_NAME" value="MainKt" />
       <module name="student-group-manager-server.main" />
       <shortenClasspath name="NONE" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/server" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
       <item itemvalue="Gradle.Tests in 'student-group-manager.test'" />
-      <item itemvalue="Kotlin.Start Serenity Client" />
-      <item itemvalue="Kotlin.Start Serenity Server" />
+      <item itemvalue="Kotlin.server" />
+      <item itemvalue="Kotlin.client" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Kotlin.client" />
         <item itemvalue="Gradle.Tests in 'student-group-manager.test'" />
       </list>
     </recent_temporary>
@@ -280,6 +297,9 @@
       <workItem from="1744210685461" duration="13337000" />
       <workItem from="1744652814850" duration="376000" />
       <workItem from="1745086271178" duration="2868000" />
+      <workItem from="1745334723485" duration="1034000" />
+      <workItem from="1745335766937" duration="165000" />
+      <workItem from="1745335937721" duration="10537000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />

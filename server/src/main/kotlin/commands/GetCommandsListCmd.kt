@@ -1,5 +1,6 @@
 package commands
 
+import dto.CommandInfoDto
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import invoker.Invoker
@@ -8,10 +9,13 @@ import invoker.Invoker
  * Shows description of all commands
  */
 class GetCommandsListCmd: Command {
+    override val paramTypeName = null
     override fun execute(args: List<Any?>) {
-        if (args.size == 1) {
-            val commandNames = ArrayList<Pair<String, String>>()
-            Invoker.commands.forEach { command -> commandNames.add(Pair(command.key, command.value.describe())) }
+        if (args.isEmpty()) {
+            val commandNames = ArrayList<CommandInfoDto>()
+            Invoker.commands.forEach { command ->
+                commandNames.add(CommandInfoDto(command.key, command.value.describe(), command.value.paramTypeName))
+            }
             ConnectionHandler.handleResponse(commandNames)
         } else {
             IOHandler printInfoLn "help: too many arguments"

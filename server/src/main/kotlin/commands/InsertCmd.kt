@@ -10,6 +10,7 @@ import validators.PropertyValidator
  * Starts insertion process: user manually step by step enters new [StudyGroup] data
  */
 class InsertCmd : Command {
+    override val paramTypeName = "StudyGroup"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE

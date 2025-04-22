@@ -6,6 +6,7 @@ import handlers.IOHandler
  * Stops program running
  */
 class ExitCmd : Command {
+    override val paramTypeName = null
     override fun execute(args: List<Any?>) {
         IOHandler printInfoLn "Exiting console..."
         State.isRunning = false

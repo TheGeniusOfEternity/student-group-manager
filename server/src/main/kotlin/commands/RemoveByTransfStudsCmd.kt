@@ -7,6 +7,7 @@ import receiver.Receiver
  * Removes study groups with given transferred students amount
  */
 class RemoveByTransfStudsCmd: Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             try {

@@ -12,6 +12,7 @@ import handlers.IOHandler
  * Update [StudyGroup] by its id, works similar to [InsertCmd]
  */
 class UpdateCmd : Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE

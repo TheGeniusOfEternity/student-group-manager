@@ -7,6 +7,7 @@ import receiver.Receiver
  * Shows study groups with count of students greater than given
  */
 class FilterGreaterStudsCountCmd: Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             try {

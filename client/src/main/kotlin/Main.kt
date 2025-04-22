@@ -1,11 +1,8 @@
-import ch.qos.logback.classic.LoggerContext
 import handlers.ConnectionHandler
 import handlers.IOHandler
-import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
-import java.util.logging.ConsoleHandler
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -36,11 +33,7 @@ fun main() {
     loadProgram()
     try {
         while (State.isRunning) {
-            if (State.connectedToServer) {
                 IOHandler.handle()
-            } else {
-                ConnectionHandler.handleConnectionFail()
-            }
         }
         exitProcess(0)
     } catch (e: IOException) {
@@ -52,11 +45,8 @@ fun main() {
  * Sets program's logging, initiates connection to server & enables [State.isRunning] flag true
  */
 fun loadProgram() {
-    val loggerContext = LoggerFactory.getILoggerFactory() as LoggerContext
-    val logger = loggerContext.getLogger("com.rabbitmq.client.impl.ConsumerWorkService")
-    logger.level = ch.qos.logback.classic.Level.INFO
     State.isRunning = true
-    ConnectionHandler.initializeConnection()
+    ConnectionHandler.initializeConnection(null)
     val latch = CountDownLatch(1)
     latch.await(100, TimeUnit.MILLISECONDS)
 }

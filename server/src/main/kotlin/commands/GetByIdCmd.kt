@@ -7,6 +7,7 @@ import receiver.Receiver
 import java.util.ArrayList
 
 class GetByIdCmd : Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         IOHandler printInfoLn args.toString()
 //        if (args.size == 1) {

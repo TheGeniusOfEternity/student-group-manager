@@ -7,6 +7,7 @@ import receiver.Receiver
  * Removes all elements from collection, whose id lower than given
  */
 class RemoveLowerCmd: Command {
+    override val paramTypeName = "Long"
     override fun execute(args: List<Any?>) {
         if (args.size == 1) {
             val comparedGroup = Receiver.getStudyGroup((args[0] as String).toLong())

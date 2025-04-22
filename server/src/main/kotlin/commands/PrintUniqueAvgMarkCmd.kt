@@ -7,6 +7,7 @@ import receiver.Receiver
  * Shows only unique average marks from all study groups
  */
 class PrintUniqueAvgMarkCmd: Command {
+    override val paramTypeName = null
     override fun execute(args: List<Any?>) {
         if (args.isEmpty()) {
             val avgMarks = mutableListOf<Int?>()
