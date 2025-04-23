@@ -13,37 +13,23 @@ import handlers.IOHandler
  * Update [StudyGroup] by its id, works similar to [InsertCmd]
  */
 class UpdateCmd : Command {
-    override val paramTypeName = "Long"
+    override val paramTypeName = "StudyGroup"
     override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
-            val propertyValidator = PropertyValidator()
-            val newGroupData = GroupData()
-            if (propertyValidator.validateData(Property("id", (args[0] as String)))) {
-                if (Receiver.getStudyGroup((args[0] as String).toLong()) != null) {
-                    newGroupData.add(Property("id", (args[0] as String)))
-                    val newGroup = IOHandler.handleUserInput(newGroupData, "collection.StudyGroup")
-                    if (newGroup != null) {
-                        Receiver.addStudyGroup((args[0] as String).toLong(), newGroup)
-                        IOHandler printInfoLn "Successfully updated new group, type 'show' to see all groups"
+            val group = (args[0] as CommandParam.StudyGroupParam).value
+                if (group != null) {
+                    if (Receiver.getStudyGroup(group.getId()) != null) {
+                        Receiver.addStudyGroup(group.getId(), group)
+                        IOHandler.responsesThread.add("Successfully updated new group, type 'show' to see all groups")
                     } else {
-                        IOHandler printInfoLn "update error: group data can't be validated"
+                        IOHandler.responsesThread.add("update error: group with this id not found, use 'insert'")
                     }
                 } else {
-                    var input: String
-                    do {
-                        IOHandler printInfo "update error: group #${(args[0] as String)} not found, should insert? (Y/n): "
-                        input = readln()
-                    } while (input != "Y" && input != "n")
-                    if (input == "Y") {
-                        InsertCmd().execute(args)
-                    } else {
-                        IOHandler printInfoLn "update rejected"
-                    }
+                    IOHandler.responsesThread.add("update error: group data is invalid")
                 }
-            }
         } else {
-            IOHandler printInfoLn "update: invalid count of arguments"
+            IOHandler.responsesThread.add("update error: invalid count of arguments")
         }
     }
 

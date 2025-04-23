@@ -47,7 +47,7 @@ object ConnectionHandler {
             }
             channel?.basicPublish("", HEALTH_CHECK_REQUESTS, null, "Are you GOIDA?".toByteArray())
             channel?.basicConsume(HEALTH_CHECK_RESPONSES, true, deliverCallback) { _: String? -> }
-            Thread.sleep(100)
+            Thread.sleep(300)
             if (!State.connectedToServer) {
                 currentConnection?.close()
                 State.tasks--
@@ -122,6 +122,7 @@ object ConnectionHandler {
             responseLatch.countDown()
         }
         receiveMessage(DATA_RESPONSES, deliverCallback)
+        responseLatch.await(100, TimeUnit.MILLISECONDS)
         State.tasks--
         return responses
     }
