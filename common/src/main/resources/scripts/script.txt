@@ -1,0 +1,9 @@
+info
+show 4
+insert 4
+update 678
+remove 42
+remove_lower 5
+show
+execute_script script.txt
+exit

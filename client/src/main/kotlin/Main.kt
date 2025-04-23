@@ -1,8 +1,7 @@
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import java.io.IOException
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.Phaser
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -24,7 +23,7 @@ object State {
     var isRunning = false
     var connectedToServer = false
     var host = "localhost"
-    var latch: CountDownLatch? = null
+    var tasks = 1
 }
 
 /**
@@ -34,7 +33,7 @@ fun main() {
     loadProgram()
     try {
         while (State.isRunning) {
-                IOHandler.handle()
+            IOHandler.handle()
         }
         exitProcess(0)
     } catch (e: IOException) {

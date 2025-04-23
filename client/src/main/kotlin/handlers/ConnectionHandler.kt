@@ -6,7 +6,6 @@ import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
-import commands.ExitCmd
 import commands.ServerCmd
 import dto.CommandInfoDto
 import dto.ExecuteCommandDto
@@ -25,36 +24,37 @@ object ConnectionHandler {
 
     fun initializeConnection() {
         var response = ""
-        State.latch = CountDownLatch(1)
-        currentConnection = factory.newConnection("client")
+        State.tasks++
         try {
+            currentConnection = factory.newConnection("client")
             val channel = currentConnection?.createChannel()
-            if (!currentConnection?.isOpen!!) IOHandler printInfoLn "RabbitMQ is offline"
+
             channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
             channel?.queueDeclare(HEALTH_CHECK_RESPONSES, false, false, false, null)
-
+            channel?.queuePurge(HEALTH_CHECK_REQUESTS)
+            channel?.queuePurge(HEALTH_CHECK_RESPONSES)
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 response = String(delivery.body, charset("UTF-8"))
                 if (response == "Yes, I am GOIDA!") {
                     State.connectedToServer = true
-                    IOHandler printInfoLn "Connection established"
-                    fetchResponses()
-                    if (Invoker.commands.size == 2) loadCommandsList()
-                    else State.latch?.countDown()
+                    if (State.tasks == 2) {
+                        IOHandler printInfoLn "Connection established"
+                        State.tasks--
+                        fetchResponses()
+                        if (Invoker.commands.size == 2) loadCommandsList()
+                    }
                 }
             }
-            channel?.queuePurge(HEALTH_CHECK_REQUESTS)
-            channel?.queuePurge(HEALTH_CHECK_RESPONSES)
             channel?.basicPublish("", HEALTH_CHECK_REQUESTS, null, "Are you GOIDA?".toByteArray())
-            val tag = channel?.basicConsume(HEALTH_CHECK_RESPONSES, true, deliverCallback) { _: String? -> }
-
-            State.latch?.await(100, TimeUnit.MILLISECONDS)
+            channel?.basicConsume(HEALTH_CHECK_RESPONSES, true, deliverCallback) { _: String? -> }
+            Thread.sleep(100)
             if (!State.connectedToServer) {
-                channel?.basicCancel(tag)
+                currentConnection?.close()
+                State.tasks--
                 handleConnectionFail()
             }
         } catch (e: Exception) {
-            println(e.printStackTrace().toString())
+            handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
         }
     }
 
@@ -66,14 +66,10 @@ object ConnectionHandler {
             val input = readln()
             when (input) {
                 "Y" -> {
-                    currentConnection?.close()
                     initializeConnection()
                 }
                 "n" -> {
                     Invoker.commands["exit"]!!.execute(listOf())
-                    break
-                }
-                "late connection" -> {
                     break
                 }
                 else -> {
@@ -91,11 +87,11 @@ object ConnectionHandler {
     }
 
     fun receiveMessage(queueName: String, callback: DeliverCallback) {
-        val msgLatch = CountDownLatch(1)
         val channel = currentConnection?.createChannel()
+        val latch = CountDownLatch(1)
         channel?.queueDeclare(queueName, false, false, false, null)
         channel?.basicConsume(queueName, true, callback) { _: String? ->}
-        msgLatch.await(100, TimeUnit.MILLISECONDS)
+        latch.await(100, TimeUnit.MILLISECONDS)
         channel?.close()
     }
 
@@ -110,12 +106,12 @@ object ConnectionHandler {
             response.forEach{ command ->
                 Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
             }
-            State.latch?.countDown()
         }
         receiveMessage(DATA_RESPONSES, deliverCallback)
     }
 
     fun fetchResponses(): ArrayList<String> {
+        State.tasks++
         val responseLatch = CountDownLatch(1)
         var responses: ArrayList<String> = ArrayList()
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
@@ -126,7 +122,7 @@ object ConnectionHandler {
             responseLatch.countDown()
         }
         receiveMessage(DATA_RESPONSES, deliverCallback)
-        responseLatch.await(100, TimeUnit.MILLISECONDS)
+        State.tasks--
         return responses
     }
 }

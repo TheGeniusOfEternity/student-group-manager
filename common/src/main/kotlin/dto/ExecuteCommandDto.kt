@@ -1,7 +1,7 @@
 package dto
 
-import kotlinx.serialization.Serializable
 import collection.StudyGroup
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 
 /**

@@ -11,7 +11,7 @@ class GetByIdCmd : Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
-            val group = Receiver.getStudyGroup((args[0] as CommandParam.LongParam).value);
+            val group = Receiver.getStudyGroup((args[0] as CommandParam.LongParam).value!!);
             val response = ArrayList<StudyGroup?>()
             response.add(group)
             ConnectionHandler.handleResponse(response)

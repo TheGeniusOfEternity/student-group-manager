@@ -19,25 +19,8 @@ class ServerCmd(val name: String, override val description: String, override val
         if (args.isEmpty()) {
             IOHandler printInfoLn "command execution error - command name is empty"
         } else {
-            if (args.size == 2 && args[1].toLongOrNull() != null) {
-                val propertyValidator = PropertyValidator()
-                if (propertyValidator.validateData(Property("id", args[1]))) {
-                    State.latch = CountDownLatch(1)
-                    val bytedCheckRequest = JsonSerializer.serialize(ExecuteCommandDto("get_by_id", CommandParam.LongParam(args[1].toLong())))
-                    ConnectionHandler.sendMessage(
-                        bytedCheckRequest,
-                        ConnectionHandler.DATA_REQUESTS,
-                        mapOf("paramsType" to "Id")
-                    )
-                    val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-                        val data = JsonSerializer.deserialize<ArrayList<StudyGroup?>>(delivery.body)
-                        if (data[0] != null) IOHandler printInfoLn "${args[0]} error: element with such id already exists"
-                        else serverExecute(args[1].toLong())
-                        State.latch?.countDown()
-                    }
-                    ConnectionHandler.receiveMessage(ConnectionHandler.DATA_RESPONSES, deliverCallback)
-                    State.latch?.await()
-                } else IOHandler printInfoLn "$name error: wrong argument type"
+            if (args.size == 2) {
+                serverExecute(args[1].toLongOrNull())
             } else serverExecute()
         }
     }
@@ -53,19 +36,24 @@ class ServerCmd(val name: String, override val description: String, override val
         }
     }
 
-    private fun serverExecute(id: Long? = null) {
+    private fun serverExecute(num: Long? = null) {
         val params: CommandParam?
         val responses: ArrayList<String>
-        if (paramTypeName != null && id == null) IOHandler printInfoLn "$name error - invalid count of arguments"
+        if (paramTypeName != null && num == null) IOHandler printInfoLn "$name error - invalid count of arguments"
         else {
             when (paramTypeName) {
                 "StudyGroup" -> {
                     val groupData = GroupData()
-                    groupData.add(Property("id", id.toString()))
+                    val propertyValidator = PropertyValidator()
+                    if (!propertyValidator.validateData(Property("id", num.toString()))) {
+                        IOHandler printInfoLn "$name error - $num is not a valid id"
+                        return
+                    }
+                    groupData.add(Property("id", num.toString()))
                     params = CommandParam.StudyGroupParam(IOHandler.handleUserInput(groupData, "collection.StudyGroup"))
                 }
                 else -> {
-                    params = if (id !== null) CommandParam.LongParam(id) else null
+                    params = if (num !== null) CommandParam.LongParam(num) else null
                 }
             }
             if (compareTypes(params?.javaClass?.typeName, paramTypeName)) {

@@ -11,7 +11,7 @@ import kotlinx.serialization.SerialName
 sealed class CommandParam  {
     @Serializable
     @SerialName("long")
-    data class LongParam(val value: Long) : CommandParam()
+    data class LongParam(val value: Long?) : CommandParam()
 
     @Serializable
     @SerialName("studyGroup")

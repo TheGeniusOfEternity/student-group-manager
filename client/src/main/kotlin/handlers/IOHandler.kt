@@ -32,9 +32,10 @@ object IOHandler {
         if (!State.connectedToServer ) {
             ConnectionHandler.handleConnectionFail()
         }
-        State.latch?.await()
-        IOHandler printInfo "& "
-        InputParser.parseCommand()
+        if (State.tasks == 1) {
+            IOHandler printInfo "& "
+            InputParser.parseCommand()
+        }
     }
 
     /**
@@ -100,7 +101,6 @@ object IOHandler {
             IOHandler printInfo e.message
         }
     }
-
     infix fun printInfo(message: String?): Unit = print(message)
     infix fun printInfoLn(message: String?): Unit = println(message)
 }
