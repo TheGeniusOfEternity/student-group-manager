@@ -20,7 +20,7 @@ class ServerCmd(val name: String, override val description: String, override val
             IOHandler printInfoLn "command execution error - command name is empty"
         } else {
             if (args.size == 2) {
-                serverExecute(args[1].toLongOrNull())
+                serverExecute(args[1])
             } else serverExecute()
         }
     }
@@ -36,24 +36,27 @@ class ServerCmd(val name: String, override val description: String, override val
         }
     }
 
-    private fun serverExecute(num: Long? = null) {
+    private fun serverExecute(arg: String? = null) {
         val params: CommandParam?
         val responses: ArrayList<String>
-        if (paramTypeName != null && num == null) IOHandler printInfoLn "$name error - invalid count of arguments"
+        if (paramTypeName != null && arg == null) IOHandler printInfoLn "$name error - invalid count of arguments"
         else {
             when (paramTypeName) {
                 "StudyGroup" -> {
                     val groupData = GroupData()
                     val propertyValidator = PropertyValidator()
-                    if (!propertyValidator.validateData(Property("id", num.toString()))) {
-                        IOHandler printInfoLn "$name error - $num is not a valid id"
+                    if (!propertyValidator.validateData(Property("id", arg))) {
+                        IOHandler printInfoLn "$name error - $arg is not a valid id"
                         return
                     }
-                    groupData.add(Property("id", num.toString()))
+                    groupData.add(Property("id", arg))
                     params = CommandParam.StudyGroupParam(IOHandler.handleUserInput(groupData, "collection.StudyGroup"))
                 }
+                "String" -> {
+                    params = CommandParam.StringParam(arg)
+                }
                 else -> {
-                    params = if (num !== null) CommandParam.LongParam(num) else null
+                    params = if (arg !== null) CommandParam.LongParam(arg.toLongOrNull()) else null
                 }
             }
             if (compareTypes(params?.javaClass?.typeName, paramTypeName)) {

@@ -16,6 +16,10 @@ sealed class CommandParam  {
     @Serializable
     @SerialName("studyGroup")
     data class StudyGroupParam(val value: StudyGroup?) : CommandParam()
+
+    @Serializable
+    @SerialName("string")
+    data class StringParam(val value: String?) : CommandParam()
 }
 
 /**
