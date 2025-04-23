@@ -57,13 +57,13 @@ object ConnectionHandler {
             latch.countDown()
         }
         channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
-        latch.await(1000, TimeUnit.MILLISECONDS)
+        latch.await(100, TimeUnit.MILLISECONDS)
         channel?.close()
     }
 
-    inline fun <reified T> handleResponse(commandResponse: ArrayList<T>?) {
+    inline fun <reified T> handleResponse(commandResponse: ArrayList<T?>?) {
         val channel = currentConnection?.createChannel()
-        val bytedResponse = JsonSerializer.serialize<ArrayList<T>>(commandResponse as ArrayList<T>)
+        val bytedResponse = JsonSerializer.serialize<ArrayList<T?>?>(commandResponse)
         channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
         channel?.basicPublish("", DATA_RESPONSES, null, bytedResponse)
         channel?.close()

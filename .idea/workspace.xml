@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1" />
+    <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -163,7 +171,7 @@
       <recent name="dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.server">
+  <component name="RunManager" selected="Kotlin.client">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -262,7 +270,7 @@
       <workItem from="1745086271178" duration="2868000" />
       <workItem from="1745334723485" duration="1034000" />
       <workItem from="1745335766937" duration="165000" />
-      <workItem from="1745335937721" duration="17677000" />
+      <workItem from="1745335937721" duration="24494000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />

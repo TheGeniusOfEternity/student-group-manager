@@ -22,7 +22,7 @@ class ServerCmd(val name: String, override val description: String, override val
             if (args.size == 2 && args[1].toLongOrNull() != null) {
                 val propertyValidator = PropertyValidator()
                 if (propertyValidator.validateData(Property("id", args[1]))) {
-                    val latch = CountDownLatch(1)
+                    State.latch = CountDownLatch(1)
                     val bytedCheckRequest = JsonSerializer.serialize(ExecuteCommandDto("get_by_id", CommandParam.LongParam(args[1].toLong())))
                     ConnectionHandler.sendMessage(
                         bytedCheckRequest,
@@ -33,10 +33,10 @@ class ServerCmd(val name: String, override val description: String, override val
                         val data = JsonSerializer.deserialize<ArrayList<StudyGroup?>>(delivery.body)
                         if (data[0] != null) IOHandler printInfoLn "${args[0]} error: element with such id already exists"
                         else serverExecute(args[1].toLong())
-                        latch.countDown()
+                        State.latch?.countDown()
                     }
-                    ConnectionHandler.receiveMessage(ConnectionHandler.DATA_RESPONSES, deliverCallback, latch)
-                    latch.await()
+                    ConnectionHandler.receiveMessage(ConnectionHandler.DATA_RESPONSES, deliverCallback)
+                    State.latch?.await()
                 } else IOHandler printInfoLn "$name error: wrong argument type"
             } else serverExecute()
         }
@@ -55,6 +55,7 @@ class ServerCmd(val name: String, override val description: String, override val
 
     private fun serverExecute(id: Long? = null) {
         val params: CommandParam?
+        val responses: ArrayList<String>
         if (paramTypeName != null && id == null) IOHandler printInfoLn "$name error - invalid count of arguments"
         else {
             when (paramTypeName) {
@@ -68,20 +69,15 @@ class ServerCmd(val name: String, override val description: String, override val
                 }
             }
             if (compareTypes(params?.javaClass?.typeName, paramTypeName)) {
-                val latch = CountDownLatch(1)
                 val bytedData = JsonSerializer.serialize(
                     ExecuteCommandDto(name, params)
                 )
                 ConnectionHandler.sendMessage(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName))
-                val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-                    val responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
-                    responses.forEach { response ->
-                        IOHandler printInfoLn response
-                    }
-                    latch.countDown()
+                responses = ConnectionHandler.fetchResponses()
+                if (responses.isEmpty()) {
+                    State.connectedToServer = false
+                    ConnectionHandler.handleConnectionFail("Connection lost, try to reconnect? (Y/n)")
                 }
-
-                ConnectionHandler.receiveMessage(ConnectionHandler.DATA_RESPONSES, deliverCallback, latch)
             } else IOHandler printInfoLn "data serialization error: incorrect params's type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }

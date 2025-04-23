@@ -13,11 +13,11 @@ class GetCommandsListCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>) {
         if (args.isEmpty()) {
-            val commandNames = ArrayList<CommandInfoDto>()
+            val commandNames = ArrayList<CommandInfoDto?>()
             Invoker.commands.forEach { command ->
                 commandNames.add(CommandInfoDto(command.key, command.value.describe(), command.value.paramTypeName))
             }
-            ConnectionHandler.handleResponse(commandNames)
+            ConnectionHandler.handleResponse<CommandInfoDto?>(commandNames)
         } else {
             IOHandler printInfoLn "help: too many arguments"
         }

@@ -24,6 +24,7 @@ object State {
     var isRunning = false
     var connectedToServer = false
     var host = "localhost"
+    var latch: CountDownLatch? = null
 }
 
 /**
@@ -42,11 +43,9 @@ fun main() {
 }
 
 /**
- * Sets program's logging, initiates connection to server & enables [State.isRunning] flag true
+ * Sets program's logging, initiates connection to server & enables [State.isRunning]
  */
 fun loadProgram() {
     State.isRunning = true
-    ConnectionHandler.initializeConnection(null)
-    val latch = CountDownLatch(1)
-    latch.await(100, TimeUnit.MILLISECONDS)
+    ConnectionHandler.initializeConnection()
 }

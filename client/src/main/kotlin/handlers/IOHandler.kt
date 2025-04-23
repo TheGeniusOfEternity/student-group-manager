@@ -14,6 +14,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.reflect.KClass
 import receiver.Receiver
+import java.util.concurrent.TimeUnit
 
 /**
  * IOHandler of application input/output:
@@ -28,6 +29,10 @@ object IOHandler {
      * Works only if [State.isRunning] is true
      */
     fun handle() {
+        if (!State.connectedToServer ) {
+            ConnectionHandler.handleConnectionFail()
+        }
+        State.latch?.await()
         IOHandler printInfo "& "
         InputParser.parseCommand()
     }
