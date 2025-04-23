@@ -15,16 +15,17 @@ class GetCommandsListCmd: Command {
         if (args.isEmpty()) {
             val commandNames = ArrayList<CommandInfoDto?>()
             Invoker.commands.forEach { command ->
-                commandNames.add(CommandInfoDto(command.key, command.value.describe(), command.value.paramTypeName))
+                if (command.key != "save" && command.key != "get_commands_list") {
+                    commandNames.add(CommandInfoDto(command.key, command.value.describe(), command.value.paramTypeName))
+                }
             }
             ConnectionHandler.handleResponse<CommandInfoDto?>(commandNames)
         } else {
-            IOHandler printInfoLn "help: too many arguments"
+            IOHandler.responsesThread.add("get_commands_list error: too many arguments")
         }
-        return
     }
 
     override fun describe(): String {
-        return "help - shows all available commands"
+        return "get_commands_list - loads all commands from server"
     }
 }
