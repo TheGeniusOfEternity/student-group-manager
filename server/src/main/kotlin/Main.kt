@@ -37,6 +37,9 @@ fun main() {
     try {
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
+            if (IOHandler.responsesThread.isNotEmpty()) {
+                ConnectionHandler.handleResponse(IOHandler.responsesThread)
+            }
             ConnectionHandler.handleRequests()
         }
         exitProcess(0)

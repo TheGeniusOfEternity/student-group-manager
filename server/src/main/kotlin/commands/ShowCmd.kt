@@ -13,7 +13,6 @@ class ShowCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>) {
         var responseMsg = "Collection info: \n\n"
-        val response = ArrayList<String>()
         if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups();
             if (groups.isEmpty()) {
@@ -26,8 +25,7 @@ class ShowCmd: Command {
         } else {
             responseMsg = "show: Too many arguments"
         }
-        response.add(responseMsg)
-        ConnectionHandler.handleResponse(response)
+        IOHandler.responsesThread.add(responseMsg)
     }
 
     override fun describe(): String {

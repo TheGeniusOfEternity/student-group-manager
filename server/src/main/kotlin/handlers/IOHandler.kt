@@ -28,6 +28,7 @@ import receiver.Receiver
  */
 
 object IOHandler {
+    val responsesThread: ArrayList<String?> = ArrayList()
     /**
      * Main function of i/o handle,
      * Works only if [State.isRunning] is true

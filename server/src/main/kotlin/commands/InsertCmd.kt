@@ -2,9 +2,8 @@ package commands
 import State
 import collection.StudyGroup
 import dto.CommandParam
-import handlers.ConnectionHandler
+import handlers.IOHandler
 import receiver.Receiver
-import java.util.ArrayList
 
 /**
  * Starts insertion process: user manually step by step enters new [StudyGroup] data
@@ -13,7 +12,6 @@ class InsertCmd : Command {
     override val paramTypeName = "StudyGroup"
     override fun execute(args: List<CommandParam?>) {
         val responseMsg: String
-        val response = ArrayList<String>()
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
             val group = (args[0] as CommandParam.StudyGroupParam).value
@@ -26,8 +24,7 @@ class InsertCmd : Command {
         } else {
             responseMsg = "insert: invalid count of arguments"
         }
-        response.add(responseMsg)
-        ConnectionHandler.handleResponse(response)
+        IOHandler.responsesThread.add(responseMsg)
     }
 
     override fun describe(): String {

@@ -74,8 +74,10 @@ class ServerCmd(val name: String, override val description: String, override val
                 )
                 ConnectionHandler.sendMessage(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName))
                 val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-                    val response = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
-                    IOHandler printInfoLn response[0]
+                    val responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
+                    responses.forEach { response ->
+                        IOHandler printInfoLn response
+                    }
                     latch.countDown()
                 }
 

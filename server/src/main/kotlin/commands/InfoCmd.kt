@@ -13,11 +13,9 @@ class InfoCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>) {
         if (args.isEmpty()) {
-            val collectionInfo = ArrayList<String>()
-            collectionInfo.add(CollectionInfo.toString())
-            ConnectionHandler.handleResponse(collectionInfo)
+            IOHandler.responsesThread.add(CollectionInfo.toString())
         } else {
-            IOHandler printInfoLn "info: Too many arguments"
+            IOHandler.responsesThread.add("info: Too many arguments")
         }
     }
 

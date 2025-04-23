@@ -67,5 +67,6 @@ object ConnectionHandler {
         channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
         channel?.basicPublish("", DATA_RESPONSES, null, bytedResponse)
         channel?.close()
+        IOHandler.responsesThread.clear()
     }
 }
