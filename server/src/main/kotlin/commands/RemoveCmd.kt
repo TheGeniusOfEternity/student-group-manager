@@ -12,18 +12,19 @@ class RemoveCmd: Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
-            try {
-                if (Receiver.getStudyGroup((args[0] as String).toLong()) == null) {
-                    IOHandler printInfoLn "remove error: group with id ${(args[0] as String)} not found"
+            val id = (args[0] as CommandParam.LongParam).value
+            if (id != null) {
+                if (Receiver.getStudyGroup(id) == null) {
+                    IOHandler.responsesThread.add("remove error: group with id $id not found")
                 } else {
-                    Receiver.removeStudyGroup((args[0] as String).toLong())
-                    IOHandler printInfoLn "Group #${(args[0] as String)} was removed"
+                    Receiver.removeStudyGroup(id)
+                    IOHandler.responsesThread.add("Group #$id was removed")
                 }
-            } catch (e: NumberFormatException) {
-                IOHandler printInfoLn "${(args[0] as String)} is not a correct number, must be Long"
+            } else {
+                IOHandler.responsesThread.add("remove error: provided id is not a number")
             }
         } else {
-            IOHandler printInfoLn "remove: invalid count of arguments."
+            IOHandler.responsesThread.add("remove: invalid count of arguments.")
         }
     }
 
