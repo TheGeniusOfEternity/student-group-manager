@@ -18,9 +18,9 @@ class PrintUniqueAvgMarkCmd: Command {
                     avgMarks.add(mark.toInt())
                 }
             }
-            IOHandler printInfoLn "All unique marks: $avgMarks"
+            IOHandler.responsesThread.add("All unique marks: $avgMarks")
         } else {
-            IOHandler printInfoLn "print_unique_average_mark error: invalid count of arguments"
+            IOHandler.responsesThread.add("print_unique_average_mark error: invalid count of arguments")
         }
     }
 
