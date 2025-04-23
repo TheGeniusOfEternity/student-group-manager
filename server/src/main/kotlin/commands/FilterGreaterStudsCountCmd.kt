@@ -11,18 +11,19 @@ class FilterGreaterStudsCountCmd: Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>) {
         if (args.size == 1) {
-            try {
-                val groups = Receiver.getStudyGroups().filter { it.value.getStudentsCount() > (args[0] as String).toLong() }
+            val amount = (args[0] as CommandParam.LongParam).value
+            if (amount != null) {
+                val groups = Receiver.getStudyGroups().filter { it.value.getStudentsCount() > amount }
                 if (groups.isEmpty()) {
-                    IOHandler printInfoLn "filter_greater_than_students_count error: no group with such amount"
+                    IOHandler.responsesThread.add("filter_greater_than_students_count error: no group with such amount")
                 } else {
-                    groups.forEach{ group -> IOHandler printInfoLn group.value.toString() }
+                    groups.forEach{ group ->
+                        IOHandler.responsesThread.add(group.value.toString())
+                    }
                 }
-            } catch (e: NumberFormatException) {
-                IOHandler printInfoLn "filter_greater_than_students_count error: incorrect number format"
-            }
+            } else IOHandler.responsesThread.add("filter_greater_than_students_count error:  is not a number")
         } else {
-            IOHandler printInfoLn "filter_greater_than_students_count error: invalid count of arguments"
+            IOHandler.responsesThread.add("filter_greater_than_students_count error: invalid count of arguments")
         }
     }
 
