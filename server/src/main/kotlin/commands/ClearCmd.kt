@@ -10,9 +10,9 @@ class ClearCmd: Command {
     override fun execute(args: List<CommandParam?>) {
        if (args.isEmpty()) {
            Receiver.clearStudyGroups()
-           IOHandler printInfoLn "Collection was successfully cleared"
+           IOHandler.responsesThread.add("Collection was successfully cleared")
        } else {
-           IOHandler printInfoLn "clear error: invalid count of arguments"
+           IOHandler.responsesThread.add("clear error: invalid count of arguments")
        }
     }
 
