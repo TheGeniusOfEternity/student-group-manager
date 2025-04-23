@@ -3,6 +3,7 @@ package commands
 import collection.CollectionInfo
 import collection.CollectionInfo.commandsList
 import dto.CommandParam
+import handlers.ConnectionHandler
 import handlers.IOHandler
 
 
@@ -12,7 +13,7 @@ import handlers.IOHandler
 class HistoryCmd : Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>) {
-        IOHandler printInfo "Commands history:\n${commandsList()}"
+        IOHandler.responsesThread.add("Commands history:\n${commandsList()}")
     }
 
     override fun describe(): String {
