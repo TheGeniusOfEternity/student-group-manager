@@ -10,21 +10,21 @@ import receiver.Receiver
  */
 class RemoveCmd: Command {
     override val paramTypeName = "Long"
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.size == 1) {
             val id = (args[0] as CommandParam.LongParam).value
             if (id != null) {
                 if (Receiver.getStudyGroup(id) == null) {
-                    IOHandler.responsesThread.add("remove error: group with id $id not found")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove error: group with id $id not found")
                 } else {
                     Receiver.removeStudyGroup(id)
-                    IOHandler.responsesThread.add("Group #$id was removed")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Group #$id was removed")
                 }
             } else {
-                IOHandler.responsesThread.add("remove error: provided id is not a number")
+                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove error: provided id is not a number")
             }
         } else {
-            IOHandler.responsesThread.add("remove: invalid count of arguments.")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove: invalid count of arguments.")
         }
     }
 

@@ -11,7 +11,7 @@ import java.util.ArrayList
  */
 class ShowCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         var responseMsg = "Collection info: \n\n"
         if (args.isEmpty()) {
             val groups = Receiver.getStudyGroups();
@@ -25,7 +25,7 @@ class ShowCmd: Command {
         } else {
             responseMsg = "show: Too many arguments"
         }
-        IOHandler.responsesThread.add(responseMsg)
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(responseMsg)
     }
 
     override fun describe(): String {

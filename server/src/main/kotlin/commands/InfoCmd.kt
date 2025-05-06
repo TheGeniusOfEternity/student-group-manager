@@ -11,11 +11,11 @@ import java.util.ArrayList
  */
 class InfoCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.isEmpty()) {
-            IOHandler.responsesThread.add(CollectionInfo.toString())
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(CollectionInfo.toString())
         } else {
-            IOHandler.responsesThread.add("info: Too many arguments")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("info: Too many arguments")
         }
     }
 

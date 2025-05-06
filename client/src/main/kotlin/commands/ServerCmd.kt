@@ -59,8 +59,7 @@ class ServerCmd(val name: String, override val description: String, override val
                 val bytedData = JsonSerializer.serialize(
                     ExecuteCommandDto(name, params)
                 )
-                ConnectionHandler.sendMessage(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName))
-                responses = ConnectionHandler.fetchResponses()
+                responses = ConnectionHandler.fetch(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName))
                 if (responses.isEmpty()) {
                     State.connectedToServer = false
                     ConnectionHandler.handleConnectionFail("Connection lost, try to reconnect? (Y/n)")

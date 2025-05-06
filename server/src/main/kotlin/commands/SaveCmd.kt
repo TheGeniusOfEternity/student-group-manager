@@ -10,7 +10,7 @@ import receiver.Receiver
  */
 class SaveCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
             if (groups.isNotEmpty()) {

@@ -1,9 +1,6 @@
 package handlers
 
-import com.rabbitmq.client.Connection
-import com.rabbitmq.client.ConnectionFactory
-import com.rabbitmq.client.DeliverCallback
-import com.rabbitmq.client.Delivery
+import com.rabbitmq.client.*
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
@@ -22,12 +19,16 @@ object ConnectionHandler {
             currentConnection = factory.newConnection("server")
             val channel = currentConnection?.createChannel()
             channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
+            channel?.queueDeclare(HEALTH_CHECK_RESPONSES, false, false, false, null)
+            channel?.queuePurge(HEALTH_CHECK_REQUESTS)
+            channel?.queuePurge(HEALTH_CHECK_RESPONSES)
 
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 val response = String(delivery.body, charset("UTF-8"))
                 if (response == "Are you GOIDA?") {
                     IOHandler printInfoLn "GOIDA requested, sending response..."
-                    channel?.basicPublish("", HEALTH_CHECK_RESPONSES, null, "Yes, I am GOIDA!".toByteArray())
+                    val properties = AMQP.BasicProperties.Builder().appId(delivery.properties.appId).build()
+                    channel?.basicPublish("", HEALTH_CHECK_RESPONSES, properties, "Yes, I am GOIDA!".toByteArray())
                 }
             }
             channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
@@ -45,14 +46,17 @@ object ConnectionHandler {
             channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
 
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
+                val clientId = delivery.properties.appId
                 try {
                     commandRequest = JsonSerializer.deserialize<ExecuteCommandDto>(delivery.body)
-                    Invoker.run(commandRequest!!.name,
-                        if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf()
+                    Invoker.run(
+                        commandRequest!!.name,
+                        if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf(),
+                        clientId
                     )
                     latch.countDown()
                 } catch (e: Exception) {
-                    IOHandler.responsesThread.add("execution error: " + e.message.toString())
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
                 }
             }
             channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
@@ -63,13 +67,15 @@ object ConnectionHandler {
         }
     }
 
-    inline fun <reified T> handleResponse(commandResponse: ArrayList<T?>?) {
+    inline fun <reified T> handleResponse(clientId: String, commandResponse: ArrayList<T?>?) {
         val channel = currentConnection?.createChannel()
         val bytedResponse = JsonSerializer.serialize<ArrayList<T?>?>(commandResponse)
+        val properties = AMQP.BasicProperties.Builder().appId(clientId).build()
+
         channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
-        channel?.basicPublish("", DATA_RESPONSES, null, bytedResponse)
+        channel?.basicPublish("", DATA_RESPONSES, properties, bytedResponse)
         channel?.close()
-        IOHandler.responsesThread.clear()
+        IOHandler.responsesThreads.remove(clientId)
     }
 
     private fun handleConnectionFail(msg: String? = null) {

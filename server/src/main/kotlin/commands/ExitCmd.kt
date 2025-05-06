@@ -8,7 +8,7 @@ import handlers.IOHandler
  */
 class ExitCmd : Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         IOHandler printInfoLn "Exiting console..."
         State.isRunning = false
     }

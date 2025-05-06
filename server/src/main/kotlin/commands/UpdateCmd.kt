@@ -14,22 +14,22 @@ import handlers.IOHandler
  */
 class UpdateCmd : Command {
     override val paramTypeName = "StudyGroup"
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.size == 1) {
             State.source = InputSource.CONSOLE
             val group = (args[0] as CommandParam.StudyGroupParam).value
                 if (group != null) {
                     if (Receiver.getStudyGroup(group.getId()) != null) {
                         Receiver.addStudyGroup(group.getId(), group)
-                        IOHandler.responsesThread.add("Successfully updated new group, type 'show' to see all groups")
+                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Successfully updated new group, type 'show' to see all groups")
                     } else {
-                        IOHandler.responsesThread.add("update error: group with this id not found, use 'insert'")
+                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: group with this id not found, use 'insert'")
                     }
                 } else {
-                    IOHandler.responsesThread.add("update error: group data is invalid")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: group data is invalid")
                 }
         } else {
-            IOHandler.responsesThread.add("update error: invalid count of arguments")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: invalid count of arguments")
         }
     }
 

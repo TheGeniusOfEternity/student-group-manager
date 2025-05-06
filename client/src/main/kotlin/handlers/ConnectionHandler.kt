@@ -2,6 +2,7 @@ package handlers
 
 import core.State
 import com.rabbitmq.client.AMQP
+import com.rabbitmq.client.Channel
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
@@ -18,21 +19,17 @@ object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
     const val DATA_REQUESTS = "data-requests"
-    const val DATA_RESPONSES = "data-responses"
-    private val factory = ConnectionFactory().apply { this.host = State.host }
+    private const val DATA_RESPONSES = "data-responses"
+    var factory = ConnectionFactory().apply { this.host = State.host }
     private var currentConnection: Connection? = null
 
     fun initializeConnection() {
-        var response = ""
+        var response: String
+        factory.connectionTimeout = 1000
         State.tasks++
         try {
             currentConnection = factory.newConnection("client")
             val channel = currentConnection?.createChannel()
-
-            channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
-            channel?.queueDeclare(HEALTH_CHECK_RESPONSES, false, false, false, null)
-            channel?.queuePurge(HEALTH_CHECK_REQUESTS)
-            channel?.queuePurge(HEALTH_CHECK_RESPONSES)
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 response = String(delivery.body, charset("UTF-8"))
                 if (response == "Yes, I am GOIDA!") {
@@ -40,13 +37,13 @@ object ConnectionHandler {
                     if (State.tasks == 2) {
                         IOHandler printInfoLn "Connection established"
                         State.tasks--
-                        fetchResponses()
+                        loadResponses(channel)
                         if (Invoker.commands.size == 3) loadCommandsList()
                     }
                 }
             }
-            channel?.basicPublish("", HEALTH_CHECK_REQUESTS, null, "Are you GOIDA?".toByteArray())
-            channel?.basicConsume(HEALTH_CHECK_RESPONSES, true, deliverCallback) { _: String? -> }
+            sendMessage("Are you GOIDA?".toByteArray(), HEALTH_CHECK_REQUESTS, mapOf("paramsType" to null), channel)
+            receiveMessage(HEALTH_CHECK_RESPONSES, deliverCallback, channel)
             Thread.sleep(300)
             if (!State.connectedToServer) {
                 currentConnection?.close()
@@ -74,6 +71,12 @@ object ConnectionHandler {
                     Invoker.commands["exit"]!!.execute(listOf())
                     break
                 }
+                "change address" -> {
+                    State.host = null
+                    IOHandler.getServerAddress()
+                    initializeConnection()
+                    break
+                }
                 else -> {
                     msg = "Incorrect option, should retry connection? (Y/n): "
                 }
@@ -81,10 +84,12 @@ object ConnectionHandler {
         }
     }
 
-    fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>) {
-        val properties = AMQP.BasicProperties.Builder().headers(headers).build()
+    private fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>, channel: Channel?) {
+        val properties = AMQP.BasicProperties.Builder()
+            .headers(headers)
+            .appId(State.appName)
+            .build()
         try {
-            val channel = currentConnection?.createChannel()
             channel?.queueDeclare(queueName, false, false, false, null)
             channel?.basicPublish("", queueName, properties, data)
         } catch (e: Exception) {
@@ -92,14 +97,10 @@ object ConnectionHandler {
         }
     }
 
-    fun receiveMessage(queueName: String, callback: DeliverCallback) {
+    private fun receiveMessage(queueName: String, callback: DeliverCallback, channel: Channel?) {
         try {
-            val channel = currentConnection?.createChannel()
-            val latch = CountDownLatch(1)
             channel?.queueDeclare(queueName, false, false, false, null)
-            channel?.basicConsume(queueName, true, callback) { _: String? ->}
-            latch.await(100, TimeUnit.MILLISECONDS)
-            channel?.close()
+            channel?.basicConsume(queueName, false, filterDeliverCallback(callback, channel)) { _: String? ->}
         } catch (e: Exception) {
             handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
         }
@@ -107,20 +108,39 @@ object ConnectionHandler {
 
     private fun loadCommandsList() {
         IOHandler printInfoLn "Getting available commands..."
+        val channel = currentConnection?.createChannel()
         val bytedData = JsonSerializer.serialize(
             ExecuteCommandDto("get_commands_list", null)
         )
-        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to null))
+        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to null), channel)
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
             val response = JsonSerializer.deserialize<ArrayList<CommandInfoDto>>(delivery.body)
             response.forEach{ command ->
                 Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
             }
         }
-        receiveMessage(DATA_RESPONSES, deliverCallback)
+        receiveMessage(DATA_RESPONSES, deliverCallback, channel)
     }
 
-    fun fetchResponses(): ArrayList<String> {
+    private fun filterDeliverCallback(callback: DeliverCallback, channel: Channel?)  = DeliverCallback { consumerTag: String?, delivery: Delivery ->
+        try {
+            val props = delivery.properties
+            if (props.appId == State.appName) {
+                callback.handle(consumerTag, delivery)
+                channel?.basicAck(delivery.envelope.deliveryTag, false)
+                channel?.close()
+            }
+        } catch (_: Exception) {}
+    }
+
+    fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>): ArrayList<String> {
+        val channel = currentConnection?.createChannel()
+        sendMessage(data, queueName, headers, channel)
+
+        return loadResponses(channel)
+    }
+
+    private fun loadResponses(channel: Channel?): ArrayList<String> {
         State.tasks++
         val responseLatch = CountDownLatch(1)
         var responses: ArrayList<String> = ArrayList()
@@ -131,7 +151,7 @@ object ConnectionHandler {
             }
             responseLatch.countDown()
         }
-        receiveMessage(DATA_RESPONSES, deliverCallback)
+        receiveMessage(DATA_RESPONSES, deliverCallback, channel)
         responseLatch.await(100, TimeUnit.MILLISECONDS)
         State.tasks--
         return responses

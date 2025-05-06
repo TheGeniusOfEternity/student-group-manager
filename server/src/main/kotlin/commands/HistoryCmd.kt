@@ -12,8 +12,8 @@ import handlers.IOHandler
  */
 class HistoryCmd : Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
-        IOHandler.responsesThread.add("Commands history:\n${commandsList()}")
+    override fun execute(args: List<CommandParam?>, clientId: String) {
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Commands history:\n${commandsList()}")
     }
 
     override fun describe(): String {

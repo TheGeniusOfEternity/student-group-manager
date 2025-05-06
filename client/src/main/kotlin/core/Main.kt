@@ -36,5 +36,6 @@ fun main() {
  */
 fun loadProgram() {
     State.isRunning = true
+    IOHandler.getServerAddress()
     ConnectionHandler.initializeConnection()
 }

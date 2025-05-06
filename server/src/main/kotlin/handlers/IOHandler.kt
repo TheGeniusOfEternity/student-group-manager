@@ -1,21 +1,17 @@
 package handlers
 
-import GroupData
 import State
-import annotations.Nested
 import collection.CollectionInfo
 import collection.StudyGroup
 import parsers.InputParser
 import parsers.OutputParser
 import validators.GroupDataValidator
-import validators.PropertyValidator
 import java.io.BufferedOutputStream
 import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.reflect.KClass
 import commands.InsertCmd
 import commands.UpdateCmd
 import receiver.Receiver
@@ -28,31 +24,8 @@ import receiver.Receiver
  */
 
 object IOHandler {
-    val responsesThread: ArrayList<String?> = ArrayList()
-    /**
-     * Main function of i/o handle,
-     * Works only if [State.isRunning] is true
-     */
-    fun handle() {
-        when (State.source) {
-            InputSource.FILE -> {
-                val openedFiles = CollectionInfo.getOpenedFiles()
-                if (openedFiles.size != 0) {
-                    handleFileInput(
-                        openedFiles.lastElement().first,
-                        openedFiles.lastElement().second,
-                    )
-                } else {
-                    IOHandler printInfoLn "program's state error: no file opened"
-                    State.source = InputSource.CONSOLE
-                }
-            }
-            InputSource.CONSOLE -> {
-                IOHandler printInfo "& "
-                InputParser.parseCommand()
-            }
-        }
-    }
+    val responsesThreads: HashMap<String, ArrayList<String?>> = HashMap()
+
     /**
      * @param filename - Path to the file
      * @param lastLine - Index of last read line of the file
@@ -70,8 +43,6 @@ object IOHandler {
                 response = groupsData.map {groupData ->
                     groupDataValidator.validateData(groupData)
                 }.toCollection(ArrayList())
-            } else {
-                InputParser.parseScript(fileReader, filename)
             }
         } catch (e: IOException) {
             IOHandler printInfoLn "input error: file $filename not found"
@@ -79,52 +50,6 @@ object IOHandler {
         CollectionInfo.removeOpenedFile()
         State.source = InputSource.CONSOLE
         return response
-    }
-
-    /**
-     * Handle user's input on Insert command and creates GroupData
-     *
-     * @param data A [GroupData] object, contains only ("id", id)
-     * @param classname class's name to get its properties
-     *
-     * @return New [StudyGroup] or null
-     */
-    fun handleUserInput(data: GroupData, classname: String): StudyGroup? {
-        val propertyValidator = PropertyValidator()
-        val groupDataValidator = GroupDataValidator()
-        val properties = propertyValidator.getProperties(classname)
-        for ((property) in properties) {
-            if (property.annotations.contains(Nested())) {
-                if (property.name == "groupAdmin") {
-                    var input: String
-                    do {
-                        IOHandler printInfo "${property.name.replaceFirstChar { it.uppercase() }} (Y/n): "
-                        input = readln()
-                    } while (input != "Y" && input != "n")
-                    if (input == "Y") handleUserInput(data, property.returnType.toString().split("?")[0])
-                } else {
-                    handleUserInput(data, property.returnType.toString().split("?")[0])
-                }
-            }
-            else {
-                if (property.name == "id" || property.name == "creationDate") continue
-                var input: String
-                do {
-                    IOHandler printInfo "${property.name.replaceFirstChar { it.uppercase() }}: "
-                    if ((property.returnType.classifier as? KClass<*>)?.java?.isEnum == true) {
-                        val enums = (property.returnType.classifier as? KClass<*>)?.java?.enumConstants?.joinToString(separator = ", ")
-                        IOHandler printInfo "($enums) "
-                    }
-                    input = readln()
-
-                } while (!propertyValidator.validateData(Pair(property.name, input)))
-                data.add(Pair(property.name, input))
-            }
-        }
-        if (classname == "collection.StudyGroup") {
-            return groupDataValidator.validateData(data)
-        }
-        return null
     }
 
     /**

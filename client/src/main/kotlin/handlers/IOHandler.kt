@@ -4,6 +4,7 @@ import core.GroupData
 import core.State
 import annotations.Nested
 import collection.StudyGroup
+import com.rabbitmq.client.ConnectionFactory
 import parsers.InputParser
 import parsers.OutputParser
 import validators.GroupDataValidator
@@ -34,6 +35,34 @@ object IOHandler {
             IOHandler printInfo "& "
             InputParser.parseCommand()
         }
+    }
+
+    fun getServerAddress() {
+        State.tasks++
+        while (State.host == null) {
+            IOHandler printInfoLn "Specify server ipv4 address:"
+            IOHandler printInfo "& "
+            val input = readln()
+            if (isValidIPv4(input)) {
+                State.host = input
+                ConnectionHandler.factory = ConnectionFactory().apply { this.host = State.host }
+            }
+            else printInfoLn("Incorrect IPv4 address.")
+        }
+        State.tasks--
+    }
+
+    private fun isValidIPv4(ip: String): Boolean {
+        val parts = ip.split(".")
+        if (ip.trim() == "localhost") return true
+        if (parts.size != 4) return false
+        for (part in parts) {
+            if (part.isEmpty() || part.length > 3) return false
+            if (part.length > 1 && part.startsWith('0')) return false
+            val num = part.toIntOrNull() ?: return false
+            if (num !in 0..255) return false
+        }
+        return true
     }
 
     /**

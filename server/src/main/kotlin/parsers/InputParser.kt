@@ -2,7 +2,6 @@ package parsers
 
 import GroupData
 import Property
-import collection.CollectionInfo
 import dto.CommandParam
 import invoker.Invoker
 import java.io.FileReader
@@ -51,54 +50,5 @@ object InputParser: Parser<FileReader> {
             index = data.read()
         }
         return groupsData
-    }
-
-    /**
-     * Parses script files
-     *
-     * @param data - [FileReader]
-     * @param fileName - Name of reading file
-     */
-    fun parseScript(data: FileReader, fileName: String) {
-        var index: Int = data.read()
-        var currLine = ""
-        val prevLines = CollectionInfo.getFileByName(fileName)?.second ?: -1
-        var linesCount = 0
-        while (index != -1) {
-            when (val c: Char = index.toChar()) {
-                '\n' -> {
-                    if (currLine.isNotEmpty() && linesCount > prevLines) {
-                        val query: List<String> = currLine.trim().split(" ")
-                        val commandName = query.first()
-                        val params: ArrayList<CommandParam?> = ArrayList()
-                        query.drop(1).forEach{ param -> params.add(CommandParam.LongParam(param.toLong()))}
-                        Invoker.run(commandName, params)
-                        State.source = InputSource.FILE
-                        CollectionInfo.updateOpenedFile(fileName, linesCount)
-                    }
-                    currLine = ""
-                    linesCount++
-                }
-                else -> {
-                    currLine += c
-                }
-            }
-            index = data.read()
-        }
-    }
-
-    /**
-     * Reads commands and invoke them to execute
-     */
-    fun parseCommand() {
-        val commandName: String
-        val input = readlnOrNull()
-        if (!input.isNullOrEmpty()) {
-            val query: List<String> = input.trim().split(" ")
-            commandName = query.first()
-            val params: ArrayList<CommandParam?> = ArrayList()
-            query.drop(1).forEach{ param -> params.add(CommandParam.LongParam(param.toLong()))}
-            Invoker.run(commandName, params)
-        }
     }
 }

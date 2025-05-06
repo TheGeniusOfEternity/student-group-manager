@@ -9,7 +9,7 @@ import receiver.Receiver
  */
 class PrintUniqueAvgMarkCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.isEmpty()) {
             val avgMarks = mutableListOf<Int?>()
             Receiver.getStudyGroups().forEach { group ->
@@ -18,9 +18,9 @@ class PrintUniqueAvgMarkCmd: Command {
                     avgMarks.add(mark.toInt())
                 }
             }
-            IOHandler.responsesThread.add("All unique marks: $avgMarks")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("All unique marks: $avgMarks")
         } else {
-            IOHandler.responsesThread.add("print_unique_average_mark error: invalid count of arguments")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("print_unique_average_mark error: invalid count of arguments")
         }
     }
 

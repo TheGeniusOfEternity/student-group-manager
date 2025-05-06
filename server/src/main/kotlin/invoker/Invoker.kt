@@ -32,11 +32,11 @@ object Invoker {
     /**
      * Initiates [Command] execution
      */
-    fun run(commandName: String, args: List<CommandParam?>) {
+    fun run(commandName: String, args: List<CommandParam?>, clientId: String) {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)
-            command.execute(args)
+            command.execute(args, clientId)
         } else {
             println("Command not found: $commandName")
         }

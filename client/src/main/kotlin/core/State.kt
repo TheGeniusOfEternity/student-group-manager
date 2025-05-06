@@ -12,8 +12,9 @@ import java.util.*
 object State {
     var isRunning = false
     var connectedToServer = false
-    var host = "localhost"
+    var host: String? = null
     var tasks = 1
+    val appName = "client-${UUID.randomUUID()}"
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
 
     /**

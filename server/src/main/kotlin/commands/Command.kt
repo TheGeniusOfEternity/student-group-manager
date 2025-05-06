@@ -10,7 +10,7 @@ interface Command {
     /**
      * Initiate command
      */
-    fun execute(args: List<CommandParam?>)
+    fun execute(args: List<CommandParam?>, clientId: String)
 
     /**
      * Shows command description

@@ -9,21 +9,21 @@ import receiver.Receiver
  */
 class FilterGreaterStudsCountCmd: Command {
     override val paramTypeName = "Long"
-    override fun execute(args: List<CommandParam?>) {
+    override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.size == 1) {
             val amount = (args[0] as CommandParam.LongParam).value
             if (amount != null) {
                 val groups = Receiver.getStudyGroups().filter { it.value.getStudentsCount() > amount }
                 if (groups.isEmpty()) {
-                    IOHandler.responsesThread.add("filter_greater_than_students_count error: no group with such amount")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("filter_greater_than_students_count error: no group with such amount")
                 } else {
                     groups.forEach{ group ->
-                        IOHandler.responsesThread.add(group.value.toString())
+                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(group.value.toString())
                     }
                 }
-            } else IOHandler.responsesThread.add("filter_greater_than_students_count error:  is not a number")
+            } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("filter_greater_than_students_count error:  is not a number")
         } else {
-            IOHandler.responsesThread.add("filter_greater_than_students_count error: invalid count of arguments")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("filter_greater_than_students_count error: invalid count of arguments")
         }
     }
 
