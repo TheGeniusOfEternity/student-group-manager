@@ -54,6 +54,7 @@ object ConnectionHandler {
                 handleConnectionFail()
             }
         } catch (e: Exception) {
+            State.tasks--
             handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
         }
     }
@@ -67,6 +68,7 @@ object ConnectionHandler {
             when (input) {
                 "Y" -> {
                     initializeConnection()
+                    break
                 }
                 "n" -> {
                     Invoker.commands["exit"]!!.execute(listOf())
@@ -81,18 +83,26 @@ object ConnectionHandler {
 
     fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>) {
         val properties = AMQP.BasicProperties.Builder().headers(headers).build()
-        val channel = currentConnection?.createChannel()
-        channel?.queueDeclare(queueName, false, false, false, null)
-        channel?.basicPublish("", queueName, properties, data)
+        try {
+            val channel = currentConnection?.createChannel()
+            channel?.queueDeclare(queueName, false, false, false, null)
+            channel?.basicPublish("", queueName, properties, data)
+        } catch (e: Exception) {
+            handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
+        }
     }
 
     fun receiveMessage(queueName: String, callback: DeliverCallback) {
-        val channel = currentConnection?.createChannel()
-        val latch = CountDownLatch(1)
-        channel?.queueDeclare(queueName, false, false, false, null)
-        channel?.basicConsume(queueName, true, callback) { _: String? ->}
-        latch.await(100, TimeUnit.MILLISECONDS)
-        channel?.close()
+        try {
+            val channel = currentConnection?.createChannel()
+            val latch = CountDownLatch(1)
+            channel?.queueDeclare(queueName, false, false, false, null)
+            channel?.basicConsume(queueName, true, callback) { _: String? ->}
+            latch.await(100, TimeUnit.MILLISECONDS)
+            channel?.close()
+        } catch (e: Exception) {
+            handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
+        }
     }
 
     private fun loadCommandsList() {

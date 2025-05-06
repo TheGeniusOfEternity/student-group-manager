@@ -1,6 +1,5 @@
 package handlers
 
-import collection.StudyGroup
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
 import com.rabbitmq.client.DeliverCallback
@@ -34,30 +33,34 @@ object ConnectionHandler {
             channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
             State.isRunning = true
         } catch (e: Exception) {
-            IOHandler printInfoLn e.printStackTrace().toString()
+            handleConnectionFail()
         }
     }
 
     fun handleRequests() {
-        val channel = currentConnection?.createChannel()
-        val latch = CountDownLatch(1)
-        var commandRequest: ExecuteCommandDto?
-        channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
+        try {
+            val channel = currentConnection?.createChannel()
+            val latch = CountDownLatch(1)
+            var commandRequest: ExecuteCommandDto?
+            channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
 
-        val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            try {
-                commandRequest = JsonSerializer.deserialize<ExecuteCommandDto>(delivery.body)
-                Invoker.run(commandRequest!!.name,
-                    if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf()
-                )
-                latch.countDown()
-            } catch (e: Exception) {
-                IOHandler.responsesThread.add("execution error: " + e.message.toString())
+            val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
+                try {
+                    commandRequest = JsonSerializer.deserialize<ExecuteCommandDto>(delivery.body)
+                    Invoker.run(commandRequest!!.name,
+                        if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf()
+                    )
+                    latch.countDown()
+                } catch (e: Exception) {
+                    IOHandler.responsesThread.add("execution error: " + e.message.toString())
+                }
             }
+            channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
+            latch.await(100, TimeUnit.MILLISECONDS)
+            channel?.close()
+        } catch (e: Exception) {
+            handleConnectionFail()
         }
-        channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
-        latch.await(100, TimeUnit.MILLISECONDS)
-        channel?.close()
     }
 
     inline fun <reified T> handleResponse(commandResponse: ArrayList<T?>?) {
@@ -67,5 +70,12 @@ object ConnectionHandler {
         channel?.basicPublish("", DATA_RESPONSES, null, bytedResponse)
         channel?.close()
         IOHandler.responsesThread.clear()
+    }
+
+    private fun handleConnectionFail(msg: String? = null) {
+        val message = msg ?: "RabbitMQ is probably offline, retrying in 1 second..."
+        IOHandler printInfoLn message
+        Thread.sleep(1000)
+        initializeConnection()
     }
 }
