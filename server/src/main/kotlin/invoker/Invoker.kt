@@ -24,7 +24,6 @@ object Invoker {
         commands["save"] = SaveCmd()
         commands["history"] = HistoryCmd()
         commands["remove_lower"] = RemoveLowerCmd()
-        commands["execute_script"] = ExecuteScriptCmd()
         commands["remove_any_by_transferred_students"] = RemoveByTransfStudsCmd()
         commands["filter_greater_than_students_count"] = FilterGreaterStudsCountCmd()
         commands["print_unique_average_mark"] = PrintUniqueAvgMarkCmd()

@@ -1,6 +1,6 @@
 package validators
 
-import GroupData
+import core.GroupData
 import collection.*
 import java.text.SimpleDateFormat
 

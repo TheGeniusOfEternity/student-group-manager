@@ -73,6 +73,7 @@ object ConnectionHandler {
     }
 
     private fun handleConnectionFail(msg: String? = null) {
+        this.currentConnection?.close()
         val message = msg ?: "RabbitMQ is probably offline, retrying in 1 second..."
         IOHandler printInfoLn message
         Thread.sleep(1000)

@@ -1,7 +1,8 @@
+package core
+
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import java.io.IOException
-import java.util.concurrent.Phaser
 import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
@@ -14,17 +15,6 @@ typealias GroupData = ArrayList<Pair<String, String?>>
  */
 typealias Property = Pair<String, String?>
 
-/**
- * Singleton object for storing program state
- * @property isRunning - check if program is running or not
- * @property connectedToServer - is client connect to server, or not
- */
-object State {
-    var isRunning = false
-    var connectedToServer = false
-    var host = "localhost"
-    var tasks = 1
-}
 
 /**
  * Entry point of the program

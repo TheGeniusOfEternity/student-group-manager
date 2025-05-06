@@ -1,18 +1,14 @@
 package commands
 
-import GroupData
-import Property
-import collection.StudyGroup
-import com.rabbitmq.client.DeliverCallback
-import com.rabbitmq.client.Delivery
+import core.GroupData
+import core.Property
+import core.State
 import dto.CommandParam
 import dto.ExecuteCommandDto
 import handlers.ConnectionHandler
 import handlers.IOHandler
 import serializers.JsonSerializer
 import validators.PropertyValidator
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 class ServerCmd(val name: String, override val description: String, override val paramTypeName: String?) : Command {
     override fun execute(args: List<String>) {
@@ -69,6 +65,7 @@ class ServerCmd(val name: String, override val description: String, override val
                     State.connectedToServer = false
                     ConnectionHandler.handleConnectionFail("Connection lost, try to reconnect? (Y/n)")
                 }
+                if (name == "info") IOHandler printInfoLn State.openedFilesList()
             } else IOHandler printInfoLn "data serialization error: incorrect params's type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }

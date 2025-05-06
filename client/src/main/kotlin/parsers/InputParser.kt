@@ -1,8 +1,8 @@
 package parsers
 
-import GroupData
-import Property
-import collection.CollectionInfo
+import core.GroupData
+import core.Property
+import core.State
 import invoker.Invoker
 import java.io.FileReader
 
@@ -61,7 +61,7 @@ object InputParser: Parser<FileReader> {
     fun parseScript(data: FileReader, fileName: String) {
         var index: Int = data.read()
         var currLine = ""
-        val prevLines = CollectionInfo.getFileByName(fileName)?.second ?: -1
+        val prevLines = State.getFileByName(fileName)?.second ?: -1
         var linesCount = 0
         while (index != -1) {
             when (val c: Char = index.toChar()) {
@@ -70,7 +70,7 @@ object InputParser: Parser<FileReader> {
                         val query: List<String> = currLine.trim().split(" ")
                         val commandName = query.first()
                         Invoker.run(commandName, query.drop(1))
-                        CollectionInfo.updateOpenedFile(fileName, linesCount)
+                        State.updateOpenedFile(fileName, linesCount)
                     }
                     currLine = ""
                     linesCount++

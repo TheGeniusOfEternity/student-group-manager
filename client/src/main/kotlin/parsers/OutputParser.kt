@@ -1,10 +1,9 @@
 package parsers
 
-import GroupData
-import Property
+import core.GroupData
+import core.Property
 import annotations.Pos
 import collection.StudyGroup
-import receiver.Receiver
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList

@@ -1,8 +1,6 @@
 package invoker
 
-import collection.CollectionInfo
 import commands.*
-import handlers.ConnectionHandler
 import handlers.IOHandler
 import kotlin.collections.HashMap
 
@@ -16,6 +14,7 @@ object Invoker {
     init {
         commands["help"] = HelpCmd()
         commands["exit"] = ExitCmd()
+        commands["execute_script"] = ExecuteScriptCmd()
     }
 
     /**
@@ -24,7 +23,6 @@ object Invoker {
     fun run(commandName: String, args: List<String>) {
         val command: Command? = this.commands[commandName]
         if (command != null) {
-            CollectionInfo.updateCommandHistory(commandName)
             command.execute(listOf(commandName) + args)
         } else {
             IOHandler printInfoLn "Unknown command $commandName"

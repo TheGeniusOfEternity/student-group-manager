@@ -73,10 +73,10 @@ object IOHandler {
             } else {
                 InputParser.parseScript(fileReader, filename)
             }
-            CollectionInfo.removeOpenedFile()
         } catch (e: IOException) {
             IOHandler printInfoLn "input error: file $filename not found"
         }
+        CollectionInfo.removeOpenedFile()
         State.source = InputSource.CONSOLE
         return response
     }

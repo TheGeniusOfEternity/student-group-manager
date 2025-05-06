@@ -11,7 +11,7 @@ tasks.dokkaHtml {
 }
 
 application {
-    mainClass = "MainKt"
+    mainClass = "core.MainKt"
 }
 
 group = "org.itmo"
@@ -43,7 +43,7 @@ tasks.test {
 tasks.withType<Jar> {
     // Otherwise you'll get a "No main manifest attribute" error
     manifest {
-        attributes["Main-Class"] = "MainKt"
+        attributes["Main-Class"] = "core.MainKt"
     }
     // To avoid the duplicate handling strategy error
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

@@ -1,6 +1,6 @@
 package validators
 
-import Property
+import core.Property
 import collection.Country
 import collection.FormOfEducation
 import java.text.SimpleDateFormat

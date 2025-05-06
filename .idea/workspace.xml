@@ -5,9 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExecuteScriptCmd.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/State.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/client/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/CollectionInfo.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ExitCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/invoker/Invoker.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/parsers/InputParser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/parsers/InputParser.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/parsers/OutputParser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/parsers/OutputParser.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/receiver/Receiver.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/validators/GroupDataValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/validators/GroupDataValidator.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/validators/PropertyValidator.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/validators/PropertyValidator.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/invoker/Invoker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/invoker/Invoker.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,8 +70,8 @@
         <option value="Dockerfile" />
         <option value="Kotlin Enum" />
         <option value="Kotlin Data Class" />
-        <option value="Kotlin Class" />
         <option value="Kotlin Object" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -142,11 +158,11 @@
       <recent name="$PROJECT_DIR$/client/src/main/kotlin" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/client/src/main/kotlin/core" />
       <recent name="$PROJECT_DIR$/client" />
       <recent name="$PROJECT_DIR$/src/main/resources/data" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/annotations" />
       <recent name="$PROJECT_DIR$/src/main/resources" />
-      <recent name="$PROJECT_DIR$/src/main/kotlin" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -167,7 +183,7 @@
       <recent name="dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.client">
+  <component name="RunManager" selected="Kotlin.server">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -191,7 +207,7 @@
       <method v="2" />
     </configuration>
     <configuration name="client" type="JetRunConfigurationType" temporary="true">
-      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <option name="MAIN_CLASS_NAME" value="core.MainKt" />
       <module name="student-group-manager-client.main" />
       <shortenClasspath name="NONE" />
       <method v="2">
@@ -268,7 +284,7 @@
       <workItem from="1745335766937" duration="165000" />
       <workItem from="1745335937721" duration="25343000" />
       <workItem from="1745425701516" duration="4005000" />
-      <workItem from="1746536824060" duration="1219000" />
+      <workItem from="1746536824060" duration="4679000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />

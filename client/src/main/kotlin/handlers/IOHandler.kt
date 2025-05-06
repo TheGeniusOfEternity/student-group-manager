@@ -1,7 +1,7 @@
 package handlers
 
-import GroupData
-import State
+import core.GroupData
+import core.State
 import annotations.Nested
 import collection.StudyGroup
 import parsers.InputParser
@@ -13,13 +13,11 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import kotlin.reflect.KClass
-import receiver.Receiver
-import java.util.concurrent.TimeUnit
+import java.io.FileReader
 
 /**
  * IOHandler of application input/output:
  * - Reads data & script files
- * - Reads user input on commands [InsertCmd] & [UpdateCmd]
  * - Writes output for files and console (mostly)
  */
 
@@ -82,6 +80,33 @@ object IOHandler {
             return groupDataValidator.validateData(data)
         }
         return null
+    }
+    /**
+     * @param filename - Path to the file
+     * @param lastLine - Index of last read line of the file
+     *
+     * @return [ArrayList] of [StudyGroup] if data file is being read, or null in script file case
+     */
+    fun handleFileInput(filename: String, lastLine: Int?): ArrayList<StudyGroup?>? {
+        var response: ArrayList<StudyGroup?>? = null
+        try {
+            State.addOpenedFile(Pair(filename, lastLine))
+            val fileReader = FileReader(filename)
+            if (State.getOpenedFiles().lastElement().first.contains("data/")) {
+                val groupDataValidator = GroupDataValidator()
+                val groupsData = InputParser.parse(fileReader)
+                response = groupsData.map {groupData ->
+                    groupDataValidator.validateData(groupData)
+                }.toCollection(ArrayList())
+            } else {
+                InputParser.parseScript(fileReader, filename)
+            }
+            State.removeOpenedFile()
+        } catch (e: IOException) {
+            IOHandler printInfoLn "input error: file $filename not found"
+        }
+//        State = InputSource.CONSOLE
+        return response
     }
 
     /**

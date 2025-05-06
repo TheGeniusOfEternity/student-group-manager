@@ -1,6 +1,6 @@
 package handlers
 
-import State
+import core.State
 import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.Connection
 import com.rabbitmq.client.ConnectionFactory
@@ -41,7 +41,7 @@ object ConnectionHandler {
                         IOHandler printInfoLn "Connection established"
                         State.tasks--
                         fetchResponses()
-                        if (Invoker.commands.size == 2) loadCommandsList()
+                        if (Invoker.commands.size == 3) loadCommandsList()
                     }
                 }
             }
