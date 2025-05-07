@@ -38,7 +38,7 @@ object ConnectionHandler {
                         IOHandler printInfoLn "Connection established"
                         State.tasks--
                         loadResponses(channel)
-                        if (Invoker.commands.size == 3) loadCommandsList()
+                        loadCommandsList()
                     }
                 }
             }

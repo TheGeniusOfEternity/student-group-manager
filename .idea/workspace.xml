@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/parsers/OutputParser.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/serializers/LocalDateSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/LocalDateSerializer.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -273,7 +268,8 @@
       <workItem from="1745335937721" duration="25343000" />
       <workItem from="1745425701516" duration="4005000" />
       <workItem from="1746536824060" duration="15049000" />
-      <workItem from="1746559718210" duration="7052000" />
+      <workItem from="1746559718210" duration="7414000" />
+      <workItem from="1746618981816" duration="1910000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />
