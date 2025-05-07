@@ -6,11 +6,8 @@ import annotations.Nested
 import collection.StudyGroup
 import com.rabbitmq.client.ConnectionFactory
 import parsers.InputParser
-import parsers.OutputParser
 import validators.GroupDataValidator
 import validators.PropertyValidator
-import java.io.BufferedOutputStream
-import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import kotlin.reflect.KClass
@@ -134,27 +131,9 @@ object IOHandler {
         } catch (e: IOException) {
             IOHandler printInfoLn "input error: file $filename not found"
         }
-//        State = InputSource.CONSOLE
         return response
     }
 
-    /**
-     * Writes output data to the file
-     * @param data - [Receiver.stdGroupCollection] all study groups from collection
-     * @param filename - name of file that data will be written in
-     */
-    fun handleFileOutput(data: TreeMap<Long, StudyGroup>, filename: String) {
-        try {
-            val writer = BufferedOutputStream(FileOutputStream(filename))
-            val groupsData = OutputParser.generateGroupsData(data)
-            val res = OutputParser.parse(groupsData)
-            val bytes = res.toByteArray()
-            writer.write(bytes)
-            writer.flush()
-        } catch (e: IOException) {
-            IOHandler printInfo e.message
-        }
-    }
     infix fun printInfo(message: String?): Unit = print(message)
     infix fun printInfoLn(message: String?): Unit = println(message)
 }

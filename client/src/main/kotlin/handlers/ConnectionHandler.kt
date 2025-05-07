@@ -46,7 +46,6 @@ object ConnectionHandler {
             receiveMessage(HEALTH_CHECK_RESPONSES, deliverCallback, channel)
             Thread.sleep(300)
             if (!State.connectedToServer) {
-                currentConnection?.close()
                 State.tasks--
                 handleConnectionFail()
             }
@@ -57,6 +56,7 @@ object ConnectionHandler {
     }
 
     fun handleConnectionFail(errorMsg: String? = null) {
+        currentConnection?.close()
         var msg = errorMsg ?: "Server is not responding, should retry connection? (Y/n): "
         while (!State.connectedToServer) {
             IOHandler printInfoLn msg

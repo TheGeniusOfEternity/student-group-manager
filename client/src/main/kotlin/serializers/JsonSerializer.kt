@@ -1,6 +1,5 @@
 package serializers
 
-import collection.StudyGroup
 import dto.CommandParam
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

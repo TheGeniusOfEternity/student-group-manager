@@ -1,13 +1,13 @@
 package collection
 
-import LocalDateSerializer
+import serializers.LocalDateSerializer
 import annotations.Nested
 import annotations.Pos
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 /**
- * Class of study group, element of [CollectionInfo]
+ * Class of study group, element of collection
  */
 @Serializable
 class StudyGroup(
@@ -41,28 +41,6 @@ class StudyGroup(
     fun getId(): Long {
         return id
     }
-
-    /**
-     * @return [studentsCount] of the group
-     */
-    fun getStudentsCount(): Int {
-        return studentsCount
-    }
-
-    /**
-     * @return [transferredStudents] of the group
-     */
-    fun getTransferredStudents(): Long? {
-        return transferredStudents
-    }
-
-    /**
-     * @return [averageMark] of study group
-     */
-    fun getAverageMark(): Int? {
-        return averageMark
-    }
-
 
     /**
      * @return [StudyGroup] string representation

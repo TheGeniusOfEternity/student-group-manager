@@ -6,33 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/core/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/core/State.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/State.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/collection/StudyGroup.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ClearCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/Command.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExecuteScriptCmd.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExitCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ExitCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/FilterGreaterStudsCountCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/FilterGreaterStudsCountCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetByIdCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetByIdCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/GetCommandsListCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/HistoryCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/HistoryCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/InfoCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/InfoCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/InsertCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/InsertCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/PrintUniqueAvgMarkCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/PrintUniqueAvgMarkCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveByTransfStudsCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveByTransfStudsCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveLowerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/RemoveLowerCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/SaveCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/SaveCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/ShowCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/ShowCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/commands/UpdateCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/commands/UpdateCmd.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/invoker/Invoker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/invoker/Invoker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/parsers/InputParser.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/parsers/InputParser.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/parsers/OutputParser.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/JsonSerializer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/serializers/LocalDateSerializer.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/serializers/LocalDateSerializer.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +171,7 @@
       <recent name="dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.client">
+  <component name="RunManager" selected="Kotlin.server">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -294,7 +273,7 @@
       <workItem from="1745335937721" duration="25343000" />
       <workItem from="1745425701516" duration="4005000" />
       <workItem from="1746536824060" duration="15049000" />
-      <workItem from="1746559718210" duration="1000000" />
+      <workItem from="1746559718210" duration="7052000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />
