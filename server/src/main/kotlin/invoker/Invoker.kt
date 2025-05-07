@@ -21,7 +21,6 @@ object Invoker {
         commands["update"] = UpdateCmd()
         commands["remove"] = RemoveCmd()
         commands["clear"] = ClearCmd()
-        commands["save"] = SaveCmd()
         commands["history"] = HistoryCmd()
         commands["remove_lower"] = RemoveLowerCmd()
         commands["remove_any_by_transferred_students"] = RemoveByTransfStudsCmd()

@@ -1,10 +1,6 @@
 package commands
 
-import GroupData
-import Property
-import State
 import receiver.Receiver
-import validators.PropertyValidator
 import collection.StudyGroup
 import dto.CommandParam
 import handlers.IOHandler
@@ -16,7 +12,6 @@ class UpdateCmd : Command {
     override val paramTypeName = "StudyGroup"
     override fun execute(args: List<CommandParam?>, clientId: String) {
         if (args.size == 1) {
-            State.source = InputSource.CONSOLE
             val group = (args[0] as CommandParam.StudyGroupParam).value
                 if (group != null) {
                     if (Receiver.getStudyGroup(group.getId()) != null) {

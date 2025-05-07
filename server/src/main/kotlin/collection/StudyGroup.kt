@@ -1,6 +1,6 @@
 package collection
 
-import LocalDateSerializer
+import serializers.LocalDateSerializer
 import annotations.Nested
 import annotations.Pos
 import kotlinx.serialization.Serializable

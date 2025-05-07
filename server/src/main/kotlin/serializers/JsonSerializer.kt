@@ -1,6 +1,5 @@
 package serializers
 
-import collection.StudyGroup
 import dto.CommandParam
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -16,6 +15,7 @@ object JsonSerializer{
         polymorphic(CommandParam::class) {
             subclass(CommandParam.LongParam::class)
             subclass(CommandParam.StudyGroupParam::class)
+            subclass(CommandParam.StringParam::class)
         }
     }
     val jsonSerializer = Json {

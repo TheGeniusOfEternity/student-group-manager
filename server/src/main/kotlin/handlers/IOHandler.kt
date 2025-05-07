@@ -1,20 +1,15 @@
 package handlers
 
-import State
 import collection.CollectionInfo
 import collection.StudyGroup
 import parsers.InputParser
-import parsers.OutputParser
 import validators.GroupDataValidator
-import java.io.BufferedOutputStream
-import java.io.FileOutputStream
 import java.io.FileReader
 import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 import commands.InsertCmd
 import commands.UpdateCmd
-import receiver.Receiver
 
 /**
  * IOHandler of application input/output:
@@ -48,28 +43,8 @@ object IOHandler {
             IOHandler printInfoLn "input error: file $filename not found"
         }
         CollectionInfo.removeOpenedFile()
-        State.source = InputSource.CONSOLE
         return response
     }
 
-    /**
-     * Writes output data to the file
-     * @param data - [Receiver.stdGroupCollection] all study groups from collection
-     * @param filename - name of file that data will be written in
-     */
-    fun handleFileOutput(data: TreeMap<Long, StudyGroup>, filename: String) {
-        try {
-            val writer = BufferedOutputStream(FileOutputStream(filename))
-            val groupsData = OutputParser.generateGroupsData(data)
-            val res = OutputParser.parse(groupsData)
-            val bytes = res.toByteArray()
-            writer.write(bytes)
-            writer.flush()
-        } catch (e: IOException) {
-            IOHandler printInfo e.message
-        }
-    }
-
-    infix fun printInfo(message: String?): Unit = print(message)
     infix fun printInfoLn(message: String?): Unit = println(message)
 }

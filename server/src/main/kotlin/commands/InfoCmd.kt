@@ -2,7 +2,6 @@ package commands
 import receiver.Receiver
 import collection.CollectionInfo
 import dto.CommandParam
-import handlers.ConnectionHandler
 import handlers.IOHandler
 import java.util.ArrayList
 

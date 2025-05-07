@@ -3,7 +3,6 @@ package commands
 import collection.CollectionInfo
 import collection.CollectionInfo.commandsList
 import dto.CommandParam
-import handlers.ConnectionHandler
 import handlers.IOHandler
 
 

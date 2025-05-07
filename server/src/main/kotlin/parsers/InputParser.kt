@@ -2,8 +2,6 @@ package parsers
 
 import GroupData
 import Property
-import dto.CommandParam
-import invoker.Invoker
 import java.io.FileReader
 
 /**

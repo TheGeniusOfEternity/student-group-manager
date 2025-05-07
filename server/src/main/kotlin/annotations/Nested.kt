@@ -5,4 +5,4 @@ import collection.StudyGroup
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.PROPERTY)
-annotation class Nested()
+annotation class Nested

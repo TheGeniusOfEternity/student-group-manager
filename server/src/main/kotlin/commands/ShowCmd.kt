@@ -1,7 +1,6 @@
 package commands
 import collection.StudyGroup
 import dto.CommandParam
-import handlers.ConnectionHandler
 import handlers.IOHandler
 import receiver.Receiver
 import java.util.ArrayList
@@ -14,7 +13,7 @@ class ShowCmd: Command {
     override fun execute(args: List<CommandParam?>, clientId: String) {
         var responseMsg = "Collection info: \n\n"
         if (args.isEmpty()) {
-            val groups = Receiver.getStudyGroups();
+            val groups = Receiver.getStudyGroups()
             if (groups.isEmpty()) {
                 responseMsg = "No groups found"
             } else {

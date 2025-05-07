@@ -17,17 +17,11 @@ typealias Property = Pair<String, String?>
 
 /**
  * Singleton object for storing program state
- * @property source - data source from what program should read data
  * @property isRunning - check if program is running or not
  */
 object State {
-    var source: InputSource = InputSource.CONSOLE
     var isRunning = false
     var isConnectionFailNotified = false
-}
-
-enum class InputSource {
-    FILE, CONSOLE
 }
 
 /**
