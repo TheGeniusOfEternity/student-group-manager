@@ -4,7 +4,7 @@ ITMO Programming project implementing console application for study groups colle
 ## About
 This application is implementation of several labs (5-8) of the first-year ITMO programming course.
 - **Lab 5** - basic configuration (core): commands, i/o handle, data parsing
-- **Lab 6** - ...
+- **Lab 6** - client/server separation, RabbitMQ message broker: async requests & responses, data serialization, multi-client support
 - **Lab 7** - ...
 - **Lab 8** - ...
 
@@ -13,12 +13,15 @@ This application is implementation of several labs (5-8) of the first-year ITMO 
 - **Gradle:** depends on plugins
 - **Kotlin:** 2.0.10 or higher
 - **Dokka:** 2.0.0 for docs generation
+- **Docker & Docker compose** depeneds on plugins
 
 ## How to run project
 1. Clone repository
    ```git clone https://github.com/TheGeniusOfEternity/student-group-manager.git```
 2. Go into project dir
    ```cd student-group-manager```
+3. Run RabbitMQ container:
+   ```docker-compose up --build```
 3. Build & Run project
    ```./gradlew build```
    ```./gradlew run```
