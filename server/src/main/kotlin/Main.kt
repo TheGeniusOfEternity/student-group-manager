@@ -23,6 +23,7 @@ typealias Property = Pair<String, String?>
 object State {
     var source: InputSource = InputSource.CONSOLE
     var isRunning = false
+    var isConnectionFailNotified = false
 }
 
 enum class InputSource {

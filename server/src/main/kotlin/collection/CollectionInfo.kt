@@ -46,23 +46,6 @@ object CollectionInfo {
         return openedFiles
     }
 
-    /**
-     * Returns file by its name
-     * @return [Pair] of filename and index where program was paused reading
-     */
-    fun getFileByName(fileName: String): Pair<String, Int?>? {
-        openedFiles.forEach { if (it.first == fileName) return it }
-        return null
-    }
-
-    fun updateOpenedFile(filename: String, newIndex: Int) {
-        openedFiles.forEach {
-            if (it.first == filename) {
-                this.removeOpenedFile()
-                this.addOpenedFile(Pair(filename, newIndex))
-            }
-        }
-    }
 
     /**
      * Clears opened filename on file's close
@@ -103,8 +86,7 @@ object CollectionInfo {
                 "Created Date: $createdDate\n" +
                 "Elements count: $elementsCount\n" +
                 "Commands history: ${commandsList()}\n" +
-                "Default file name: $defaultFileName\n" +
-                "Opened files: ${openedFilesList()}"
+                "Default file name: $defaultFileName"
     }
 
     /**
@@ -115,19 +97,6 @@ object CollectionInfo {
         commandsHistory.forEach {
             if (it.isNotEmpty()) {
                 output += "$it, "
-            }
-        }
-        return output
-    }
-
-    /**
-     * @return [openedFiles] with only filenames
-     */
-    private fun openedFilesList(): String {
-        var output = ""
-        openedFiles.forEach {
-            if (it != null) {
-                output += "${it.first}, "
             }
         }
         return output

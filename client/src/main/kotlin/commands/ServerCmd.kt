@@ -63,8 +63,7 @@ class ServerCmd(val name: String, override val description: String, override val
                 if (responses.isEmpty()) {
                     State.connectedToServer = false
                     ConnectionHandler.handleConnectionFail("Connection lost, try to reconnect? (Y/n)")
-                }
-                if (name == "info") IOHandler printInfoLn State.openedFilesList()
+                } else if (name == "info") IOHandler printInfoLn State.openedFilesList()
             } else IOHandler printInfoLn "data serialization error: incorrect params's type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }

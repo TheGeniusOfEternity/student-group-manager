@@ -16,6 +16,7 @@ object ConnectionHandler {
     var currentConnection: Connection? = null
     fun initializeConnection() {
         try {
+            factory.apply { isAutomaticRecoveryEnabled = false }
             currentConnection = factory.newConnection("server")
             val channel = currentConnection?.createChannel()
             channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
@@ -33,6 +34,7 @@ object ConnectionHandler {
             }
             channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
             State.isRunning = true
+            IOHandler printInfoLn "Connection to RabbitMQ established"
         } catch (e: Exception) {
             handleConnectionFail()
         }
@@ -79,10 +81,13 @@ object ConnectionHandler {
     }
 
     private fun handleConnectionFail(msg: String? = null) {
-        this.currentConnection?.close()
-        val message = msg ?: "RabbitMQ is probably offline, retrying in 1 second..."
-        IOHandler printInfoLn message
-        Thread.sleep(1000)
+        if (currentConnection?.isOpen == true) currentConnection?.close()
+        if (!State.isConnectionFailNotified) {
+            val message = msg ?: "RabbitMQ is probably offline, retrying..."
+            IOHandler printInfoLn message
+            State.isConnectionFailNotified = true
+        }
+        Thread.sleep(100)
         initializeConnection()
     }
 }

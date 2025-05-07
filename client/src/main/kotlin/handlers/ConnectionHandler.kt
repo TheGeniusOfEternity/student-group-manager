@@ -56,7 +56,7 @@ object ConnectionHandler {
     }
 
     fun handleConnectionFail(errorMsg: String? = null) {
-        currentConnection?.close()
+        if (currentConnection?.isOpen == true) currentConnection?.close()
         var msg = errorMsg ?: "Server is not responding, should retry connection? (Y/n): "
         while (!State.connectedToServer) {
             IOHandler printInfoLn msg
@@ -134,10 +134,12 @@ object ConnectionHandler {
     }
 
     fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>): ArrayList<String> {
-        val channel = currentConnection?.createChannel()
-        sendMessage(data, queueName, headers, channel)
+        if (currentConnection?.isOpen == true) {
+            val channel = currentConnection?.createChannel()
+            sendMessage(data, queueName, headers, channel)
 
-        return loadResponses(channel)
+            return loadResponses(channel)
+        } else return ArrayList()
     }
 
     private fun loadResponses(channel: Channel?): ArrayList<String> {

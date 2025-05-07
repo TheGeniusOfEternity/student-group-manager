@@ -65,7 +65,7 @@ object State {
      * @return [openedFiles] with only filenames
      */
     fun openedFilesList(): String {
-        var output = ""
+        var output = "Opened Files: "
         openedFiles.forEach {
             if (it != null) {
                 output += "${it.first}, "
