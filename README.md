@@ -13,7 +13,7 @@ This application is implementation of several labs (5-8) of the first-year ITMO 
 - **Gradle:** depends on plugins
 - **Kotlin:** 2.0.10 or higher
 - **Dokka:** 2.0.0 for docs generation
-- **Docker & Docker compose** depeneds on plugins
+- **Docker & Docker compose:** depends on plugins
 
 ## How to run project
 1. Clone repository
