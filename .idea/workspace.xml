@@ -6,6 +6,33 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/lol" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/Main.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/annotations/Nested.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/annotations/Pos.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Coordinates.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Country.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/FormOfEducation.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Person.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/StudyGroup.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/dto/CommandInfoDto.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/dto/ExecuteCommandDto.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/exceptions/EmptyValueException.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/DateSerializer.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/JsonSerializer.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/LocalDateSerializer.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/GroupDataValidator.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/PropertyValidator.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/Validator.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/resources/data/src.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/main/resources/scripts/script.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/src/test/kotlin/collection/StudyGroupTest.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,7 +192,7 @@
       <recent name="dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.client">
+  <component name="RunManager" selected="Kotlin.server">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -269,7 +296,7 @@
       <workItem from="1746536824060" duration="15049000" />
       <workItem from="1746559718210" duration="7414000" />
       <workItem from="1746618981816" duration="6675000" />
-      <workItem from="1746625822695" duration="4862000" />
+      <workItem from="1746625822695" duration="6418000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />
