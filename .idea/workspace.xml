@@ -6,33 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/build.gradle.kts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/gradle.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/gradlew" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/lol" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/settings.gradle.kts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/Main.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/annotations/Nested.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/annotations/Pos.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Coordinates.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Country.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/FormOfEducation.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/Person.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/collection/StudyGroup.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/dto/CommandInfoDto.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/dto/ExecuteCommandDto.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/exceptions/EmptyValueException.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/DateSerializer.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/JsonSerializer.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/serializers/LocalDateSerializer.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/GroupDataValidator.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/PropertyValidator.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/kotlin/validators/Validator.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/resources/data/src.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/main/resources/scripts/script.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/common/src/test/kotlin/collection/StudyGroupTest.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +113,7 @@
     &quot;com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5&quot;: &quot;&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/maksim/Code/JavaITMO/student-group-manager/server/build/libs&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/maksim/Code/JavaITMO/student-group-manager/server&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -160,18 +133,18 @@
       <recent name="" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server" />
       <recent name="$PROJECT_DIR$/server/build/libs" />
       <recent name="$PROJECT_DIR$/client/src/main/kotlin/dto" />
       <recent name="$PROJECT_DIR$/server/src/main/kotlin" />
       <recent name="$PROJECT_DIR$/server/src/main/kotlin/dto" />
-      <recent name="$PROJECT_DIR$/client/src/main/kotlin" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/server" />
       <recent name="$PROJECT_DIR$/client/src/main/kotlin/core" />
       <recent name="$PROJECT_DIR$/client" />
       <recent name="$PROJECT_DIR$/src/main/resources/data" />
       <recent name="$PROJECT_DIR$/src/main/kotlin/annotations" />
-      <recent name="$PROJECT_DIR$/src/main/resources" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -296,7 +269,8 @@
       <workItem from="1746536824060" duration="15049000" />
       <workItem from="1746559718210" duration="7414000" />
       <workItem from="1746618981816" duration="6675000" />
-      <workItem from="1746625822695" duration="6418000" />
+      <workItem from="1746625822695" duration="9222000" />
+      <workItem from="1746742862768" duration="748000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />
