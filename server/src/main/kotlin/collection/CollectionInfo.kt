@@ -12,16 +12,9 @@ object CollectionInfo {
     private val createdDate: LocalDate = LocalDate.now()
     private var elementsCount: Int = 0
     private const val COLLECTION_TYPE: String = "TreeMap"
-    private val commandsHistory: Array<String> = Array(11) {""}
+    private val commandsHistory: MutableList<String> = mutableListOf()
     private var defaultFileName: String = "data/src.csv"
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
-
-    /**
-     * Update [defaultFileName]
-     */
-    fun updateDefaultFileName(newFileName: String) {
-        defaultFileName = newFileName
-    }
 
     /**
      * Get output file name by default
@@ -65,16 +58,10 @@ object CollectionInfo {
      * @param commandName Name of executed [Command]
      */
     fun updateCommandHistory(commandName: String) {
-        val currIndex = commandsHistory.indexOfFirst { it.isEmpty() }
-
-        if (currIndex == -1) {
-            for (i in 0 until commandsHistory.size - 2) {
-                commandsHistory[i] = commandsHistory[i + 1]
-            }
-            commandsHistory[commandsHistory.size - 1] = commandName
-        } else {
-            commandsHistory[currIndex] = commandName
+        if (commandsHistory.size == 11) {
+            commandsHistory.removeAt(0)
         }
+        commandsHistory.add(commandName)
     }
 
     /**

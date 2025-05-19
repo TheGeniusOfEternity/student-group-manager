@@ -47,4 +47,4 @@ bin/
 .DS_Store
 
 ### Project
-server/.env
+.env

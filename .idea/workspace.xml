@@ -5,7 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca78b46-6d76-49d3-b4a7-9075f0e7872c" name="Changes" comment="feat(project): split application into client &amp; server #1">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/commands/ServerCmd.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/core/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/core/State.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/core/State.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/client/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/.env.example" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/server/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/docker-compose.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/collection/CollectionInfo.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/collection/CollectionInfo.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/ConnectionHandler.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/main/kotlin/handlers/IOHandler.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,11 +154,11 @@
       <recent name="$PROJECT_DIR$/server/src/main/kotlin/dto" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/" />
       <recent name="$PROJECT_DIR$/server" />
       <recent name="$PROJECT_DIR$/client/src/main/kotlin/core" />
       <recent name="$PROJECT_DIR$/client" />
       <recent name="$PROJECT_DIR$/src/main/resources/data" />
-      <recent name="$PROJECT_DIR$/src/main/kotlin/annotations" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -165,7 +179,7 @@
       <recent name="dto" />
     </key>
   </component>
-  <component name="RunManager" selected="Kotlin.server">
+  <component name="RunManager" selected="Kotlin.client">
     <configuration name="Tests in 'student-group-manager.test'" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -271,6 +285,8 @@
       <workItem from="1746618981816" duration="6675000" />
       <workItem from="1746625822695" duration="9222000" />
       <workItem from="1746742862768" duration="748000" />
+      <workItem from="1747294759065" duration="9217000" />
+      <workItem from="1747509371675" duration="6496000" />
     </task>
     <task id="LOCAL-00001" summary="feat(app): basic structure; help, info, show &amp; exit commands">
       <option name="closed" value="true" />

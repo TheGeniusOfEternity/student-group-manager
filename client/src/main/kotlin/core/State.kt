@@ -1,6 +1,7 @@
 package core
 
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * Singleton object for storing program state
@@ -8,6 +9,7 @@ import java.util.*
  * @property connectedToServer - is client connect to server, or not
  * @property host - Address to message broker (Rabbit MQ)
  * @property tasks - current running i/o tasks
+ * @property credentials - storage for all auth info
  */
 object State {
     var isRunning = false
@@ -15,6 +17,7 @@ object State {
     var host: String? = null
     var tasks = 1
     val appName = "client-${UUID.randomUUID()}"
+    val credentials: HashMap<String, String> = HashMap()
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
 
     /**

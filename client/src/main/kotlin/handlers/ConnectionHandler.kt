@@ -20,10 +20,16 @@ object ConnectionHandler {
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
     const val DATA_REQUESTS = "data-requests"
     private const val DATA_RESPONSES = "data-responses"
-    var factory = ConnectionFactory().apply { this.host = State.host }
+    private var factory: ConnectionFactory = ConnectionFactory()
     private var currentConnection: Connection? = null
 
     fun initializeConnection() {
+        factory.apply {
+            isAutomaticRecoveryEnabled = false
+            this.host = "localhost"
+            this.username = State.credentials["RABBITMQ_USERNAME"] ?: error("RABBITMQ_USERNAME not set")
+            this.password = State.credentials["RABBITMQ_PASSWORD"] ?: error("RABBITMQ_PASSWORD not set")
+        }
         var response: String
         factory.connectionTimeout = 1000
         State.tasks++
@@ -133,29 +139,25 @@ object ConnectionHandler {
         } catch (_: Exception) {}
     }
 
-    fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>): ArrayList<String> {
+    fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>, cmdName: String? = null) {
         if (currentConnection?.isOpen == true) {
             val channel = currentConnection?.createChannel()
             sendMessage(data, queueName, headers, channel)
-
-            return loadResponses(channel)
-        } else return ArrayList()
+            loadResponses(channel, cmdName)
+        } else handleConnectionFail("cmd execution error, broker is offline")
     }
 
-    private fun loadResponses(channel: Channel?): ArrayList<String> {
-        State.tasks++
-        val responseLatch = CountDownLatch(1)
-        var responses: ArrayList<String> = ArrayList()
+    private fun loadResponses(channel: Channel?, cmdName: String? = null) {
+        var responses: ArrayList<String>
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
             responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
             responses.forEach { response ->
-                IOHandler printInfoLn response
+                if (cmdName == "info") IOHandler.responsesThreads.add("$response\n${State.openedFilesList()}")
+                else IOHandler.responsesThreads.add(response)
             }
-            responseLatch.countDown()
+            IOHandler.checkResponses()
         }
         receiveMessage(DATA_RESPONSES, deliverCallback, channel)
-        responseLatch.await(100, TimeUnit.MILLISECONDS)
-        State.tasks--
-        return responses
+        Thread.sleep(100)
     }
 }

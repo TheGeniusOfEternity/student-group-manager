@@ -59,11 +59,7 @@ class ServerCmd(val name: String, override val description: String, override val
                 val bytedData = JsonSerializer.serialize(
                     ExecuteCommandDto(name, params)
                 )
-                responses = ConnectionHandler.fetch(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName))
-                if (responses.isEmpty()) {
-                    State.connectedToServer = false
-                    ConnectionHandler.handleConnectionFail("Connection lost, try to reconnect? (Y/n)")
-                } else if (name == "info") IOHandler printInfoLn State.openedFilesList()
+                ConnectionHandler.fetch(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName), name)
             } else IOHandler printInfoLn "data serialization error: incorrect params's type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }

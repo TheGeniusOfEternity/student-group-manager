@@ -4,10 +4,10 @@ import core.GroupData
 import core.State
 import annotations.Nested
 import collection.StudyGroup
-import com.rabbitmq.client.ConnectionFactory
 import parsers.InputParser
 import validators.GroupDataValidator
 import validators.PropertyValidator
+import java.io.File
 import java.io.IOException
 import java.util.*
 import kotlin.reflect.KClass
@@ -17,14 +17,17 @@ import java.io.FileReader
  * IOHandler of application input/output:
  * - Reads data & script files
  * - Writes output for files and console (mostly)
+ * @property responsesThreads - storage for all command responses in string representation
  */
 
 object IOHandler {
+    val responsesThreads: ArrayList<String?> = ArrayList()
     /**
      * Main function of i/o handle,
      * Works only if [State.isRunning] is true
      */
     fun handle() {
+        checkResponses()
         if (!State.connectedToServer ) {
             ConnectionHandler.handleConnectionFail()
         }
@@ -34,16 +37,20 @@ object IOHandler {
         }
     }
 
+    fun checkResponses() {
+        if (responsesThreads.isNotEmpty()) {
+            responsesThreads.forEach { printInfoLn(it) }
+            responsesThreads.clear()
+        }
+    }
+
     fun getServerAddress() {
         State.tasks++
         while (State.host == null) {
             IOHandler printInfoLn "Specify server ipv4 address:"
             IOHandler printInfo "& "
             val input = readln()
-            if (isValidIPv4(input)) {
-                State.host = input
-                ConnectionHandler.factory = ConnectionFactory().apply { this.host = State.host }
-            }
+            if (isValidIPv4(input)) State.host = input
             else printInfoLn("Incorrect IPv4 address.")
         }
         State.tasks--
@@ -132,6 +139,20 @@ object IOHandler {
             IOHandler printInfoLn "input error: file $filename not found"
         }
         return response
+    }
+
+    /**
+     * Loads auth credentials for connection to broker from .env file
+     */
+    fun loadCredentials() {
+        val envFile = File(".env")
+        if (envFile.exists()) {
+            envFile.readLines()
+                .forEach { line ->
+                    State.credentials[line.split("=")[0]] = line.split("=")[1]
+                }
+            this printInfoLn ".env file successfully loaded"
+        } else this printInfoLn ".env file not found"
     }
 
     infix fun printInfo(message: String?): Unit = print(message)

@@ -34,6 +34,7 @@ dependencies {
     implementation("org.slf4j:slf4j-nop:2.0.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.5.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.5.1")
 }
 
 tasks.test {

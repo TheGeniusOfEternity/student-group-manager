@@ -24,6 +24,7 @@ fun main() {
     try {
         while (State.isRunning) {
             IOHandler.handle()
+            Thread.sleep(100)
         }
         exitProcess(0)
     } catch (e: IOException) {
@@ -36,6 +37,7 @@ fun main() {
  */
 fun loadProgram() {
     State.isRunning = true
+    IOHandler.loadCredentials()
     IOHandler.getServerAddress()
     ConnectionHandler.initializeConnection()
 }

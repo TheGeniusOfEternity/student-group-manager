@@ -5,18 +5,22 @@ import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
     private const val DATA_REQUESTS = "data-requests"
     const val DATA_RESPONSES = "data-responses"
-    private val factory = ConnectionFactory().apply { this.host = "localhost" }
+    private val factory = ConnectionFactory()
     var currentConnection: Connection? = null
     fun initializeConnection() {
         try {
-            factory.apply { isAutomaticRecoveryEnabled = false }
+            factory.apply {
+                isAutomaticRecoveryEnabled = false
+                this.host = "localhost"
+                this.username = State.credentials["RABBITMQ_USERNAME"] ?: error("RABBITMQ_USERNAME not set")
+                this.password = State.credentials["RABBITMQ_PASSWORD"] ?: error("RABBITMQ_PASSWORD not set")
+            }
             currentConnection = factory.newConnection("server")
             val channel = currentConnection?.createChannel()
             channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
@@ -30,17 +34,20 @@ object ConnectionHandler {
                     IOHandler printInfoLn "GOIDA requested, sending response..."
                     val properties = AMQP.BasicProperties.Builder().appId(delivery.properties.appId).build()
                     channel?.basicPublish("", HEALTH_CHECK_RESPONSES, properties, "Yes, I am GOIDA!".toByteArray())
+                    State.isConnectionFailNotified = false
+                    handleRequests()
                 }
             }
             channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
             State.isRunning = true
             IOHandler printInfoLn "Connection to RabbitMQ established"
+            State.isConnectionFailNotified = false
         } catch (e: Exception) {
             handleConnectionFail()
         }
     }
 
-    fun handleRequests() {
+    private fun handleRequests() {
         try {
             val channel = currentConnection?.createChannel()
             val latch = CountDownLatch(1)
@@ -62,8 +69,6 @@ object ConnectionHandler {
                 }
             }
             channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
-            latch.await(100, TimeUnit.MILLISECONDS)
-            channel?.close()
         } catch (e: Exception) {
             handleConnectionFail()
         }
