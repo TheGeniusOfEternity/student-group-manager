@@ -4,7 +4,10 @@ import core.GroupData
 import core.State
 import annotations.Nested
 import collection.StudyGroup
+import dto.CommandParam
+import dto.ExecuteCommandDto
 import parsers.InputParser
+import serializers.JsonSerializer
 import validators.GroupDataValidator
 import validators.PropertyValidator
 import java.io.File
@@ -37,6 +40,9 @@ object IOHandler {
         }
     }
 
+    /**
+     * Check if there are any responses from server and display them, if so
+     */
     fun checkResponses() {
         if (responsesThreads.isNotEmpty()) {
             responsesThreads.forEach { printInfoLn(it) }
@@ -44,6 +50,9 @@ object IOHandler {
         }
     }
 
+    /**
+     * Get IPv4 address of server from user
+     */
     fun getServerAddress() {
         State.tasks++
         while (State.host == null) {
@@ -56,6 +65,10 @@ object IOHandler {
         State.tasks--
     }
 
+    /**
+     * Checks if provided IP is valid for IPv4
+     * @return true, if ip is valid, false otherwise
+     */
     private fun isValidIPv4(ip: String): Boolean {
         val parts = ip.split(".")
         if (ip.trim() == "localhost") return true
@@ -67,6 +80,24 @@ object IOHandler {
             if (num !in 0..255) return false
         }
         return true
+    }
+
+    fun getAuthCredentials() {
+        State.tasks++
+        var username = ""
+        var password = ""
+        while (username.isEmpty()) {
+            IOHandler printInfoLn "Username:"
+            IOHandler printInfo "& "
+            username = readln().trim()
+        }
+        while (password.isEmpty()) {
+            IOHandler printInfoLn "Password:"
+            IOHandler printInfo "& "
+            password = readln().trim()
+        }
+
+        State.tasks--
     }
 
     /**

@@ -34,7 +34,6 @@ class ServerCmd(val name: String, override val description: String, override val
 
     private fun serverExecute(arg: String? = null) {
         val params: CommandParam?
-        val responses: ArrayList<String>
         if (paramTypeName != null && arg == null) IOHandler printInfoLn "$name error - invalid count of arguments"
         else {
             when (paramTypeName) {

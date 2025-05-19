@@ -25,7 +25,11 @@ sealed class CommandParam  {
 /**
  * ExecuteCommandDto Dto - for requesting command execution
  * @property name - Command's name
- * @property params - [CommandParam] additional params of command. Could be [Long] as id, [StudyGroup] as new study group, or simply null
+ * @property params - [CommandParam] additional params of command. Could be:
+ * - [Long] as id,
+ * - [StudyGroup] as new study group,
+ * - [String] as username & password info
+ * - simply null
  */
 @Serializable
 data class ExecuteCommandDto(

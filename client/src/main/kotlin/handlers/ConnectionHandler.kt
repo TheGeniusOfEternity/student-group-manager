@@ -9,6 +9,7 @@ import com.rabbitmq.client.DeliverCallback
 import com.rabbitmq.client.Delivery
 import commands.ServerCmd
 import dto.CommandInfoDto
+import dto.CommandParam
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
@@ -137,16 +138,36 @@ object ConnectionHandler {
         } catch (_: Exception) {}
     }
 
+    fun authorize(username: String, password: String) {
+        IOHandler printInfoLn "Authorization..."
+        val channel = currentConnection?.createChannel()
+        val bytedData = JsonSerializer.serialize(
+            ExecuteCommandDto("authorize", CommandParam.StringParam("$username:$password"))
+        )
+        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to "string"), channel)
+        val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
+            val response = JsonSerializer.deserialize<ArrayList<CommandInfoDto>>(delivery.body)
+            response.forEach{ command ->
+                Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
+            }
+        }
+        receiveMessage(DATA_RESPONSES, deliverCallback, channel)
+    }
+
     fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>, cmdName: String? = null) {
         if (currentConnection?.isOpen == true) {
             val channel = currentConnection?.createChannel()
             sendMessage(data, queueName, headers, channel)
-            loadResponses(channel, cmdName)
+            val responses = loadResponses(channel, cmdName)
+            if (responses.isEmpty()) {
+                State.connectedToServer = false
+                handleConnectionFail("Lost connection to server, should retry connection? (Y/n): ")
+            }
         } else handleConnectionFail("cmd execution error, broker is offline")
     }
 
-    private fun loadResponses(channel: Channel?, cmdName: String? = null) {
-        var responses: ArrayList<String>
+    private fun loadResponses(channel: Channel?, cmdName: String? = null): ArrayList<String> {
+        var responses: ArrayList<String> = ArrayList()
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
             responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
             responses.forEach { response ->
@@ -157,5 +178,6 @@ object ConnectionHandler {
         }
         receiveMessage(DATA_RESPONSES, deliverCallback, channel)
         Thread.sleep(100)
+        return responses
     }
 }
