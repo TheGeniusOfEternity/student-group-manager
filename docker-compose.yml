@@ -10,7 +10,7 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - sgm-rabbitmq_data:/var/lib/rabbitmq
 
   postgres:
     image: postgres
@@ -18,9 +18,24 @@ services:
     ports:
       - "5432:5432"
     environment:
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - postgres:/var/lib/postgresql/data
+      - sgm-postgres:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:9.0
+    ports:
+      - "8080:80"
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_USER: ${DB_USERNAME}
+      PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: "max06safin@yandex.ru"
+    volumes:
+      - sgm-pgadmin-volume:/var/libs/pgadmin
+
 volumes:
-  rabbitmq_data:
-  postgres:
+  sgm-rabbitmq_data:
+  sgm-pgadmin-volume:
+  sgm-postgres:

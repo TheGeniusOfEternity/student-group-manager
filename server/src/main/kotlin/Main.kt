@@ -1,5 +1,6 @@
 import collection.CollectionInfo
 import handlers.ConnectionHandler
+import handlers.DatabaseHandler
 import handlers.IOHandler
 import receiver.Receiver
 import java.io.IOException
@@ -34,6 +35,7 @@ fun main() {
     IOHandler.loadCredentials()
     ConnectionHandler.initializeConnection()
     try {
+        DatabaseHandler.setUp()
         Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
         while (State.isRunning) {
             if (IOHandler.responsesThreads.isNotEmpty()) {

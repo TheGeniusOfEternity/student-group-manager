@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class Coordinates (
-    @Pos(31) private var x: Int,
-    @Pos(32) private var y: Long
+    @Pos(31) private val x: Int,
+    @Pos(32) private val y: Long
 ) {
     init {
         require(x > -357)

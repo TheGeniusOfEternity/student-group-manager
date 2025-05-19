@@ -11,22 +11,22 @@ import java.time.LocalDate
  */
 @Serializable
 class StudyGroup(
-    @Pos(10) private var id: Long,
-    @Pos(20) var name: String,
-    @Pos(30) @Nested private var coordinates: Coordinates,
-    @Pos(40) private var studentsCount: Int,
-    @Pos(50) private var transferredStudents: Long?,
-    @Pos(60) private var averageMark: Int?,
-    @Pos(70) private var formOfEducation: FormOfEducation?,
-    @Pos(80) @Nested private var groupAdmin: Person?
+    @Pos(10) private val id: Long,
+    @Pos(20) val name: String,
+    @Pos(30) @Nested private val coordinates: Coordinates,
+    @Pos(40) private val studentsCount: Int,
+    @Pos(50) private val transferredStudents: Long?,
+    @Pos(60) private val averageMark: Int?,
+    @Pos(70) private val formOfEducation: FormOfEducation?,
+    @Pos(80) @Nested private val groupAdmin: Person?
 ): Comparable<StudyGroup> {
     init {
         require(id > 0) { "id must be greater than zero" }
         require(name.isNotBlank()) { "Name cannot be blank" }
         require(studentsCount > 0) { "id must be greater than zero" }
-        require(transferredStudents == null || transferredStudents!! > 0)
+        require(transferredStudents == null || transferredStudents > 0)
             { "transferredStudents must be greater than zero" }
-        require(averageMark == null || averageMark!! > 0)
+        require(averageMark == null || averageMark > 0)
             { "averageMark must be greater than zero" }
     }
     @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now()
