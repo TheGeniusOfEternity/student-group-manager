@@ -12,8 +12,6 @@ import dto.CommandInfoDto
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"

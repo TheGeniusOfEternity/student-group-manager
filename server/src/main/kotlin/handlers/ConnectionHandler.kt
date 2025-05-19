@@ -4,7 +4,6 @@ import com.rabbitmq.client.*
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
-import java.util.concurrent.CountDownLatch
 
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
@@ -50,7 +49,6 @@ object ConnectionHandler {
     private fun handleRequests() {
         try {
             val channel = currentConnection?.createChannel()
-            val latch = CountDownLatch(1)
             var commandRequest: ExecuteCommandDto?
             channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
 
@@ -63,7 +61,6 @@ object ConnectionHandler {
                         if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf(),
                         clientId
                     )
-                    latch.countDown()
                 } catch (e: Exception) {
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
                 }
