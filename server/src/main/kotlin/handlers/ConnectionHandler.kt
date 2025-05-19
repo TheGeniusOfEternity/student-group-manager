@@ -5,6 +5,15 @@ import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
 
+/**
+ * Handles all logic with connection to broker and requests from client
+ * @property HEALTH_CHECK_REQUESTS - name of broker's queue for receiving status check requests from client
+ * @property HEALTH_CHECK_RESPONSES - name of broker's queue for sending response on status check  to client
+ * @property DATA_REQUESTS - name of broker's queue for receiving data requests (command executions) from client
+ * @property DATA_RESPONSES - name of broker's queue for sending response on command execution to client
+ * @property factory - object for connection to broker
+ * @property currentConnection - connection to broker entity
+ */
 object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
@@ -12,6 +21,11 @@ object ConnectionHandler {
     const val DATA_RESPONSES = "data-responses"
     private val factory = ConnectionFactory()
     var currentConnection: Connection? = null
+
+    /**
+     * Tries to connect to broker and enables request listening
+     * Otherwise calls [handleConnectionFail]
+     */
     fun initializeConnection() {
         try {
             factory.apply {
@@ -46,6 +60,10 @@ object ConnectionHandler {
         }
     }
 
+    /**
+     * Listener of client requests - receive message from broker, deserializes it and executes needed command
+     * On error calls [handleConnectionFail]
+     */
     private fun handleRequests() {
         try {
             val channel = currentConnection?.createChannel()
@@ -71,6 +89,9 @@ object ConnectionHandler {
         }
     }
 
+    /**
+     * Sends all responses from [IOHandler.responsesThreads] to client, serializing them to messages and sending them to broker
+     */
     inline fun <reified T> handleResponse(clientId: String, commandResponse: ArrayList<T?>?) {
         val channel = currentConnection?.createChannel()
         val bytedResponse = JsonSerializer.serialize<ArrayList<T?>?>(commandResponse)
@@ -82,6 +103,9 @@ object ConnectionHandler {
         IOHandler.responsesThreads.remove(clientId)
     }
 
+    /**
+     * Called by different connection loss issues. Retries to restore connection until success or server shutdown
+     */
     private fun handleConnectionFail(msg: String? = null) {
         if (currentConnection?.isOpen == true) currentConnection?.close()
         if (!State.isConnectionFailNotified) {
