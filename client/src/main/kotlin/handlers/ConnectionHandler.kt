@@ -43,8 +43,8 @@ object ConnectionHandler {
                     channel?.close()
                     if (State.tasks == 2) {
                         IOHandler printInfoLn "Connection established"
-                        State.tasks--
                         authorize()
+                        State.tasks--
                     }
                 }
             }
@@ -91,8 +91,14 @@ object ConnectionHandler {
     }
 
     private fun sendMessage(data: ByteArray, queueName: String, headers: Map<String, Any?>, channel: Channel?) {
+        val authHeaders = headers.toMutableMap()
+        if (State.credentials["ACCESS_TOKEN"] == null && State.isAuthorized) {
+            handleAuthorizationFail("Authorization token not set")
+            return
+        }
+        authHeaders["authorization"] = State.credentials["ACCESS_TOKEN"]
         val properties = AMQP.BasicProperties.Builder()
-            .headers(headers)
+            .headers(authHeaders)
             .appId(State.appName)
             .build()
         try {
@@ -155,6 +161,9 @@ object ConnectionHandler {
             if (response[0].contains("authorize")) {
                 handleAuthorizationFail(response[0])
             } else {
+                State.credentials["ACCESS_TOKEN"] = response[0].split('#')[0]
+                State.credentials["REFRESH_TOKEN"] = response[0].split('#')[1]
+                State.isAuthorized = true
                 IOHandler printInfoLn "Welcome back, '${State.credentials["TEMP_USERNAME"]}', GOIDA!"
                 loadCommandsList()
                 handleResponses()
@@ -202,8 +211,23 @@ object ConnectionHandler {
 
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 val responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
+
                 responses.forEach { response ->
-                    IOHandler.responsesThreads.add(response)
+                    if (response.contains("refresh token is expired")) {
+                        handleAuthorizationFail("Auth token is expired, need to reauthenticate")
+                    } else if (response.contains("access token is expired")) {
+                        IOHandler printInfoLn "Access token is expired, need to refresh token"
+                        State.tasks++
+                        val bytedData = JsonSerializer.serialize(
+                            ExecuteCommandDto("refresh", CommandParam.StringParam(
+                                State.credentials["REFRESH_TOKEN"])
+                            )
+                        )
+                        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to "string"), channel)
+                    } else if (response.contains("#")) {
+                        State.credentials["ACCESS_TOKEN"] = response.split('#')[0]
+                        State.credentials["REFRESH_TOKEN"] = response.split('#')[1]
+                    } else IOHandler.responsesThreads.add(response)
                 }
             }
             channel?.basicConsume(DATA_RESPONSES, true, deliverCallback) { _: String? -> }

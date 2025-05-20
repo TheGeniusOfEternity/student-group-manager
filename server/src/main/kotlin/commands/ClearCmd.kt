@@ -10,7 +10,7 @@ import java.util.ArrayList
 class ClearCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.isEmpty()) {
+        if (args.size == 1) {
             Receiver.clearStudyGroups()
             IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Collection was successfully cleared")
         } else {

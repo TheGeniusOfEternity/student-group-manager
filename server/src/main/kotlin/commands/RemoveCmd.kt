@@ -11,7 +11,7 @@ import receiver.Receiver
 class RemoveCmd: Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.size == 1) {
+        if (args.size == 2) {
             val id = (args[0] as CommandParam.LongParam).value
             if (id != null) {
                 if (Receiver.getStudyGroup(id) == null) {

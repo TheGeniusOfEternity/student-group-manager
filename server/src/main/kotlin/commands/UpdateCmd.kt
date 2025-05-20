@@ -11,7 +11,7 @@ import handlers.IOHandler
 class UpdateCmd : Command {
     override val paramTypeName = "StudyGroup"
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.size == 1) {
+        if (args.size == 2) {
             val group = (args[0] as CommandParam.StudyGroupParam).value
                 if (group != null) {
                     if (Receiver.getStudyGroup(group.getId()) != null) {

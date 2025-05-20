@@ -1,5 +1,7 @@
 package services
 
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.security.Keys
@@ -11,23 +13,32 @@ object JwtTokenService {
 
     fun generateAccessToken(userId: String): String {
         val now = Date()
-        val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes expiry for access token
+        val expiryDate = Date(now.time + 10 * 1000) // 15 minutes expiry for access token
         return Jwts.builder()
             .setSubject(userId)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
+            .claim("typ", "access")
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
     }
 
     fun generateRefreshToken(userId: String): String {
         val now = Date()
-        val expiryDate = Date(now.time + 7 * 24 * 60 * 60 * 1000) // 7 days expiry for refresh token
+        val expiryDate = Date(now.time + 60 * 1000) // 7 days expiry for refresh token
         return Jwts.builder()
             .setSubject(userId)
             .setIssuedAt(now)
             .setExpiration(expiryDate)
+            .claim("typ", "refresh")
             .signWith(key, SignatureAlgorithm.HS256)
             .compact()
+    }
+
+    fun decodeToken(token: String): Jws<Claims> {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token) // Проверяет подпись и декодирует
     }
 }

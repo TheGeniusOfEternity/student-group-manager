@@ -1,9 +1,14 @@
 package handlers
 
 import com.rabbitmq.client.*
+import dto.CommandParam
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import serializers.JsonSerializer
+import services.JwtTokenService
+import java.nio.charset.StandardCharsets
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Handles all logic with connection to broker and requests from client
@@ -71,14 +76,51 @@ object ConnectionHandler {
 
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 val clientId = delivery.properties.appId
+                val userId: Long?
+                IOHandler printInfoLn "${delivery.properties.headers["authorization"]} - this is token"
                 try {
+                    if (delivery.properties.headers["authorization"] != null) {
+                        val jwtToken = JwtTokenService.decodeToken(
+                            String((delivery.properties.headers["authorization"] as LongString).bytes,
+                                StandardCharsets.UTF_8)
+                        )
+                        when (jwtToken.body["typ"]) {
+                            "access" -> {
+                                if (jwtToken.body.expiration.before(Date())) {
+                                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                                        .add("authorization error: access token is expired")
+                                    return@DeliverCallback
+                                }
+                            }
+
+                            "refresh" -> {
+                                if (jwtToken.body.expiration.before(Date())) {
+                                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                                        .add("authorization error: refresh token is expired")
+                                    return@DeliverCallback
+                                }
+                            }
+
+                            else -> {
+                                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                                    .add("authorization error: invalid token")
+                                return@DeliverCallback
+                            }
+                        }
+                        userId = jwtToken.body.subject.toLong()
+                    } else userId = null
                     commandRequest = JsonSerializer.deserialize<ExecuteCommandDto>(delivery.body)
+                    val params = buildList {
+                        commandRequest!!.params?.let { add(it) }
+                        userId?.let { add(CommandParam.LongParam(it)) }
+                    }
                     Invoker.run(
                         commandRequest!!.name,
-                        if (commandRequest!!.params != null) listOf(commandRequest!!.params) else listOf(),
+                        params,
                         clientId
                     )
                 } catch (e: Exception) {
+                    IOHandler printInfoLn e.printStackTrace().toString()
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
                 }
             }

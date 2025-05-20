@@ -10,7 +10,7 @@ import receiver.Receiver
 class PrintUniqueAvgMarkCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.isEmpty()) {
+        if (args.size == 1) {
             val avgMarks = mutableListOf<Int?>()
             Receiver.getStudyGroups().forEach { group ->
                 val mark = group.value.getAverageMark()

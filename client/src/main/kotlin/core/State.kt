@@ -13,6 +13,7 @@ import kotlin.collections.HashMap
  */
 object State {
     var isRunning = false
+    var isAuthorized = false
     var connectedToServer = false
     var host: String? = null
     var tasks = 1

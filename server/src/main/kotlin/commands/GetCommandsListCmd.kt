@@ -12,7 +12,7 @@ import invoker.Invoker
 class GetCommandsListCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.isEmpty()) {
+        if (args.size == 1) {
             val commandNames = ArrayList<CommandInfoDto?>()
             Invoker.commands.forEach { command ->
                 if (command.key != "save" && command.key != "get_commands_list") {

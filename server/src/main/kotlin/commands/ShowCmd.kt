@@ -12,7 +12,7 @@ class ShowCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>, clientId: String) {
         var responseMsg = "Collection info: \n\n"
-        if (args.isEmpty()) {
+        if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
             if (groups.isEmpty()) {
                 responseMsg = "No groups found"

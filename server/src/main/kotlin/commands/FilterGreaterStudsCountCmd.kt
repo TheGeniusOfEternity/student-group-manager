@@ -10,7 +10,7 @@ import receiver.Receiver
 class FilterGreaterStudsCountCmd: Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.size == 1) {
+        if (args.size == 2) {
             val amount = (args[0] as CommandParam.LongParam).value
             if (amount != null) {
                 val groups = Receiver.getStudyGroups().filter { it.value.getStudentsCount() > amount }
