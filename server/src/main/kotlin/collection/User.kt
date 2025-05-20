@@ -1,7 +1,7 @@
 package collection
 
 class User(
-    val id: Int,
+    var id: Int?,
     val username: String,
     val passwordHash: String,
 )

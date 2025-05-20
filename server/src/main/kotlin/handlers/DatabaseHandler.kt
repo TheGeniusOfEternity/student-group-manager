@@ -6,10 +6,10 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 object DatabaseHandler {
-    private val dbSchema: String? = State.credentials["DB_SCHEMA"]
+    val dbSchema: String? = State.credentials["DB_SCHEMA"]
     private val dbUsername: String? = State.credentials["DB_USERNAME"]
     private val dbPassword: String? = State.credentials["DB_PASSWORD"]
-    private var connection: Connection? = null
+    var connection: Connection? = null
 
     fun setUp() {
         try {

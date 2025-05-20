@@ -39,5 +39,6 @@ fun loadProgram() {
     State.isRunning = true
     IOHandler.loadCredentials()
     IOHandler.getServerAddress()
+    IOHandler.getAuthCredentials()
     ConnectionHandler.initializeConnection()
 }

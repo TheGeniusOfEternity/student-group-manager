@@ -30,23 +30,19 @@ object IOHandler {
      * Works only if [State.isRunning] is true
      */
     fun handle() {
-        checkResponses()
         if (!State.connectedToServer ) {
             ConnectionHandler.handleConnectionFail()
+        }
+        if (responsesThreads.isNotEmpty()) {
+            responsesThreads.forEach{response ->
+                IOHandler printInfoLn response
+                State.tasks--
+            }
+            responsesThreads.clear()
         }
         if (State.tasks == 1) {
             IOHandler printInfo "& "
             InputParser.parseCommand()
-        }
-    }
-
-    /**
-     * Check if there are any responses from server and display them, if so
-     */
-    fun checkResponses() {
-        if (responsesThreads.isNotEmpty()) {
-            responsesThreads.forEach { printInfoLn(it) }
-            responsesThreads.clear()
         }
     }
 
@@ -84,19 +80,18 @@ object IOHandler {
 
     fun getAuthCredentials() {
         State.tasks++
-        var username = ""
-        var password = ""
-        while (username.isEmpty()) {
+        State.credentials["TEMP_USERNAME"] = ""
+        State.credentials["TEMP_PASSWORD"] = ""
+        while (State.credentials["TEMP_USERNAME"]!!.isEmpty()) {
             IOHandler printInfoLn "Username:"
             IOHandler printInfo "& "
-            username = readln().trim()
+            State.credentials["TEMP_USERNAME"] = readln().trim()
         }
-        while (password.isEmpty()) {
+        while (State.credentials["TEMP_PASSWORD"]!!.isEmpty()) {
             IOHandler printInfoLn "Password:"
             IOHandler printInfo "& "
-            password = readln().trim()
+            State.credentials["TEMP_PASSWORD"] = readln().trim()
         }
-
         State.tasks--
     }
 

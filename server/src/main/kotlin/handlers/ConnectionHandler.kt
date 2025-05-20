@@ -47,13 +47,12 @@ object ConnectionHandler {
                     IOHandler printInfoLn "GOIDA requested, sending response..."
                     val properties = AMQP.BasicProperties.Builder().appId(delivery.properties.appId).build()
                     channel?.basicPublish("", HEALTH_CHECK_RESPONSES, properties, "Yes, I am GOIDA!".toByteArray())
-                    State.isConnectionFailNotified = false
-                    handleRequests()
                 }
             }
             channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
             State.isRunning = true
             IOHandler printInfoLn "Connection to RabbitMQ established"
+            handleRequests()
             State.isConnectionFailNotified = false
         } catch (e: Exception) {
             handleConnectionFail()

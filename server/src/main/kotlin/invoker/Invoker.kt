@@ -13,6 +13,7 @@ import kotlin.collections.HashMap
 object Invoker {
     val commands: HashMap<String, Command> = HashMap()
     init {
+        commands["authorize"] = AuthorizeCmd()
         commands["get_by_id"] = GetByIdCmd()
         commands["get_commands_list"] = GetCommandsListCmd()
         commands["info"] = InfoCmd()

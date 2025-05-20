@@ -39,11 +39,12 @@ object ConnectionHandler {
                 response = String(delivery.body, charset("UTF-8"))
                 if (response == "Yes, I am GOIDA!") {
                     State.connectedToServer = true
+                    channel?.basicAck(delivery.envelope.deliveryTag, false)
+                    channel?.close()
                     if (State.tasks == 2) {
                         IOHandler printInfoLn "Connection established"
                         State.tasks--
-                        loadResponses(channel)
-                        loadCommandsList()
+                        authorize()
                     }
                 }
             }
@@ -106,13 +107,13 @@ object ConnectionHandler {
         try {
             channel?.queueDeclare(queueName, false, false, false, null)
             channel?.basicConsume(queueName, false, filterDeliverCallback(callback, channel)) { _: String? ->}
+            Thread.sleep(200)
         } catch (e: Exception) {
             handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
         }
     }
 
     private fun loadCommandsList() {
-        IOHandler printInfoLn "Getting available commands..."
         val channel = currentConnection?.createChannel()
         val bytedData = JsonSerializer.serialize(
             ExecuteCommandDto("get_commands_list", null)
@@ -123,8 +124,10 @@ object ConnectionHandler {
             response.forEach{ command ->
                 Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
             }
+            IOHandler printInfoLn "Commands loaded"
         }
         receiveMessage(DATA_RESPONSES, deliverCallback, channel)
+        channel?.close()
     }
 
     private fun filterDeliverCallback(callback: DeliverCallback, channel: Channel?)  = DeliverCallback { consumerTag: String?, delivery: Delivery ->
@@ -133,51 +136,79 @@ object ConnectionHandler {
             if (props.appId == State.appName) {
                 callback.handle(consumerTag, delivery)
                 channel?.basicAck(delivery.envelope.deliveryTag, false)
-                channel?.close()
             }
         } catch (_: Exception) {}
     }
 
-    fun authorize(username: String, password: String) {
-        IOHandler printInfoLn "Authorization..."
+    private fun authorize() {
+        State.tasks++
         val channel = currentConnection?.createChannel()
         val bytedData = JsonSerializer.serialize(
-            ExecuteCommandDto("authorize", CommandParam.StringParam("$username:$password"))
+            ExecuteCommandDto("authorize", CommandParam.StringParam(
+                "${State.credentials["TEMP_USERNAME"]}:${State.credentials["TEMP_PASSWORD"]}")
+            )
         )
         sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to "string"), channel)
         val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            val response = JsonSerializer.deserialize<ArrayList<CommandInfoDto>>(delivery.body)
-            response.forEach{ command ->
-                Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
+            val response = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
+            channel?.basicAck(delivery.envelope.deliveryTag, false)
+            if (response[0].contains("authorize")) {
+                handleAuthorizationFail(response[0])
+            } else {
+                IOHandler printInfoLn "Welcome back, '${State.credentials["TEMP_USERNAME"]}', GOIDA!"
+                loadCommandsList()
+                handleResponses()
             }
+            State.tasks--
         }
         receiveMessage(DATA_RESPONSES, deliverCallback, channel)
+        channel?.close()
+    }
+
+    private fun handleAuthorizationFail(msg: String? = null) {
+        while (State.isRunning) {
+            IOHandler printInfoLn msg
+            IOHandler printInfoLn "Retry authorization? (Y/n): "
+            IOHandler printInfo "& "
+            val input = readln()
+            when (input) {
+                "Y" -> {
+                    IOHandler.getAuthCredentials()
+                    authorize()
+                    break
+                }
+                "n" -> {
+                    Invoker.commands["exit"]!!.execute(listOf())
+                    break
+                }
+            }
+        }
     }
 
     fun fetch(data: ByteArray, queueName: String, headers: Map<String, String?>, cmdName: String? = null) {
         if (currentConnection?.isOpen == true) {
             val channel = currentConnection?.createChannel()
             sendMessage(data, queueName, headers, channel)
-            val responses = loadResponses(channel, cmdName)
-            if (responses.isEmpty()) {
-                State.connectedToServer = false
-                handleConnectionFail("Lost connection to server, should retry connection? (Y/n): ")
-            }
+            State.tasks++
+            channel?.close()
         } else handleConnectionFail("cmd execution error, broker is offline")
     }
 
-    private fun loadResponses(channel: Channel?, cmdName: String? = null): ArrayList<String> {
-        var responses: ArrayList<String> = ArrayList()
-        val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-            responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
-            responses.forEach { response ->
-                if (cmdName == "info") IOHandler.responsesThreads.add("$response\n${State.openedFilesList()}")
-                else IOHandler.responsesThreads.add(response)
+
+    private fun handleResponses() {
+        try {
+            val channel = currentConnection?.createChannel()
+            channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
+
+            val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
+                val responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
+                responses.forEach { response ->
+                    IOHandler.responsesThreads.add(response)
+                }
             }
-            IOHandler.checkResponses()
+            channel?.basicConsume(DATA_RESPONSES, true, deliverCallback) { _: String? -> }
+        } catch (e: Exception) {
+            handleConnectionFail()
         }
-        receiveMessage(DATA_RESPONSES, deliverCallback, channel)
-        Thread.sleep(100)
-        return responses
     }
 }

@@ -8,7 +8,7 @@ interface Dao<T>{
      * Add new entity to related table
      * @return id of added entity
      */
-    fun insert(entity: T): Int
+    fun insert(entity: T): Int?
 
     /**
      * Update entity in related table
