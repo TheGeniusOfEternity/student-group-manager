@@ -8,8 +8,9 @@ class RefreshTokenCmd : Command {
     override val paramTypeName = "String"
 
     override fun execute(args: List<CommandParam?>, clientId: String) {
-        if (args.size == 1) {
+        if (args.size == 2) {
             val token = JwtTokenService.decodeToken((args[0] as CommandParam.StringParam).value!!)
+            IOHandler.printInfoLn(token.body["typ"].toString())
             if (token.body["typ"] == "refresh") {
                 IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
                     .add(
@@ -17,7 +18,7 @@ class RefreshTokenCmd : Command {
                                 JwtTokenService.generateRefreshToken(token.body.subject)
                     )
             }
-        } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("refresh_token: invalid count of arguments")
+        } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("refresh_token: invalid count of arguments - ${args.size}")
     }
 
     override fun describe(): String {

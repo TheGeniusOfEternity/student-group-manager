@@ -78,5 +78,13 @@ object DatabaseHandler {
             );
         """.trimIndent())
         IOHandler printInfoLn "Table 'study_groups' created or already exists."
+        statement.executeUpdate("""
+            CREATE TABLE IF NOT EXISTS $dbSchema.refresh_tokens(
+                id SERIAL PRIMARY KEY NOT NULL,
+                user_id INT NOT NULL,
+                token TEXT NOT NULL
+            );
+        """.trimIndent())
+        IOHandler printInfoLn "Table 'refresh_tokens' created or already exists."
     }
 }

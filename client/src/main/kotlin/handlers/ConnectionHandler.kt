@@ -175,6 +175,12 @@ object ConnectionHandler {
     }
 
     private fun handleAuthorizationFail(msg: String? = null) {
+        State.isAuthorized = false
+        State.credentials.remove("ACCESS_TOKEN")
+        State.credentials.remove("REFRESH_TOKEN")
+        State.credentials.remove("TEMP_USERNAME")
+        State.credentials.remove("TEMP_PASSWORD")
+
         while (State.isRunning) {
             IOHandler printInfoLn msg
             IOHandler printInfoLn "Retry authorization? (Y/n): "
@@ -213,20 +219,31 @@ object ConnectionHandler {
                 val responses = JsonSerializer.deserialize<ArrayList<String>>(delivery.body)
 
                 responses.forEach { response ->
-                    if (response.contains("refresh token is expired")) {
-                        handleAuthorizationFail("Auth token is expired, need to reauthenticate")
-                    } else if (response.contains("access token is expired")) {
-                        IOHandler printInfoLn "Access token is expired, need to refresh token"
-                        State.tasks++
+                    if (response.contains("JWT refresh token is expired")) {
+                        handleAuthorizationFail("JWT refresh token is expired, need to reauthenticate")
+                        State.tasks--
+                    } else if (response.contains("JWT access token is expired")) {
+                        IOHandler printInfoLn "JWT access token is expired, need to refresh token"
                         val bytedData = JsonSerializer.serialize(
                             ExecuteCommandDto("refresh", CommandParam.StringParam(
                                 State.credentials["REFRESH_TOKEN"])
                             )
                         )
-                        sendMessage(bytedData, DATA_REQUESTS, mapOf("paramsType" to "string"), channel)
+                        val properties = AMQP.BasicProperties.Builder()
+                            .headers(mapOf("paramsType" to "string", "authorization" to State.credentials["REFRESH_TOKEN"]))
+                            .appId(State.appName)
+                            .build()
+                        try {
+                            channel?.queueDeclare(DATA_REQUESTS, false, false, false, null)
+                            channel?.basicPublish("", DATA_REQUESTS, properties, bytedData)
+                        } catch (e: Exception) {
+                            handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
+                        }
                     } else if (response.contains("#")) {
                         State.credentials["ACCESS_TOKEN"] = response.split('#')[0]
                         State.credentials["REFRESH_TOKEN"] = response.split('#')[1]
+                        IOHandler printInfoLn "Tokens refreshed"
+                        State.tasks--
                     } else IOHandler.responsesThreads.add(response)
                 }
             }

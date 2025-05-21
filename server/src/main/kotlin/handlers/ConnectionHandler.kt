@@ -4,11 +4,13 @@ import com.rabbitmq.client.*
 import dto.CommandParam
 import dto.ExecuteCommandDto
 import invoker.Invoker
+import io.jsonwebtoken.ExpiredJwtException
 import serializers.JsonSerializer
 import services.JwtTokenService
 import java.nio.charset.StandardCharsets
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.reflect.typeOf
 
 /**
  * Handles all logic with connection to broker and requests from client
@@ -77,7 +79,6 @@ object ConnectionHandler {
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 val clientId = delivery.properties.appId
                 val userId: Long?
-                IOHandler printInfoLn "${delivery.properties.headers["authorization"]} - this is token"
                 try {
                     if (delivery.properties.headers["authorization"] != null) {
                         val jwtToken = JwtTokenService.decodeToken(
@@ -86,6 +87,7 @@ object ConnectionHandler {
                         )
                         when (jwtToken.body["typ"]) {
                             "access" -> {
+                                IOHandler printInfoLn "Access token provided"
                                 if (jwtToken.body.expiration.before(Date())) {
                                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
                                         .add("authorization error: access token is expired")
@@ -94,6 +96,7 @@ object ConnectionHandler {
                             }
 
                             "refresh" -> {
+                                IOHandler printInfoLn "Refresh token provided"
                                 if (jwtToken.body.expiration.before(Date())) {
                                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
                                         .add("authorization error: refresh token is expired")
@@ -114,13 +117,16 @@ object ConnectionHandler {
                         commandRequest!!.params?.let { add(it) }
                         userId?.let { add(CommandParam.LongParam(it)) }
                     }
+                    IOHandler printInfoLn "${commandRequest!!.name} cmd"
                     Invoker.run(
                         commandRequest!!.name,
                         params,
                         clientId
                     )
+                } catch (e: ExpiredJwtException) {
+                    val tokenType = e.claims["typ"] as String
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: JWT $tokenType token is expired")
                 } catch (e: Exception) {
-                    IOHandler printInfoLn e.printStackTrace().toString()
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
                 }
             }
