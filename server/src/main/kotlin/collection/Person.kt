@@ -20,6 +20,20 @@ class Person (
     }
 
     /**
+     * @return [name] of person
+     */
+    fun getName() = name
+
+    /**
+     * @return [birthday] of person
+     */
+    fun getBirthday() = birthday
+
+    /**
+     * @return [nationality] of person
+     */
+    fun getNationality() = nationality
+    /**
      * @return [Person] string representation
      */
     override fun toString(): String {

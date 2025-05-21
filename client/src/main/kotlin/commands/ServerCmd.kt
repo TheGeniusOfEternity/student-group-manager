@@ -2,7 +2,6 @@ package commands
 
 import core.GroupData
 import core.Property
-import core.State
 import dto.CommandParam
 import dto.ExecuteCommandDto
 import handlers.ConnectionHandler
@@ -55,11 +54,11 @@ class ServerCmd(val name: String, override val description: String, override val
                 }
             }
             if (compareTypes(params?.javaClass?.typeName, paramTypeName)) {
-                val bytedData = JsonSerializer.serialize(
+                val byteData = JsonSerializer.serialize(
                     ExecuteCommandDto(name, params)
                 )
-                ConnectionHandler.fetch(bytedData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName), name)
-            } else IOHandler printInfoLn "data serialization error: incorrect params's type (${params?.javaClass?.typeName}), $paramTypeName expected"
+                ConnectionHandler.fetch(byteData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName), name)
+            } else IOHandler printInfoLn "data serialization error: incorrect params type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }
 }

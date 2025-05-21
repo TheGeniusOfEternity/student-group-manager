@@ -18,7 +18,8 @@ class StudyGroup(
     @Pos(50) private val transferredStudents: Long?,
     @Pos(60) private val averageMark: Int?,
     @Pos(70) private val formOfEducation: FormOfEducation?,
-    @Pos(80) @Nested private val groupAdmin: Person?
+    @Pos(80) @Nested private val groupAdmin: Person?,
+    @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now(),
 ): Comparable<StudyGroup> {
     init {
         require(id > 0) { "id must be greater than zero" }
@@ -29,8 +30,6 @@ class StudyGroup(
         require(averageMark == null || averageMark > 0)
             { "averageMark must be greater than zero" }
     }
-    @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now()
-
     override fun compareTo(other: StudyGroup): Int {
         return studentsCount.compareTo(other.studentsCount)
     }
@@ -61,6 +60,34 @@ class StudyGroup(
      */
     fun getAverageMark(): Int? {
         return averageMark
+    }
+
+    /**
+     * @return [Coordinates] of study group
+     */
+    fun getCoordinate(): Coordinates {
+        return coordinates
+    }
+
+    /**
+     * @return [Person] of study group
+     */
+    fun getGroupAdmin(): Person? {
+        return groupAdmin
+    }
+
+    /**
+     * @return [FormOfEducation] of study group
+     */
+    fun getFormOfEducation(): FormOfEducation? {
+        return formOfEducation
+    }
+
+    /**
+     * @return [creationDate] of study group
+     */
+    fun getCreationDate(): LocalDate {
+        return creationDate
     }
 
 

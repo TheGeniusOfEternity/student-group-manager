@@ -29,7 +29,7 @@ class AuthorizeCmd : Command {
                         } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: incorrect password")
                     } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: no connection to database")
                 } catch (e: Exception) {
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: ${e.cause}")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: ${e.printStackTrace()}")
                 }
             } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: username or password are missing")
         } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: invalid count of arguments")

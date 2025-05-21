@@ -16,6 +16,15 @@ class Coordinates (
     }
 
     /**
+     * @return x coordinate
+     */
+    fun getX() = x
+
+    /**
+     * @return y coordinate
+     */
+    fun getY() = y
+    /**
      * @return Coordinates string representation
      */
     override fun toString(): String {
