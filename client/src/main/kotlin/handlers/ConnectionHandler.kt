@@ -161,8 +161,8 @@ object ConnectionHandler {
             if (response[0].contains("authorize")) {
                 handleAuthorizationFail(response[0])
             } else {
-                State.credentials["ACCESS_TOKEN"] = response[0].split('#')[0]
-                State.credentials["REFRESH_TOKEN"] = response[0].split('#')[1]
+                State.credentials["ACCESS_TOKEN"] = response[0].split("#&#")[0]
+                State.credentials["REFRESH_TOKEN"] = response[0].split("#&#")[1]
                 State.isAuthorized = true
                 IOHandler printInfoLn "Welcome back, '${State.credentials["TEMP_USERNAME"]}', GOIDA!"
                 loadCommandsList()
@@ -239,9 +239,9 @@ object ConnectionHandler {
                         } catch (e: Exception) {
                             handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
                         }
-                    } else if (response.contains("#")) {
-                        State.credentials["ACCESS_TOKEN"] = response.split('#')[0]
-                        State.credentials["REFRESH_TOKEN"] = response.split('#')[1]
+                    } else if (response.contains("#&#")) {
+                        State.credentials["ACCESS_TOKEN"] = response.split("#&#")[0]
+                        State.credentials["REFRESH_TOKEN"] = response.split("#&#")[1]
                         IOHandler printInfoLn "Tokens refreshed"
                         State.tasks--
                     } else IOHandler.responsesThreads.add(response)

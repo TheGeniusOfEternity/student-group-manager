@@ -25,7 +25,7 @@ class AuthorizeCmd : Command {
                         if (user.id != null) {
                             val accessToken = JwtTokenService.generateAccessToken(user.id!!.toString())
                             val refreshToken = JwtTokenService.generateRefreshToken(user.id!!.toString())
-                            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("$accessToken#$refreshToken")
+                            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("$accessToken#&#$refreshToken")
                         } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: incorrect password")
                     } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: no connection to database")
                 } catch (e: Exception) {

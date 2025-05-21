@@ -56,10 +56,10 @@ class UserDao(private val connection: Connection): Dao<User> {
         return list
     }
 
-    override fun getById(id: Int): User? {
+    override fun getById(id: Long): User? {
         val stmt = connection.prepareStatement("SELECT * FROM ?.users WHERE id = ?")
         stmt.setString(1, DatabaseHandler.dbSchema)
-        stmt.setInt(2, id)
+        stmt.setLong(2, id)
         val rs = stmt.executeQuery()
         return if (rs.next()) {
             User(

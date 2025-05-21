@@ -1,7 +1,9 @@
 package receiver
 
 import collection.*
+import dao.StudyGroupDao
 import handlers.IOHandler
+import handlers.DatabaseHandler
 import java.util.*
 
 /**
@@ -12,17 +14,17 @@ object Receiver {
     private val stdGroupCollection: TreeMap<Long, StudyGroup> = TreeMap()
 
     /**
-     * Load studyGroups from file via [IOHandler.handleFileInput]
-     * @param filename - Path to file
+     * Load studyGroups from file via [DatabaseHandler]
      */
-    fun loadFromFile(filename: String) {
-        IOHandler.handleFileInput(filename, null)?.forEach { group ->
-            if (group != null) {
-                stdGroupCollection[group.getId()] = group
-                IOHandler printInfoLn "Group #${group.getId()} has been loaded successfully"
+    fun loadFromDatabase() {
+        if (DatabaseHandler.connection != null) {
+            val studyGroupDao = StudyGroupDao(DatabaseHandler.connection!!)
+            val groups = studyGroupDao.getAll()
+            groups.forEach { studyGroup ->
+                stdGroupCollection[studyGroup.getId()] = studyGroup
             }
+            CollectionInfo.updateElementsCount()
         }
-        CollectionInfo.updateElementsCount()
     }
 
     /**

@@ -5,6 +5,7 @@ import dto.CommandParam
 import dto.ExecuteCommandDto
 import invoker.Invoker
 import io.jsonwebtoken.ExpiredJwtException
+import receiver.Receiver
 import serializers.JsonSerializer
 import services.JwtTokenService
 import java.nio.charset.StandardCharsets
@@ -123,6 +124,7 @@ object ConnectionHandler {
                         params,
                         clientId
                     )
+                    Receiver.loadFromDatabase()
                 } catch (e: ExpiredJwtException) {
                     val tokenType = e.claims["typ"] as String
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: JWT $tokenType token is expired")

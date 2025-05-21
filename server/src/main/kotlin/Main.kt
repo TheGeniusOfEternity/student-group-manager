@@ -36,7 +36,7 @@ fun main() {
     ConnectionHandler.initializeConnection()
     try {
         DatabaseHandler.setUp()
-        Receiver.loadFromFile(CollectionInfo.getDefaultFileName())
+        Receiver.loadFromDatabase()
         while (State.isRunning) {
             if (IOHandler.responsesThreads.isNotEmpty()) {
                 IOHandler printInfoLn IOHandler.responsesThreads.keys.toString()

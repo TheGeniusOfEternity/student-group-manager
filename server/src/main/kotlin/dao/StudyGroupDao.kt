@@ -75,8 +75,7 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
     }
 
     override fun getAll(): List<StudyGroup> {
-        val stmt = connection.prepareStatement("SELECT * FROM ?.study_groups")
-        stmt.setString(1, DatabaseHandler.dbSchema)
+        val stmt = connection.prepareStatement("SELECT * FROM ${DatabaseHandler.dbSchema}.study_groups")
         val rs = stmt.executeQuery()
         val list = mutableListOf<StudyGroup>()
         while (rs.next()) {
@@ -87,12 +86,24 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
         return list
     }
 
-    override fun getById(id: Int): StudyGroup? {
-        val stmt = connection.prepareStatement("SELECT * FROM ?.users WHERE id = ?")
+    override fun getById(id: Long): StudyGroup? {
+        val stmt = connection.prepareStatement("SELECT * FROM ?.study_groups WHERE id = ?")
         stmt.setString(1, DatabaseHandler.dbSchema)
-        stmt.setInt(2, id)
+        stmt.setLong(2, id)
         val rs = stmt.executeQuery()
         return if (rs.next()) loadGroupFromDatabase(rs) else null
+    }
+
+    fun getUsernameByGroupId(id: Long): String? {
+        val stmt = connection.prepareStatement("""
+            SELECT ${DatabaseHandler.dbSchema}.users.username 
+            FROM ${DatabaseHandler.dbSchema}.study_groups 
+            JOIN ${DatabaseHandler.dbSchema}.users 
+            ON users.id = user_id WHERE ${DatabaseHandler.dbSchema}.study_groups.id = ?
+        """.trimIndent())
+        stmt.setLong(1, id)
+        val rs = stmt.executeQuery()
+        return if (rs.next()) rs.getString("username") else null
     }
 
     private fun loadGroupFromDatabase(rs: ResultSet): StudyGroup? {
@@ -105,11 +116,16 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
                     y = rs.getLong("coordinates_y"),
                 ),
                 studentsCount = rs.getInt("students_count"),
-                transferredStudents = rs.getLong("transferred_students"),
-                averageMark = rs.getInt("average_mark"),
-                formOfEducation = FormOfEducation.valueOf(rs.getString("form_of_education")),
-                groupAdmin = Person(
-                    name = rs.getString("group_admin_name"),
+                transferredStudents = if (rs.getLong("transferred_students") == 0L) null
+                else rs.getLong("transferred_students"),
+                averageMark = if (rs.getInt("average_mark") == 0) null
+                else rs.getInt("average_mark"),
+                formOfEducation = try {
+                    FormOfEducation.valueOf(rs.getString("form_of_education") ?: "")
+                } catch (e: IllegalArgumentException) { null },
+                groupAdmin = if (rs.getString("group_admin_name") == null) null
+                else Person(
+                    name = rs.getString("group_admin_name")!!,
                     birthday = Date.valueOf(rs.getString("group_admin_birthday")),
                     nationality = Country.valueOf(rs.getString("group_admin_nationality"))
                 ),

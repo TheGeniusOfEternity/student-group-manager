@@ -14,7 +14,7 @@ class RefreshTokenCmd : Command {
             if (token.body["typ"] == "refresh") {
                 IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
                     .add(
-                        "${JwtTokenService.generateAccessToken(token.body.subject)}#" +
+                        "${JwtTokenService.generateAccessToken(token.body.subject)}#&#" +
                                 JwtTokenService.generateRefreshToken(token.body.subject)
                     )
             }

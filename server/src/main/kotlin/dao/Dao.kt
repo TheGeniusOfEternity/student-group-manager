@@ -29,5 +29,5 @@ interface Dao<T>{
     /**
      * Get entity by its id
      */
-    fun getById(id: Int): T?
+    fun getById(id: Long): T?
 }
