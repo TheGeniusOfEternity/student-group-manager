@@ -3,6 +3,7 @@ package dao
 import collection.*
 import handlers.DatabaseHandler
 import handlers.IOHandler
+import receiver.Receiver
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
@@ -58,7 +59,7 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
                 group_admin_birthday = ?,
                 group_admin_nationality = ?,
                 creation_date = ?,
-                userId = ?
+                user_id = ?
             WHERE id = ? RETURNING id""".trimIndent()
         )
         fillPlaceholders(stmt, entity, userId)
@@ -87,23 +88,27 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
     }
 
     override fun getById(id: Long): StudyGroup? {
-        val stmt = connection.prepareStatement("SELECT * FROM ?.study_groups WHERE id = ?")
-        stmt.setString(1, DatabaseHandler.dbSchema)
-        stmt.setLong(2, id)
+        val stmt = connection.prepareStatement("SELECT * FROM ${DatabaseHandler.dbSchema}.study_groups WHERE id = ?")
+        stmt.setLong(1, id)
         val rs = stmt.executeQuery()
         return if (rs.next()) loadGroupFromDatabase(rs) else null
     }
 
-    fun getUsernameByGroupId(id: Long): String? {
+    fun getUserByGroupId(id: Long): User? {
         val stmt = connection.prepareStatement("""
-            SELECT ${DatabaseHandler.dbSchema}.users.username 
+            SELECT *
             FROM ${DatabaseHandler.dbSchema}.study_groups 
             JOIN ${DatabaseHandler.dbSchema}.users 
             ON users.id = user_id WHERE ${DatabaseHandler.dbSchema}.study_groups.id = ?
         """.trimIndent())
         stmt.setLong(1, id)
         val rs = stmt.executeQuery()
-        return if (rs.next()) rs.getString("username") else null
+        return if (rs.next()) User(
+            rs.getInt("user_id"),
+            rs.getString("username"),
+            rs.getString("password_hash"),
+        )
+        else null
     }
 
     private fun loadGroupFromDatabase(rs: ResultSet): StudyGroup? {

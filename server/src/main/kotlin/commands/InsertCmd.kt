@@ -15,10 +15,10 @@ class InsertCmd : Command {
         if (args.size == 2) {
             val group = (args[0] as CommandParam.StudyGroupParam).value
             if (group != null) {
-                if (Receiver.getStudyGroup(group.getId()) != null) {
+                val groupDao = StudyGroupDao(DatabaseHandler.connection!!)
+                if (groupDao.getById(group.getId()) != null) {
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert error: group already exists. Type 'update' to rewrite the group")
                 } else {
-                    val groupDao = StudyGroupDao(DatabaseHandler.connection!!)
                     val groupId = groupDao.insert(group, (args[1] as CommandParam.LongParam).value!!.toInt())
                     if (groupId != null) IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Successfully added new group, type 'show' to see all groups")
                     else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert error: SQL query failed")

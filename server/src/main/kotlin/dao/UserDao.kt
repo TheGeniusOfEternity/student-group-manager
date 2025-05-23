@@ -41,8 +41,7 @@ class UserDao(private val connection: Connection): Dao<User> {
     }
 
     override fun getAll(): List<User> {
-        val stmt = connection.prepareStatement("SELECT * FROM ?.users")
-        stmt.setString(1, DatabaseHandler.dbSchema)
+        val stmt = connection.prepareStatement("SELECT * FROM ${DatabaseHandler.dbSchema}.users")
         val rs = stmt.executeQuery()
         val list = mutableListOf<User>()
         while (rs.next()) {

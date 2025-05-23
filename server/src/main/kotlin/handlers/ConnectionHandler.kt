@@ -129,6 +129,7 @@ object ConnectionHandler {
                     val tokenType = e.claims["typ"] as String
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: JWT $tokenType token is expired")
                 } catch (e: Exception) {
+                    IOHandler printInfoLn e.printStackTrace().toString()
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
                 }
             }

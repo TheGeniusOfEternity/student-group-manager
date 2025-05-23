@@ -13,7 +13,7 @@ object JwtTokenService {
 
     fun generateAccessToken(userId: String): String {
         val now = Date()
-        val expiryDate = Date(now.time + 120 * 1000) // 15 minutes expiry for access token
+        val expiryDate = Date(now.time + 30 * 1000) // 15 minutes expiry for access token
         return Jwts.builder()
             .setSubject(userId)
             .setIssuedAt(now)

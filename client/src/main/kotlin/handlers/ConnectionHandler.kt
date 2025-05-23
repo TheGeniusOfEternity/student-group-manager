@@ -175,6 +175,7 @@ object ConnectionHandler {
     }
 
     private fun handleAuthorizationFail(msg: String? = null) {
+        var message = msg ?: "Authorization failed"
         State.isAuthorized = false
         State.credentials.remove("ACCESS_TOKEN")
         State.credentials.remove("REFRESH_TOKEN")
@@ -182,7 +183,7 @@ object ConnectionHandler {
         State.credentials.remove("TEMP_PASSWORD")
 
         while (State.isRunning) {
-            IOHandler printInfoLn msg
+            IOHandler printInfoLn message
             IOHandler printInfoLn "Retry authorization? (Y/n): "
             IOHandler printInfo "& "
             val input = readln()
@@ -196,6 +197,7 @@ object ConnectionHandler {
                     Invoker.commands["exit"]!!.execute(listOf())
                     break
                 }
+                else -> message = "Incorrect option"
             }
         }
     }
@@ -244,7 +246,11 @@ object ConnectionHandler {
                         State.credentials["REFRESH_TOKEN"] = response.split("#&#")[1]
                         IOHandler printInfoLn "Tokens refreshed"
                         State.tasks--
-                    } else IOHandler.responsesThreads.add(response)
+                    } else if (response.contains("authorize: incorrect password")) {
+                        handleAuthorizationFail(response)
+                        State.tasks--
+                    }
+                    else IOHandler.responsesThreads.add(response)
                 }
             }
             channel?.basicConsume(DATA_RESPONSES, true, deliverCallback) { _: String? -> }

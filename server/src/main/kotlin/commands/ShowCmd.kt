@@ -21,17 +21,14 @@ class ShowCmd: Command {
                 responseMsg = "No groups found"
             } else {
                 groups.forEach { group ->
-                    if (DatabaseHandler.connection != null) {
-                        val studyGroupDao = StudyGroupDao(DatabaseHandler.connection!!)
-                        val groupCreatorName = studyGroupDao.getUsernameByGroupId(group.value.getId())
-                        responseMsg += "${group.value}\nCreator: '$groupCreatorName'\n\n"
-                    } else responseMsg += group.value.toString()
+                    val creatorName = StudyGroupDao(DatabaseHandler.connection!!).getUserByGroupId(group.value.getId())?.username
+                    responseMsg += "${group.value}\nCreated by '$creatorName'\n\n"
                 }
             }
         } else {
             responseMsg = "show: Too many arguments"
         }
-        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(responseMsg.removeSuffix("\n"))
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(responseMsg.removeSuffix("\n\n"))
     }
 
     override fun describe(): String {
