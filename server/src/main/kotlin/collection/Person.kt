@@ -39,6 +39,6 @@ class Person (
     override fun toString(): String {
         return "- Name: $name\n" +
                 "- Birthday: ${SimpleDateFormat("dd.MM.yyyy").format(birthday)}\n" +
-                "- Nationality: $nationality\n"
+                "- Nationality: $nationality"
     }
 }

@@ -156,7 +156,7 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
             stmt.setString(9, entity.getGroupAdmin()!!.getName())
             stmt.setString(11, entity.getGroupAdmin()!!.getNationality().toString())
             if (entity.getGroupAdmin()!!.getBirthday() != null) {
-                stmt.setDate(10, entity.getGroupAdmin()!!.getBirthday() as Date)
+                stmt.setDate(10, Date(entity.getGroupAdmin()!!.getBirthday()!!.time))
             } else stmt.setNull(10, Types.DATE)
         } else {
             stmt.setNull(9, Types.VARCHAR)
