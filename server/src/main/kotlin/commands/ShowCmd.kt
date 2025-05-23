@@ -1,9 +1,6 @@
 package commands
 import collection.StudyGroup
-import dao.StudyGroupDao
-import dao.UserDao
 import dto.CommandParam
-import handlers.DatabaseHandler
 import handlers.IOHandler
 import receiver.Receiver
 import java.util.ArrayList
@@ -17,11 +14,13 @@ class ShowCmd: Command {
         var responseMsg = "Collection info: \n\n"
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
+            val users = Receiver.getUsers()
             if (groups.isEmpty()) {
                 responseMsg = "No groups found"
             } else {
+                IOHandler printInfoLn users.toString()
                 groups.forEach { group ->
-                    val creatorName = StudyGroupDao(DatabaseHandler.connection!!).getUserByGroupId(group.value.getId())?.username
+                    val creatorName = users.entries.find { user -> user.value.id == group.value.getUserId() }?.value?.username
                     responseMsg += "${group.value}\nCreated by '$creatorName'\n\n"
                 }
             }

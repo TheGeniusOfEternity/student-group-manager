@@ -21,6 +21,7 @@ class StudyGroup(
     @Pos(80) @Nested private val groupAdmin: Person?,
     @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now(),
 ): Comparable<StudyGroup> {
+    @Pos(100) private var userId: Int = -1
     init {
         require(id > 0) { "id must be greater than zero" }
         require(name.isNotBlank()) { "Name cannot be blank" }
@@ -35,10 +36,17 @@ class StudyGroup(
     }
 
     /**
-     * @return id of this StudyGroup
+     * @return id of this study group
      */
     fun getId(): Long {
         return id
+    }
+
+    /**
+     * @return user id of this study group
+     */
+    fun getUserId(): Int {
+        return userId
     }
 
     /**
@@ -90,6 +98,12 @@ class StudyGroup(
         return creationDate
     }
 
+    /**
+     * Set exact creator's id
+     */
+    fun setUserId(userId: Int) {
+        this.userId = userId
+    }
 
     /**
      * @return [StudyGroup] string representation

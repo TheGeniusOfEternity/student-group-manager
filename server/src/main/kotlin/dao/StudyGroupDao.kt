@@ -3,7 +3,6 @@ package dao
 import collection.*
 import handlers.DatabaseHandler
 import handlers.IOHandler
-import receiver.Receiver
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
@@ -12,11 +11,16 @@ import java.sql.SQLException
 import java.sql.Types
 import java.time.LocalDate
 
-class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
+object StudyGroupDao : Dao<StudyGroup> {
+    private val connection: Connection = DatabaseHandler.connection!!
+    private val schemaName = DatabaseHandler.getSchemaName()
+    init {
+        require(schemaName.matches(Regex("^[a-zA-Z0-9_]+$"))) { "Invalid schema name" }
+    }
     override fun insert(entity: StudyGroup, userId: Int?): Int? {
         if (userId == null) return null
         val stmt = connection.prepareStatement(
-            """INSERT INTO ${DatabaseHandler.dbSchema}.study_groups (
+            """INSERT INTO $schemaName.study_groups (
                 id,
                 name,
                 coordinates_x,
@@ -46,7 +50,7 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
     override fun update(entity: StudyGroup, userId: Int?): Int? {
         if (userId == null) return null
         val stmt = connection.prepareStatement(
-            """UPDATE ${DatabaseHandler.dbSchema}.study_groups SET 
+            """UPDATE $schemaName.study_groups SET 
                 id = ?,
                 name = ?,
                 coordinates_x = ?,
@@ -69,18 +73,18 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
     }
 
     override fun delete(id: Int) {
-        val stmt = connection.prepareStatement("DELETE FROM ?.study_groups WHERE id = ?")
-        stmt.setString(1, DatabaseHandler.dbSchema)
-        stmt.setInt(2, id)
+        val stmt = connection.prepareStatement("DELETE FROM $schemaName.study_groups WHERE id = ?")
+        stmt.setInt(1, id)
         stmt.executeUpdate()
     }
 
     override fun getAll(): List<StudyGroup> {
-        val stmt = connection.prepareStatement("SELECT * FROM ${DatabaseHandler.dbSchema}.study_groups")
+        val stmt = connection.prepareStatement("SELECT * FROM $schemaName.study_groups")
         val rs = stmt.executeQuery()
         val list = mutableListOf<StudyGroup>()
         while (rs.next()) {
             val group = loadGroupFromDatabase(rs)
+            group?.setUserId(rs.getInt("user_id"))
             if (group != null) list.add(group)
         }
         stmt.close()
@@ -88,27 +92,10 @@ class StudyGroupDao(private val connection: Connection) : Dao<StudyGroup> {
     }
 
     override fun getById(id: Long): StudyGroup? {
-        val stmt = connection.prepareStatement("SELECT * FROM ${DatabaseHandler.dbSchema}.study_groups WHERE id = ?")
+        val stmt = connection.prepareStatement("SELECT * FROM $schemaName.study_groups WHERE id = ?")
         stmt.setLong(1, id)
         val rs = stmt.executeQuery()
         return if (rs.next()) loadGroupFromDatabase(rs) else null
-    }
-
-    fun getUserByGroupId(id: Long): User? {
-        val stmt = connection.prepareStatement("""
-            SELECT *
-            FROM ${DatabaseHandler.dbSchema}.study_groups 
-            JOIN ${DatabaseHandler.dbSchema}.users 
-            ON users.id = user_id WHERE ${DatabaseHandler.dbSchema}.study_groups.id = ?
-        """.trimIndent())
-        stmt.setLong(1, id)
-        val rs = stmt.executeQuery()
-        return if (rs.next()) User(
-            rs.getInt("user_id"),
-            rs.getString("username"),
-            rs.getString("password_hash"),
-        )
-        else null
     }
 
     private fun loadGroupFromDatabase(rs: ResultSet): StudyGroup? {

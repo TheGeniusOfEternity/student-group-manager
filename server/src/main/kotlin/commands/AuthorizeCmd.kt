@@ -3,8 +3,8 @@ package commands
 import collection.User
 import dao.UserDao
 import dto.CommandParam
-import handlers.DatabaseHandler
 import handlers.IOHandler
+import receiver.Receiver
 import services.JwtTokenService
 import java.security.MessageDigest
 
@@ -15,19 +15,16 @@ class AuthorizeCmd : Command {
             val username = (args[0] as CommandParam.StringParam).value?.split(":")?.get(0)
             val password = (args[0] as CommandParam.StringParam).value?.split(":")?.get(1)
             if (username != null && password != null) {
-                val user = User(null, username, hashPassword(password))
+                val currentUser = User(null, username, hashPassword(password))
                 try {
-                    val connection = DatabaseHandler.connection
-                    if (connection != null) {
-                        val existedUser = UserDao(connection).getByUsername(username)
-                        if (existedUser == null)  user.id = UserDao(connection).insert(user)
-                        else if (existedUser.passwordHash == user.passwordHash) user.id = existedUser.id
-                        if (user.id != null) {
-                            val accessToken = JwtTokenService.generateAccessToken(user.id!!.toString())
-                            val refreshToken = JwtTokenService.generateRefreshToken(user.id!!.toString())
-                            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("$accessToken#&#$refreshToken")
-                        } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: incorrect password")
-                    } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: no connection to database")
+                    val existedUser = Receiver.getUsers().entries.find { user -> user.value.username == username }?.value
+                    if (existedUser == null)  currentUser.id = UserDao.insert(currentUser)
+                    else if (existedUser.passwordHash == currentUser.passwordHash) currentUser.id = existedUser.id
+                    if (currentUser.id != null) {
+                        val accessToken = JwtTokenService.generateAccessToken(currentUser.id!!.toString())
+                        val refreshToken = JwtTokenService.generateRefreshToken(currentUser.id!!.toString())
+                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("$accessToken#&#$refreshToken")
+                    } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: incorrect password")
                 } catch (e: Exception) {
                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: ${e.printStackTrace()}")
                 }

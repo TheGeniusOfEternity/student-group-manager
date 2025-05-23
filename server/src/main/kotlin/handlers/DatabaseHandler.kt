@@ -6,7 +6,7 @@ import java.sql.Connection
 import java.sql.DriverManager
 
 object DatabaseHandler {
-    val dbSchema: String? = State.credentials["DB_SCHEMA"]
+    private val dbSchema: String? = State.credentials["DB_SCHEMA"]
     private val dbUsername: String? = State.credentials["DB_USERNAME"]
     private val dbPassword: String? = State.credentials["DB_PASSWORD"]
     var connection: Connection? = null
@@ -86,5 +86,13 @@ object DatabaseHandler {
             );
         """.trimIndent())
         IOHandler printInfoLn "Table 'refresh_tokens' created or already exists."
+    }
+
+    /**
+     * @return schema of database, public by default
+     */
+    fun getSchemaName(): String {
+        if (dbSchema != null) return dbSchema
+        return "public"
     }
 }

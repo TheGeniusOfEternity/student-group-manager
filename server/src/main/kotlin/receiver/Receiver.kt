@@ -2,7 +2,7 @@ package receiver
 
 import collection.*
 import dao.StudyGroupDao
-import handlers.IOHandler
+import dao.UserDao
 import handlers.DatabaseHandler
 import java.util.*
 
@@ -12,16 +12,20 @@ import java.util.*
  */
 object Receiver {
     private val stdGroupCollection: TreeMap<Long, StudyGroup> = TreeMap()
+    private val usersCollection: TreeMap<Int, User> = TreeMap()
 
     /**
      * Load studyGroups from file via [DatabaseHandler]
      */
     fun loadFromDatabase() {
         if (DatabaseHandler.connection != null) {
-            val studyGroupDao = StudyGroupDao(DatabaseHandler.connection!!)
-            val groups = studyGroupDao.getAll()
+            val groups = StudyGroupDao.getAll()
+            val users = UserDao.getAll()
             groups.forEach { studyGroup ->
                 stdGroupCollection[studyGroup.getId()] = studyGroup
+            }
+            users.forEach { user ->
+                usersCollection[user.id!!] = user
             }
             CollectionInfo.updateElementsCount()
         }
@@ -35,6 +39,13 @@ object Receiver {
     }
 
     /**
+     * Get all stored users
+     */
+    fun getUsers(): TreeMap<Int, User> {
+        return usersCollection
+    }
+
+    /**
      * Get [StudyGroup] by key (id)
      */
     fun getStudyGroup(id: Long): StudyGroup? {
@@ -42,13 +53,10 @@ object Receiver {
     }
 
     /**
-     * Add new [StudyGroup] to [stdGroupCollection]
-     * @param key Id of new study group
-     * @param studyGroup new [StudyGroup]
+     * Get [User] by key (id)
      */
-    fun addStudyGroup(key: Long, studyGroup: StudyGroup) {
-        stdGroupCollection[key] = studyGroup
-        CollectionInfo.updateElementsCount()
+    fun getUser(id: Int): User? {
+        return usersCollection[id]
     }
 
     /**
