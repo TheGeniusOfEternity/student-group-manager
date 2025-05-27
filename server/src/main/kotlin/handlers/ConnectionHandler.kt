@@ -8,10 +8,18 @@ import io.jsonwebtoken.ExpiredJwtException
 import receiver.Receiver
 import serializers.JsonSerializer
 import services.JwtTokenService
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.net.InetAddress
+import java.net.NetworkInterface
+import java.net.ServerSocket
+import java.net.Socket
 import java.nio.charset.StandardCharsets
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
-import kotlin.reflect.typeOf
 
 /**
  * Handles all logic with connection to broker and requests from client
@@ -43,27 +51,67 @@ object ConnectionHandler {
                 this.password = State.credentials["RABBITMQ_PASSWORD"] ?: error("RABBITMQ_PASSWORD not set")
             }
             currentConnection = factory.newConnection("server")
-            val channel = currentConnection?.createChannel()
-            channel?.queueDeclare(HEALTH_CHECK_REQUESTS, false, false, false, null)
-            channel?.queueDeclare(HEALTH_CHECK_RESPONSES, false, false, false, null)
-            channel?.queuePurge(HEALTH_CHECK_REQUESTS)
-            channel?.queuePurge(HEALTH_CHECK_RESPONSES)
-
-            val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
-                val response = String(delivery.body, charset("UTF-8"))
-                if (response == "Are you GOIDA?") {
-                    IOHandler printInfoLn "GOIDA requested, sending response..."
-                    val properties = AMQP.BasicProperties.Builder().appId(delivery.properties.appId).build()
-                    channel?.basicPublish("", HEALTH_CHECK_RESPONSES, properties, "Yes, I am GOIDA!".toByteArray())
-                }
-            }
-            channel?.basicConsume(HEALTH_CHECK_REQUESTS, true, deliverCallback) { _: String? -> }
             State.isRunning = true
             IOHandler printInfoLn "Connection to RabbitMQ established"
+            IOHandler printInfoLn "Server is running on ${getLocalIpAddress()}"
+            Thread {
+                startHeartbeat()
+            }.start()
             handleRequests()
             State.isConnectionFailNotified = false
         } catch (e: Exception) {
             handleConnectionFail()
+        }
+    }
+
+    private fun startHeartbeat(port: Int = 1234, heartbeatTimeoutMs: Long = 1000) {
+        val serverSocket = ServerSocket(port)
+        println("Server listening on port $port")
+
+        val clientsLastHeartbeat = ConcurrentHashMap<Socket, Long>()
+        val clientPool = Executors.newCachedThreadPool()
+        val scheduler = Executors.newSingleThreadScheduledExecutor()
+
+        scheduler.scheduleAtFixedRate({
+            val now = System.currentTimeMillis()
+            clientsLastHeartbeat.entries.removeIf { (socket, lastHeartbeat) ->
+                if (now - lastHeartbeat > heartbeatTimeoutMs) {
+                    println("Client ${socket.inetAddress.hostAddress} timed out. Closing connection.")
+                    try {
+                        socket.close()
+                    } catch (_: Exception) {}
+                    true
+                } else false
+            }
+        }, heartbeatTimeoutMs, heartbeatTimeoutMs, TimeUnit.MILLISECONDS)
+
+        while (State.isRunning) {
+            val clientSocket = serverSocket.accept()
+            println("Client connected: ${clientSocket.inetAddress.hostAddress}")
+            clientsLastHeartbeat[clientSocket] = System.currentTimeMillis()
+
+            clientPool.submit {
+                try {
+                    val input = DataInputStream(clientSocket.getInputStream())
+                    val output = DataOutputStream(clientSocket.getOutputStream())
+
+                    while (!clientSocket.isClosed) {
+                        val message = input.readUTF()
+                        if (message == "PING") {
+                            clientsLastHeartbeat[clientSocket] = System.currentTimeMillis()
+                            output.writeUTF("PONG")
+                            output.flush()
+                        }
+                    }
+                } catch (e: Exception) {
+                    println("Client ${clientSocket.inetAddress.hostAddress} disconnected or error: ${e.message}")
+                } finally {
+                    clientsLastHeartbeat.remove(clientSocket)
+                    try {
+                        clientSocket.close()
+                    } catch (_: Exception) {}
+                }
+            }
         }
     }
 
@@ -79,6 +127,7 @@ object ConnectionHandler {
 
             val deliverCallback = DeliverCallback { _: String?, delivery: Delivery ->
                 val clientId = delivery.properties.appId
+                val correlationId = delivery.properties.correlationId
                 val userId: Long?
                 try {
                     if (delivery.properties.headers["authorization"] != null) {
@@ -91,7 +140,7 @@ object ConnectionHandler {
                                 IOHandler printInfoLn "Access token provided"
                                 if (jwtToken.body.expiration.before(Date())) {
                                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
-                                        .add("authorization error: access token is expired")
+                                        .add(Pair("authorization error: access token is expired", correlationId))
                                     return@DeliverCallback
                                 }
                             }
@@ -100,14 +149,14 @@ object ConnectionHandler {
                                 IOHandler printInfoLn "Refresh token provided"
                                 if (jwtToken.body.expiration.before(Date())) {
                                     IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
-                                        .add("authorization error: refresh token is expired")
+                                        .add(Pair("refresh_token error: refresh token is expired", correlationId))
                                     return@DeliverCallback
                                 }
                             }
 
                             else -> {
                                 IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
-                                    .add("authorization error: invalid token")
+                                    .add(Pair("authorization error: invalid token", correlationId))
                                 return@DeliverCallback
                             }
                         }
@@ -122,15 +171,18 @@ object ConnectionHandler {
                     Invoker.run(
                         commandRequest!!.name,
                         params,
-                        clientId
+                        clientId,
+                        correlationId
                     )
                     Receiver.loadFromDatabase()
                 } catch (e: ExpiredJwtException) {
                     val tokenType = e.claims["typ"] as String
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: JWT $tokenType token is expired")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                        .add(Pair("execution error: JWT $tokenType token is expired", correlationId))
                 } catch (e: Exception) {
                     IOHandler printInfoLn e.printStackTrace().toString()
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("execution error: " + e.message.toString())
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                        .add(Pair("execution error: " + e.message.toString(), correlationId))
                 }
             }
             channel?.basicConsume(DATA_REQUESTS, true, deliverCallback) { _: String? -> }
@@ -142,13 +194,13 @@ object ConnectionHandler {
     /**
      * Sends all responses from [IOHandler.responsesThreads] to client, serializing them to messages and sending them to broker
      */
-    inline fun <reified T> handleResponse(clientId: String, commandResponse: ArrayList<T?>?) {
+    inline fun <reified T> handleResponse(clientId: String, commandResponse: T?, correlationId: String) {
         val channel = currentConnection?.createChannel()
-        val bytedResponse = JsonSerializer.serialize<ArrayList<T?>?>(commandResponse)
-        val properties = AMQP.BasicProperties.Builder().appId(clientId).build()
+        val byteResponse = JsonSerializer.serialize<T?>(commandResponse)
+        val properties = AMQP.BasicProperties.Builder().appId(clientId).correlationId(correlationId).build()
 
         channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
-        channel?.basicPublish("", DATA_RESPONSES, properties, bytedResponse)
+        channel?.basicPublish("", DATA_RESPONSES, properties, byteResponse)
         channel?.close()
         IOHandler.responsesThreads.remove(clientId)
     }
@@ -165,5 +217,25 @@ object ConnectionHandler {
         }
         Thread.sleep(100)
         initializeConnection()
+    }
+
+    private fun getLocalIpAddress(): String? {
+        try {
+            val interfaces = NetworkInterface.getNetworkInterfaces()
+            for (face in interfaces) {
+                val addresses = face.inetAddresses
+                for (addr in addresses) {
+                    if (!addr.isLoopbackAddress && addr is InetAddress) {
+                        val ip = addr.hostAddress
+                        if (ip.indexOf(':') < 0) { // IPv4 check
+                            return ip
+                        }
+                    }
+                }
+            }
+        } catch (ex: Exception) {
+            println("Error getting IP address: ${ex.message}")
+        }
+        return null
     }
 }

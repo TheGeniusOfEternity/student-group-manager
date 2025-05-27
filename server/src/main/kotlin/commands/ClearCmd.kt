@@ -9,13 +9,13 @@ import java.util.ArrayList
  */
 class ClearCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
+        val responseMsg: String
         if (args.size == 1) {
             Receiver.clearStudyGroups()
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Collection was successfully cleared")
-        } else {
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("clear error: invalid count of arguments")
-        }
+            responseMsg = "Collection was successfully cleared"
+        } else responseMsg = "clear error: invalid count of arguments"
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(Pair(responseMsg, correlationId))
     }
 
     override fun describe(): String {

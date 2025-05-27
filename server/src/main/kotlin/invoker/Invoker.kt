@@ -15,7 +15,6 @@ object Invoker {
     init {
         commands["authorize"] = AuthorizeCmd()
         commands["refresh"] = RefreshTokenCmd()
-        commands["get_by_id"] = GetByIdCmd()
         commands["get_commands_list"] = GetCommandsListCmd()
         commands["info"] = InfoCmd()
         commands["show"] = ShowCmd()
@@ -33,11 +32,11 @@ object Invoker {
     /**
      * Initiates [Command] execution
      */
-    fun run(commandName: String, args: List<CommandParam?>, clientId: String) {
+    fun run(commandName: String, args: List<CommandParam?>, clientId: String, correlationId: String) {
         val command: Command? = this.commands[commandName]
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)
-            command.execute(args, clientId)
+            command.execute(args, clientId, correlationId)
         } else {
             println("Command not found: $commandName")
         }

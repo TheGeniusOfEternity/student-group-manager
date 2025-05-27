@@ -33,7 +33,7 @@ fun main() {
 }
 
 /**
- * Sets program's logging, initiates connection to server & enables [State.isRunning]
+ * Setups client application, initiates connection to server & enables [State.isRunning]
  */
 fun loadProgram() {
     State.isRunning = true

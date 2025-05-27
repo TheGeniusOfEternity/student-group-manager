@@ -11,28 +11,30 @@ import handlers.IOHandler
  */
 class UpdateCmd : Command {
     override val paramTypeName = "StudyGroup"
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
+        val responseMsg: String
         if (args.size == 2) {
             val group = (args[0] as CommandParam.StudyGroupParam).value
                 if (group != null) {
                     val groupToUpdate = Receiver.getStudyGroup(group.getId())
-                    if (groupToUpdate != null) {
+                    responseMsg = if (groupToUpdate != null) {
                         if (Receiver.getUser(groupToUpdate.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
                             if (StudyGroupDao.update(group, (args[1] as CommandParam.LongParam).value!!.toInt()) != null) {
-                                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Successfully updated new group, type 'show' to see all groups")
+                                "Successfully updated new group, type 'show' to see all groups"
                             } else {
-                                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: undefined error")
+                                "update error: undefined error"
                             }
-                        } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: only creator can update his group")
+                        } else "update error: only creator can update his group"
                     } else {
-                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: group with this id not found, use 'insert'")
+                        "update error: group with this id not found, use 'insert'"
                     }
                 } else {
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: group data is invalid")
+                    responseMsg = "update error: group data is invalid"
                 }
         } else {
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("update error: invalid count of arguments")
+            responseMsg = "update error: invalid count of arguments"
         }
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(Pair(responseMsg, correlationId))
     }
 
     override fun describe(): String {

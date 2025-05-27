@@ -13,8 +13,10 @@ import kotlin.collections.HashMap
  */
 object State {
     var isRunning = false
-    var isAuthorized = false
+    @Volatile
     var connectedToServer = false
+    @Volatile
+    var isAuthenticated = false
     var host: String? = null
     var tasks = 1
     val appName = "client-${UUID.randomUUID()}"

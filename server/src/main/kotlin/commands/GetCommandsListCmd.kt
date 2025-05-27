@@ -11,7 +11,7 @@ import invoker.Invoker
  */
 class GetCommandsListCmd: Command {
     override val paramTypeName = null
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
         if (args.size == 1) {
             val commandNames = ArrayList<CommandInfoDto?>()
             Invoker.commands.forEach { command ->
@@ -19,9 +19,10 @@ class GetCommandsListCmd: Command {
                     commandNames.add(CommandInfoDto(command.key, command.value.describe(), command.value.paramTypeName))
                 }
             }
-            ConnectionHandler.handleResponse<CommandInfoDto?>(clientId, commandNames)
+            ConnectionHandler.handleResponse<ArrayList<CommandInfoDto?>>(clientId, commandNames, correlationId)
         } else {
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("get_commands_list error: too many arguments")
+            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                .add(Pair("get_commands_list error: too many arguments", correlationId))
         }
     }
 

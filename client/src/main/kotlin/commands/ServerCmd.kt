@@ -57,7 +57,7 @@ class ServerCmd(val name: String, override val description: String, override val
                 val byteData = JsonSerializer.serialize(
                     ExecuteCommandDto(name, params)
                 )
-                ConnectionHandler.fetch(byteData, ConnectionHandler.DATA_REQUESTS, mapOf("paramsType" to paramTypeName), name)
+                ConnectionHandler.sendMessage(byteData, mapOf("param" to paramTypeName), "cmd")
             } else IOHandler printInfoLn "data serialization error: incorrect params type (${params?.javaClass?.typeName}), $paramTypeName expected"
         }
     }

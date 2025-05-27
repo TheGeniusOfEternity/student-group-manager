@@ -1,6 +1,7 @@
 package commands
 
 import collection.StudyGroup
+import dao.StudyGroupDao
 import dto.CommandParam
 import handlers.IOHandler
 import receiver.Receiver
@@ -10,22 +11,32 @@ import receiver.Receiver
  */
 class RemoveCmd: Command {
     override val paramTypeName = "Long"
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
+        val responseMsg: String
         if (args.size == 2) {
             val id = (args[0] as CommandParam.LongParam).value
             if (id != null) {
-                if (Receiver.getStudyGroup(id) == null) {
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove error: group with id $id not found")
+                val group = Receiver.getStudyGroup(id)
+                responseMsg = if (group != null) {
+                    if (Receiver.getUser(group.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
+                        try  {
+                            StudyGroupDao.delete(id.toInt())
+                            "Successfully removed group #$id, type 'show' to see all groups"
+                        } catch (e: Exception) {
+                            "remove error: undefined error"
+                        }
+                    } else "remove error: only creator can delete his group"
                 } else {
-                    Receiver.removeStudyGroup(id)
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Group #$id was removed")
+                    "remove error: group with this id not found"
                 }
             } else {
-                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove error: provided id is not a number")
+                responseMsg = "remove error: provided id is not a number"
             }
         } else {
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("remove: invalid count of arguments.")
+            responseMsg = "remove error: invalid count of arguments."
         }
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+            .add(Pair(responseMsg, correlationId))
     }
 
     override fun describe(): String {

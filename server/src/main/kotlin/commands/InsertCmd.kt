@@ -10,23 +10,25 @@ import receiver.Receiver
  */
 class InsertCmd : Command {
     override val paramTypeName = "StudyGroup"
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
+        val responseMsg: String
         if (args.size == 2) {
             val group = (args[0] as CommandParam.StudyGroupParam).value
             if (group != null) {
                 if (Receiver.getStudyGroup(group.getId()) != null) {
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert error: group already exists. Type 'update' to rewrite the group")
+                    responseMsg = "insert error: group already exists. Type 'update' to rewrite the group"
                 } else {
                     val groupId = StudyGroupDao.insert(group, (args[1] as CommandParam.LongParam).value!!.toInt())
-                    if (groupId != null) IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("Successfully added new group, type 'show' to see all groups")
-                    else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert error: SQL query failed")
+                    responseMsg = if (groupId != null) "Successfully added new group, type 'show' to see all groups"
+                    else "insert error: SQL query failed"
                 }
             } else {
-                IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert error: group data can't be validated")
+                responseMsg = "insert error: group data can't be validated"
             }
         } else {
-            IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("insert: invalid count of arguments")
+            responseMsg = "insert: invalid count of arguments"
         }
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(Pair(responseMsg, correlationId))
     }
 
     override fun describe(): String {

@@ -4,10 +4,7 @@ import core.GroupData
 import core.State
 import annotations.Nested
 import collection.StudyGroup
-import dto.CommandParam
-import dto.ExecuteCommandDto
 import parsers.InputParser
-import serializers.JsonSerializer
 import validators.GroupDataValidator
 import validators.PropertyValidator
 import java.io.File
@@ -30,16 +27,13 @@ object IOHandler {
      * Works only if [State.isRunning] is true
      */
     fun handle() {
-        if (!State.connectedToServer ) {
-            ConnectionHandler.handleConnectionFail()
-        }
         if (responsesThreads.isNotEmpty()) {
             responsesThreads.forEach{response ->
                 IOHandler printInfoLn response
-                State.tasks--
             }
             responsesThreads.clear()
         }
+        if (!State.connectedToServer) ConnectionHandler.handleConnectionFail()
         if (State.tasks == 1) {
             IOHandler printInfo "& "
             InputParser.parseCommand()
@@ -50,7 +44,6 @@ object IOHandler {
      * Get IPv4 address of server from user
      */
     fun getServerAddress() {
-        State.tasks++
         while (State.host == null) {
             IOHandler printInfoLn "Specify server ipv4 address:"
             IOHandler printInfo "& "
@@ -58,7 +51,6 @@ object IOHandler {
             if (isValidIPv4(input)) State.host = input
             else printInfoLn("Incorrect IPv4 address.")
         }
-        State.tasks--
     }
 
     /**
@@ -79,7 +71,6 @@ object IOHandler {
     }
 
     fun getAuthCredentials() {
-        State.tasks++
         State.credentials["TEMP_USERNAME"] = ""
         State.credentials["TEMP_PASSWORD"] = ""
         while (State.credentials["TEMP_USERNAME"]!!.isEmpty()) {
@@ -92,7 +83,6 @@ object IOHandler {
             IOHandler printInfo "& "
             State.credentials["TEMP_PASSWORD"] = readln().trim()
         }
-        State.tasks--
     }
 
     /**
@@ -175,11 +165,24 @@ object IOHandler {
         if (envFile.exists()) {
             envFile.readLines()
                 .forEach { line ->
-                    State.credentials[line.split("=")[0]] = line.split("=")[1]
+                    val trimmedLine = line.trim()
+                    if (trimmedLine.isNotEmpty() && trimmedLine.contains("=")) {
+                        val parts = trimmedLine.split("=", limit = 2)
+                        if (parts.size == 2) {
+                            State.credentials[parts[0]] = parts[1]
+                        } else {
+                            this printInfoLn "Invalid line format (missing value): $line"
+                        }
+                    } else {
+                        this printInfoLn "Skipping invalid or empty line: $line"
+                    }
                 }
             this printInfoLn ".env file successfully loaded"
-        } else this printInfoLn ".env file not found"
+        } else {
+            this printInfoLn ".env file not found"
+        }
     }
+
 
     infix fun printInfo(message: String?): Unit = print(message)
     infix fun printInfoLn(message: String?): Unit = println(message)

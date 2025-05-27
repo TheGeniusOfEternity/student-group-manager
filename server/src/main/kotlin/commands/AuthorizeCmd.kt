@@ -10,7 +10,8 @@ import java.security.MessageDigest
 
 class AuthorizeCmd : Command {
     override val paramTypeName = "String"
-    override fun execute(args: List<CommandParam?>, clientId: String) {
+    override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
+        var responseMsg = ""
         if (args.size == 1) {
             val username = (args[0] as CommandParam.StringParam).value?.split(":")?.get(0)
             val password = (args[0] as CommandParam.StringParam).value?.split(":")?.get(1)
@@ -23,13 +24,15 @@ class AuthorizeCmd : Command {
                     if (currentUser.id != null) {
                         val accessToken = JwtTokenService.generateAccessToken(currentUser.id!!.toString())
                         val refreshToken = JwtTokenService.generateRefreshToken(currentUser.id!!.toString())
-                        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("$accessToken#&#$refreshToken")
-                    } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: incorrect password")
+                        responseMsg = "$accessToken#&#$refreshToken"
+                    } else responseMsg = "authorize: incorrect password"
                 } catch (e: Exception) {
-                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: ${e.printStackTrace()}")
+                    IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }
+                        .add(Pair("authorize: ${e.printStackTrace()}", correlationId))
                 }
-            } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: username or password are missing")
-        } else IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add("authorize: invalid count of arguments")
+            } else responseMsg = "authorize: username or password are missing"
+        } else responseMsg = "authorize: username or password are missing"
+        IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(Pair(responseMsg, correlationId))
     }
 
     override fun describe(): String {
