@@ -32,7 +32,6 @@ object ConnectionHandler {
     private var currentConnection: Connection? = null
     private var publishChannel = currentConnection?.createChannel()
     private var consumeChannel = currentConnection?.createChannel()
-    private var heartLatch = CountDownLatch(1)
 
     private fun registerResponseHandler(key: String, handler: (Delivery) -> Unit) {
         responseHandlers[key] = handler
@@ -80,7 +79,6 @@ object ConnectionHandler {
     }
 
     fun initializeConnection() {
-        heartLatch = CountDownLatch(1)
         factory.apply {
             this.host = State.host
             this.username = State.credentials["RABBITMQ_USERNAME"] ?: error("RABBITMQ_USERNAME not set")
@@ -90,72 +88,23 @@ object ConnectionHandler {
         factory.requestedHeartbeat = 2
 
         try {
-            val socket = Socket()
-            val socketAddress = InetSocketAddress(State.host, 1234)
-            socket.connect(socketAddress, 1000)
-
             currentConnection = factory.newConnection("client")
             publishChannel = currentConnection?.createChannel()
             consumeChannel = currentConnection?.createChannel()
 
             IOHandler printInfoLn "Connected to RabbitMQ established ${State.host}"
 
-            startHeartbeat(socket, heartbeatTimeoutMs = 400)
-            startResponseConsumer()
-
-            val gotBeat = heartLatch.await(2000, TimeUnit.MILLISECONDS)
-
-            if (gotBeat) authorize()
-            else handleConnectionFail()
+            if (!preflightSucceeded()) handleConnectionFail()
+            else {
+                startResponseConsumer()
+                authorize()
+            }
         } catch (e: TimeoutException) {
             handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
         } catch (e: Exception) {
             handleConnectionFail()
         }
     }
-
-    private fun startHeartbeat(
-        socket: Socket,
-        heartbeatIntervalMs: Long = 500,
-        heartbeatTimeoutMs: Int = 1000
-    ) {
-        val output = DataOutputStream(socket.getOutputStream())
-        val input = DataInputStream(socket.getInputStream())
-        socket.soTimeout = heartbeatTimeoutMs
-
-        thread {
-            try {
-                while (State.isRunning) {
-                    output.writeUTF("PING")
-                    output.flush()
-
-                    try {
-                        when (input.readUTF()) {
-                            "PONG" -> {
-                                State.connectedToServer = true
-                                if (heartLatch.count > 0) heartLatch.countDown()
-                            }
-                            else -> {
-                                IOHandler.printInfoLn("Protocol mismatch")
-                                break
-                            }
-                        }
-                    } catch (_: SocketTimeoutException) {
-                        State.connectedToServer = false
-                        break
-                    }
-                    Thread.sleep(heartbeatIntervalMs)
-                }
-            } catch (_: IOException) {
-                State.connectedToServer = false
-            } finally {
-                try {
-                    socket.close()
-                } catch (_: IOException) {}
-            }
-        }
-    }
-
 
     private fun authorize() {
         if (consumeChannel != null) {
@@ -212,6 +161,10 @@ object ConnectionHandler {
 
     fun sendMessage(data: ByteArray, headers: Map<String, Any?>, correlationId: String, refresh: Boolean? = false) {
         if (!State.connectedToServer) return
+        if (!preflightSucceeded()) {
+            handleConnectionFail()
+            return
+        }
         State.tasks++
         val authHeaders = headers.toMutableMap()
         when {
@@ -228,7 +181,7 @@ object ConnectionHandler {
             publishChannel!!.queueDeclare(DATA_REQUESTS, false, false, false, null)
             publishChannel!!.basicPublish("", DATA_REQUESTS, properties, data)
         } catch (e: Exception) {
-            handleConnectionFail("send message - fail")
+            handleConnectionFail()
         }
     }
 
@@ -330,6 +283,40 @@ object ConnectionHandler {
             }
         } catch (e: Exception) {
             return null
+        }
+    }
+
+    private fun preflightSucceeded(): Boolean {
+        val socket = Socket()
+        val socketAddress = InetSocketAddress(State.host, 1234)
+        socket.soTimeout = 1000
+        try {
+            socket.connect(socketAddress, 1000)
+
+            val output = DataOutputStream(socket.getOutputStream())
+            val input = DataInputStream(socket.getInputStream())
+
+            output.writeUTF("PING")
+            output.flush()
+
+            try {
+                when (input.readUTF()) {
+                    "PONG" -> {
+                        State.connectedToServer = true
+                        return true
+                    }
+                    else -> {
+                        IOHandler.printInfoLn("Protocol mismatch")
+                        return false
+                    }
+                }
+            } catch (_: SocketTimeoutException) {
+                State.connectedToServer = false
+                return false
+            }
+        } catch (_: IOException) {
+            State.connectedToServer = false
+            return false
         }
     }
 }

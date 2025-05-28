@@ -13,12 +13,9 @@ import java.io.DataOutputStream
 import java.net.InetAddress
 import java.net.NetworkInterface
 import java.net.ServerSocket
-import java.net.Socket
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
@@ -55,7 +52,7 @@ object ConnectionHandler {
             State.isRunning = true
             IOHandler printInfoLn "Connection to RabbitMQ established"
             IOHandler printInfoLn "Server is running on ${getLocalIpAddress()}"
-            thread { startHeartbeat() }
+            thread { handlePreflight() }
             handleRequests()
             State.isConnectionFailNotified = false
         } catch (e: Exception) {
@@ -63,31 +60,14 @@ object ConnectionHandler {
         }
     }
 
-    private fun startHeartbeat(port: Int = 1234, heartbeatTimeoutMs: Long = 1000) {
+    private fun handlePreflight(port: Int = 1234) {
         val serverSocket = ServerSocket(port)
-        println("Server listening on port $port")
-
-        val clientsLastHeartbeat = ConcurrentHashMap<Socket, Long>()
+        IOHandler printInfoLn "Server listening on port $port"
         val clientPool = Executors.newCachedThreadPool()
-        val scheduler = Executors.newSingleThreadScheduledExecutor()
-
-        scheduler.scheduleAtFixedRate({
-            val now = System.currentTimeMillis()
-            clientsLastHeartbeat.entries.removeIf { (socket, lastHeartbeat) ->
-                if (now - lastHeartbeat > heartbeatTimeoutMs) {
-                    println("Client ${socket.inetAddress.hostAddress} timed out. Closing connection.")
-                    try {
-                        socket.close()
-                    } catch (_: Exception) {}
-                    true
-                } else false
-            }
-        }, heartbeatTimeoutMs, heartbeatTimeoutMs, TimeUnit.MILLISECONDS)
 
         while (State.isRunning) {
             val clientSocket = serverSocket.accept()
-            println("Client connected: ${clientSocket.inetAddress.hostAddress}")
-            clientsLastHeartbeat[clientSocket] = System.currentTimeMillis()
+            IOHandler printInfoLn "Client connected: ${clientSocket.inetAddress.hostAddress}"
 
             clientPool.submit {
                 try {
@@ -97,15 +77,13 @@ object ConnectionHandler {
                     while (!clientSocket.isClosed) {
                         val message = input.readUTF()
                         if (message == "PING") {
-                            clientsLastHeartbeat[clientSocket] = System.currentTimeMillis()
                             output.writeUTF("PONG")
                             output.flush()
                         }
                     }
                 } catch (e: Exception) {
-                    println("Client ${clientSocket.inetAddress.hostAddress} disconnected or error: ${e.message}")
+                    IOHandler printInfoLn "Client ${clientSocket.inetAddress.hostAddress} disconnected or error: ${e.message}"
                 } finally {
-                    clientsLastHeartbeat.remove(clientSocket)
                     try {
                         clientSocket.close()
                     } catch (_: Exception) {}
