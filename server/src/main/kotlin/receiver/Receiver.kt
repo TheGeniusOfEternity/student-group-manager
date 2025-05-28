@@ -19,6 +19,7 @@ object Receiver {
      */
     fun loadFromDatabase() {
         if (DatabaseHandler.connection != null) {
+            stdGroupCollection.clear()
             val groups = StudyGroupDao.getAll()
             val users = UserDao.getAll()
             groups.forEach { studyGroup ->

@@ -123,7 +123,7 @@ object ConnectionHandler {
         val input = DataInputStream(socket.getInputStream())
         socket.soTimeout = heartbeatTimeoutMs
 
-        thread(start = true) {
+        thread {
             try {
                 while (State.isRunning) {
                     output.writeUTF("PING")
@@ -234,7 +234,11 @@ object ConnectionHandler {
 
 
     fun handleConnectionFail(errorMsg: String? = null) {
-        try { if (currentConnection?.isOpen == true) currentConnection?.close() } catch (_: Exception) {}
+        try {
+            if (currentConnection?.isOpen == true) currentConnection?.close()
+            consumeChannel = null
+            publishChannel = null
+        } catch (_: Exception) {}
         var msg = errorMsg ?: "Server is not responding, should retry connection? (Y/n): "
         State.connectedToServer = false
         while (!State.connectedToServer) {

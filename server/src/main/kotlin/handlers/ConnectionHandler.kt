@@ -20,6 +20,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
 
 /**
  * Handles all logic with connection to broker and requests from client
@@ -54,9 +55,7 @@ object ConnectionHandler {
             State.isRunning = true
             IOHandler printInfoLn "Connection to RabbitMQ established"
             IOHandler printInfoLn "Server is running on ${getLocalIpAddress()}"
-            Thread {
-                startHeartbeat()
-            }.start()
+            thread { startHeartbeat() }
             handleRequests()
             State.isConnectionFailNotified = false
         } catch (e: Exception) {
