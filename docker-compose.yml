@@ -23,18 +23,6 @@ services:
     volumes:
       - sgm-postgres:/var/lib/postgresql/data
 
-  pgadmin:
-    image: dpage/pgadmin4:9.0
-    ports:
-      - "8080:80"
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_USER: ${DB_USERNAME}
-      PGADMIN_DEFAULT_PASSWORD: ${DB_PASSWORD}
-      PGADMIN_DEFAULT_EMAIL: "max06safin@yandex.ru"
-    volumes:
-      - sgm-pgadmin-volume:/var/libs/pgadmin
-
 volumes:
   sgm-rabbitmq_data:
   sgm-pgadmin-volume:
