@@ -24,7 +24,6 @@ import kotlin.concurrent.thread
  * @property HEALTH_CHECK_REQUESTS - name of broker's queue for receiving status check requests from client
  * @property HEALTH_CHECK_RESPONSES - name of broker's queue for sending response on status check  to client
  * @property DATA_REQUESTS - name of broker's queue for receiving data requests (command executions) from client
- * @property DATA_RESPONSES - name of broker's queue for sending response on command execution to client
  * @property factory - object for connection to broker
  * @property currentConnection - connection to broker entity
  */
@@ -32,7 +31,6 @@ object ConnectionHandler {
     private const val HEALTH_CHECK_REQUESTS = "health-check-requests"
     private const val HEALTH_CHECK_RESPONSES = "health-check-responses"
     private const val DATA_REQUESTS = "data-requests"
-    const val DATA_RESPONSES = "data-responses"
     private val factory = ConnectionFactory()
     var currentConnection: Connection? = null
 
@@ -176,8 +174,8 @@ object ConnectionHandler {
         val byteResponse = JsonSerializer.serialize<T?>(commandResponse)
         val properties = AMQP.BasicProperties.Builder().appId(clientId).correlationId(correlationId).build()
 
-        channel?.queueDeclare(DATA_RESPONSES, false, false, false, null)
-        channel?.basicPublish("", DATA_RESPONSES, properties, byteResponse)
+        channel?.queueDeclare("data-responses-$clientId", false, false, false, null)
+        channel?.basicPublish("", "data-responses-$clientId", properties, byteResponse)
         channel?.close()
         IOHandler.responsesThreads.remove(clientId)
     }

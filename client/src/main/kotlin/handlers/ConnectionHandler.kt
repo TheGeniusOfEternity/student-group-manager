@@ -26,7 +26,7 @@ import kotlin.concurrent.thread
 
 object ConnectionHandler {
     private const val DATA_REQUESTS = "data-requests"
-    private const val DATA_RESPONSES = "data-responses"
+    private val DATA_RESPONSES = "data-responses-${State.appName}"
     private val responseHandlers = mutableMapOf<String, (Delivery) -> Unit>()
     private var factory: ConnectionFactory = ConnectionFactory()
     private var currentConnection: Connection? = null
@@ -48,27 +48,23 @@ object ConnectionHandler {
                 val deliverCallback = DeliverCallback { _, delivery ->
 
                     val correlationId = delivery.properties.correlationId ?: ""
-                    val clientId = delivery.properties.appId
-
-                    if (State.appName == clientId) {
-                        val handler = responseHandlers[correlationId]
-                        if (handler != null) {
-                            try {
-                                handler(delivery)
-                            } catch (e: Exception) {
-                                println("Error in handler for $correlationId: ${e.printStackTrace()}")
-                                IOHandler printInfoLn JsonSerializer.deserialize<String>(delivery.body)
-                            } finally {
-                                consumeChannel!!.basicAck(delivery.envelope.deliveryTag, false)
-                                if (correlationId != "cmd") responseHandlers.remove(correlationId)
-                                if (State.tasks > 1) State.tasks--
-                            }
-                        } else {
+                    val handler = responseHandlers[correlationId]
+                    if (handler != null) {
+                        try {
+                            handler(delivery)
+                        } catch (e: Exception) {
+                            println("Error in handler for $correlationId: ${e.printStackTrace()}")
+                            IOHandler printInfoLn JsonSerializer.deserialize<String>(delivery.body)
+                        } finally {
                             consumeChannel!!.basicAck(delivery.envelope.deliveryTag, false)
-                            responseHandlers.remove(correlationId)
-                            println("No handler registered for correlationId: $correlationId")
+                            if (correlationId != "cmd") responseHandlers.remove(correlationId)
+                            if (State.tasks > 1) State.tasks--
                         }
-                    } else consumeChannel!!.basicNack(delivery.envelope.deliveryTag, false, true)
+                    } else {
+                        consumeChannel!!.basicAck(delivery.envelope.deliveryTag, false)
+                        responseHandlers.remove(correlationId)
+                        println("No handler registered for correlationId: $correlationId")
+                    }
                 }
                 consumeChannel!!.basicConsume(DATA_RESPONSES, false, deliverCallback)  { _: String? -> }
             } else handleConnectionFail()
@@ -318,5 +314,12 @@ object ConnectionHandler {
             State.connectedToServer = false
             return false
         }
+    }
+
+    fun closeConnection() {
+        try {
+            consumeChannel?.queueDelete(DATA_RESPONSES)
+            if (currentConnection?.isOpen == true) currentConnection?.close()
+        } catch (_: Exception) {}
     }
 }
