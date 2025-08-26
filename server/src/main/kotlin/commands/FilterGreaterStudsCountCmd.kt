@@ -19,7 +19,7 @@ class FilterGreaterStudsCountCmd: Command {
                     responseMsg = "filter_greater_than_students_count error: no group with such amount"
                 } else {
                     groups.forEach{ group ->
-                        responseMsg = group.value.toString()
+                        responseMsg += group.value.toString()
                     }
                 }
             } else responseMsg = "filter_greater_than_students_count error:  is not a number"

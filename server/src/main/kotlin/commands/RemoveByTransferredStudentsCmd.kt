@@ -8,7 +8,7 @@ import receiver.Receiver
 /**
  * Removes study groups with given transferred students amount
  */
-class RemoveByTransfStudsCmd: Command {
+class RemoveByTransferredStudentsCmd: Command {
     override val paramTypeName = "Long"
     override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
         val responseMsg: String
@@ -20,7 +20,7 @@ class RemoveByTransfStudsCmd: Command {
             } else {
                 val group = groups[groups.keys.minOf { it }]
                 responseMsg = if (group != null) {
-                    if (Receiver.getUser(group.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
+                    if (Receiver.getUser(group.getOwnerName())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
                         try  {
                             StudyGroupDao.delete(group.getId().toInt())
                             "Successfully removed group #${group.getId()}, type 'show' to see all groups"

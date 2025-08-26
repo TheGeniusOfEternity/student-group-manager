@@ -209,7 +209,7 @@ object ConnectionHandler {
                 }
             }
         } catch (ex: Exception) {
-            println("Error getting IP address: ${ex.message}")
+            IOHandler printInfoLn "Error getting IP address: ${ex.message}"
         }
         return null
     }

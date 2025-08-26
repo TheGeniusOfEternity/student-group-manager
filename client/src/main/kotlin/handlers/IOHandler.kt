@@ -4,6 +4,12 @@ import core.GroupData
 import core.State
 import annotations.Nested
 import collection.StudyGroup
+import gui.controllers.MainController
+import gui.controllers.PopUpController
+import javafx.animation.Animation
+import javafx.animation.KeyFrame
+import javafx.animation.Timeline
+import javafx.util.Duration
 import parsers.InputParser
 import validators.GroupDataValidator
 import validators.PropertyValidator
@@ -22,34 +28,31 @@ import java.io.FileReader
 
 object IOHandler {
     val responsesThreads: ArrayList<String?> = ArrayList()
+    private var popUpController: PopUpController? = null
+    private val popUpTimeline = Timeline(KeyFrame(Duration.seconds(2.0), {
+        popUpController!!.hidePopUp()
+    }))
     /**
      * Main function of i/o handle,
      * Works only if [State.isRunning] is true
      */
     fun handle() {
         if (responsesThreads.isNotEmpty()) {
+            popUpController = (SceneHandler.controllers["main"] as MainController).popUpController
             responsesThreads.forEach{response ->
-                IOHandler printInfoLn response
+                while (popUpTimeline.status == Animation.Status.RUNNING &&
+                    popUpTimeline.currentTime.toSeconds() < 1)
+                popUpTimeline.stop()
+                if (response != null) {
+                    if (popUpController != null) {
+                        popUpController!!.hidePopUp()
+                        popUpController!!.showPopUp(response)
+                    }
+                }
+                popUpTimeline.cycleCount = 1
+                popUpTimeline.play()
             }
             responsesThreads.clear()
-        }
-        if (!State.connectedToServer) ConnectionHandler.handleConnectionFail()
-        if (State.tasks == 1) {
-            IOHandler printInfo "& "
-            InputParser.parseCommand()
-        }
-    }
-
-    /**
-     * Get IPv4 address of server from user
-     */
-    fun getServerAddress() {
-        while (State.host == null) {
-            IOHandler printInfoLn "Specify server ipv4 address:"
-            IOHandler printInfo "& "
-            val input = readln()
-            if (isValidIPv4(input)) State.host = input
-            else printInfoLn("Incorrect IPv4 address.")
         }
     }
 
@@ -57,7 +60,7 @@ object IOHandler {
      * Checks if provided IP is valid for IPv4
      * @return true, if ip is valid, false otherwise
      */
-    private fun isValidIPv4(ip: String): Boolean {
+    fun isValidIPv4(ip: String): Boolean {
         val parts = ip.split(".")
         if (ip.trim() == "localhost") return true
         if (parts.size != 4) return false
@@ -184,6 +187,6 @@ object IOHandler {
     }
 
 
-    infix fun printInfo(message: String?): Unit = print(message)
+    private infix fun printInfo(message: String?): Unit = print(message)
     infix fun printInfoLn(message: String?): Unit = println(message)
 }

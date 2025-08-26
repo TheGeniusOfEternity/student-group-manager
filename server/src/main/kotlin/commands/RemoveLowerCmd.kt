@@ -20,7 +20,7 @@ class RemoveLowerCmd: Command {
                     val groups = Receiver.getStudyGroups().filter { it.value < comparedGroup }
                     if (groups.isNotEmpty()) {
                         groups.forEach { group ->
-                            responseMsg = if (Receiver.getUser(group.value.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
+                            responseMsg = if (Receiver.getUser(group.value.getOwnerName())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
                                 try  {
                                     StudyGroupDao.delete(id.toInt())
                                     "Successfully removed group #$id"

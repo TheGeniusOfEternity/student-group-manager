@@ -2,13 +2,14 @@ package dao
 
 import collection.*
 import handlers.DatabaseHandler
-import handlers.IOHandler
+import receiver.Receiver
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Types
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 
 object StudyGroupDao : Dao<StudyGroup> {
@@ -39,7 +40,6 @@ object StudyGroupDao : Dao<StudyGroup> {
         fillPlaceholders(stmt, entity, userId)
         try {
             val rs = stmt.executeQuery()
-            IOHandler printInfoLn rs.toString()
             return if (rs.next()) rs.getInt("id") else return null
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -84,7 +84,9 @@ object StudyGroupDao : Dao<StudyGroup> {
         val list = mutableListOf<StudyGroup>()
         while (rs.next()) {
             val group = loadGroupFromDatabase(rs)
-            group?.setUserId(rs.getInt("user_id"))
+            val userId = rs.getInt("user_id")
+            val user = Receiver.getUsers().values.find { user -> user.id == userId }
+            group?.setOwnerName(user?.username)
             if (group != null) list.add(group)
         }
         stmt.close()
@@ -118,8 +120,12 @@ object StudyGroupDao : Dao<StudyGroup> {
                 groupAdmin = if (rs.getString("group_admin_name") == null) null
                 else Person(
                     name = rs.getString("group_admin_name")!!,
-                    birthday = Date.valueOf(rs.getString("group_admin_birthday")),
-                    nationality = Country.valueOf(rs.getString("group_admin_nationality"))
+                    birthday = try {
+                        SimpleDateFormat("yyyy-MM-dd").parse(rs.getString("group_admin_birthday"))
+                    } catch (e: Exception) { null },
+                    nationality = try {
+                        Country.valueOf(rs.getString("group_admin_nationality"))
+                    } catch (e: IllegalArgumentException) { null },
                 ),
                 creationDate = LocalDate.parse(rs.getString("creation_date")),
             )

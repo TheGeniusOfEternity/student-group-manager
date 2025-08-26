@@ -1,6 +1,8 @@
 package core
 
+import collection.StudyGroup
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 
 /**
@@ -8,7 +10,6 @@ import kotlin.collections.HashMap
  * @property isRunning - check if program is running or not
  * @property connectedToServer - is client connect to server, or not
  * @property host - Address to message broker (Rabbit MQ)
- * @property tasks - current running i/o tasks
  * @property credentials - storage for all auth info
  */
 object State {
@@ -18,10 +19,11 @@ object State {
     @Volatile
     var isAuthenticated = false
     var host: String? = null
-    var tasks = 1
     val appName = "client-${UUID.randomUUID()}"
     val credentials: HashMap<String, String> = HashMap()
     private var openedFiles: Stack<Pair<String, Int?>> = Stack()
+    val localCollection: ConcurrentHashMap<Long, StudyGroup> = ConcurrentHashMap()
+    var tempGroup: StudyGroup? = null
 
     /**
      * Add new opened file into [openedFiles]
@@ -61,22 +63,5 @@ object State {
      */
     fun removeOpenedFile() {
         openedFiles.removeLast()
-    }
-    /**
-     * Main function of i/o handle,
-     * Works only if [State.isRunning] is true
-     */
-
-    /**
-     * @return [openedFiles] with only filenames
-     */
-    fun openedFilesList(): String {
-        var output = "Opened Files: "
-        openedFiles.forEach {
-            if (it != null) {
-                output += "${it.first}, "
-            }
-        }
-        return output
     }
 }

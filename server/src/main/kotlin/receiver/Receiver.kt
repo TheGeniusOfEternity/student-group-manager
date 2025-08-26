@@ -20,13 +20,15 @@ object Receiver {
     fun loadFromDatabase() {
         if (DatabaseHandler.connection != null) {
             stdGroupCollection.clear()
-            val groups = StudyGroupDao.getAll()
+            usersCollection.clear()
             val users = UserDao.getAll()
-            groups.forEach { studyGroup ->
-                stdGroupCollection[studyGroup.getId()] = studyGroup
-            }
             users.forEach { user ->
                 usersCollection[user.id!!] = user
+            }
+
+            val groups = StudyGroupDao.getAll()
+            groups.forEach { studyGroup ->
+                stdGroupCollection[studyGroup.getId()] = studyGroup
             }
             CollectionInfo.updateElementsCount()
         }
@@ -56,16 +58,8 @@ object Receiver {
     /**
      * Get [User] by key (id)
      */
-    fun getUser(id: Int): User? {
-        return usersCollection[id]
-    }
-
-    /**
-     * Remove [StudyGroup] from [stdGroupCollection] by its key (id)
-     */
-    fun removeStudyGroup(key: Long) {
-        stdGroupCollection.remove(key)
-        CollectionInfo.updateElementsCount()
+    fun getUser(name: String?): User? {
+        return usersCollection.values.find { user -> user.username == name }
     }
 
     /**

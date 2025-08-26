@@ -24,14 +24,14 @@ class StudyGroupTest {
         )
         assertNotNull(group)
         assertEquals(1, group.getId())
-        assertEquals("Test Group", group.name)
+        assertEquals("Test Group", group.getName())
     }
 
     @Test
     fun `test invalid id creation`() {
         assertFailsWith<IllegalArgumentException> {
             StudyGroup(
-                id = -1,
+                id = -2,
                 name = "Test Group",
                 coordinates = Coordinates(10, 20L),
                 studentsCount = 10,
@@ -40,7 +40,7 @@ class StudyGroupTest {
                 formOfEducation = FormOfEducation.FULL_TIME_EDUCATION,
                 groupAdmin = Person(
                     "John Doe",
-                    SimpleDateFormat("dd.mm.yyyy").parse("23.10.2006"),
+                    SimpleDateFormat("yyyy-mm-dd").parse("2006-10-23"),
                     Country.CHINA
                 )
             )
@@ -60,7 +60,7 @@ class StudyGroupTest {
                 formOfEducation = FormOfEducation.FULL_TIME_EDUCATION,
                 groupAdmin = Person(
                     "John Doe",
-                    SimpleDateFormat("dd.mm.yyyy").parse("23.10.2006"),
+                    SimpleDateFormat("yyyy-mm-dd").parse("2006-10-23"),
                     Country.CHINA
                 )
             )
@@ -80,7 +80,7 @@ class StudyGroupTest {
                 formOfEducation = FormOfEducation.FULL_TIME_EDUCATION,
                 groupAdmin = Person(
                     "John Doe",
-                    SimpleDateFormat("dd.mm.yyyy").parse("23.10.2006"),
+                    SimpleDateFormat("yyyy-mm-dd").parse("2006-10-23"),
                     Country.CHINA
                 )
             )

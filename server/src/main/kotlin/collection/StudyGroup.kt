@@ -20,12 +20,12 @@ class StudyGroup(
     @Pos(70) private val formOfEducation: FormOfEducation?,
     @Pos(80) @Nested private val groupAdmin: Person?,
     @Pos(90) @Serializable(LocalDateSerializer::class) private var creationDate: LocalDate = LocalDate.now(),
+    @Pos(100) private var ownerName: String? = null
 ): Comparable<StudyGroup> {
-    @Pos(100) private var userId: Int = -1
     init {
-        require(id > 0) { "id must be greater than zero" }
+        require(id > 0) { "id must be greater than zero, provided - $id" }
         require(name.isNotBlank()) { "Name cannot be blank" }
-        require(studentsCount > 0) { "id must be greater than zero" }
+        require(studentsCount > 0) { "studentsCount must be greater than zero" }
         require(transferredStudents == null || transferredStudents > 0)
             { "transferredStudents must be greater than zero" }
         require(averageMark == null || averageMark > 0)
@@ -45,8 +45,8 @@ class StudyGroup(
     /**
      * @return user id of this study group
      */
-    fun getUserId(): Int {
-        return userId
+    fun getOwnerName(): String? {
+        return ownerName
     }
 
     /**
@@ -101,8 +101,8 @@ class StudyGroup(
     /**
      * Set exact creator's id
      */
-    fun setUserId(userId: Int) {
-        this.userId = userId
+    fun setOwnerName(name: String?) {
+        this.ownerName = name
     }
 
     /**

@@ -82,17 +82,4 @@ object InputParser: Parser<FileReader> {
             index = data.read()
         }
     }
-
-    /**
-     * Reads commands and invoke them to execute
-     */
-    fun parseCommand() {
-        val commandName: String
-        val input = readlnOrNull()
-        if (!input.isNullOrEmpty()) {
-            val query: List<String> = input.trim().split(" ")
-            commandName = query.first()
-            Invoker.run(commandName, query.drop(1))
-        }
-    }
 }

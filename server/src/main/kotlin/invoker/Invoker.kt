@@ -3,6 +3,7 @@ package invoker
 import collection.CollectionInfo
 import commands.*
 import dto.CommandParam
+import handlers.IOHandler
 import kotlin.collections.HashMap
 
 /**
@@ -24,7 +25,7 @@ object Invoker {
         commands["clear"] = ClearCmd()
         commands["history"] = HistoryCmd()
         commands["remove_lower"] = RemoveLowerCmd()
-        commands["remove_any_by_transferred_students"] = RemoveByTransfStudsCmd()
+        commands["remove_any_by_transferred_students"] = RemoveByTransferredStudentsCmd()
         commands["filter_greater_than_students_count"] = FilterGreaterStudsCountCmd()
         commands["print_unique_average_mark"] = PrintUniqueAvgMarkCmd()
     }
@@ -37,8 +38,6 @@ object Invoker {
         if (command != null) {
             CollectionInfo.updateCommandHistory(commandName)
             command.execute(args, clientId, correlationId)
-        } else {
-            println("Command not found: $commandName")
-        }
+        } else IOHandler printInfoLn "Command not found: $commandName"
     }
 }

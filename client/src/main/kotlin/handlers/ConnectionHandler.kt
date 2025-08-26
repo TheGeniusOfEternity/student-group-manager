@@ -1,5 +1,6 @@
 package handlers
 
+import collection.StudyGroup
 import core.State
 import com.rabbitmq.client.AMQP
 import com.rabbitmq.client.Connection
@@ -10,6 +11,7 @@ import commands.ServerCmd
 import dto.CommandInfoDto
 import dto.CommandParam
 import dto.ExecuteCommandDto
+import gui.controllers.AuthController
 import invoker.Invoker
 import serializers.JsonSerializer
 import java.io.DataInputStream
@@ -42,6 +44,7 @@ object ConnectionHandler {
             val response = checkJwt(delivery)
             if (response != null) IOHandler.responsesThreads.add(response)
         }
+
         try {
             if (consumeChannel != null) {
                 consumeChannel!!.queueDeclare(DATA_RESPONSES, false, false, false, null)
@@ -53,28 +56,25 @@ object ConnectionHandler {
                         try {
                             handler(delivery)
                         } catch (e: Exception) {
-                            println("Error in handler for $correlationId: ${e.printStackTrace()}")
+                            IOHandler printInfoLn "Error in handler for $correlationId: ${e.printStackTrace()}"
                             IOHandler printInfoLn JsonSerializer.deserialize<String>(delivery.body)
                         } finally {
                             consumeChannel!!.basicAck(delivery.envelope.deliveryTag, false)
-                            if (correlationId != "cmd") responseHandlers.remove(correlationId)
-                            if (State.tasks > 1) State.tasks--
                         }
                     } else {
                         consumeChannel!!.basicAck(delivery.envelope.deliveryTag, false)
-                        responseHandlers.remove(correlationId)
-                        println("No handler registered for correlationId: $correlationId")
+                        IOHandler printInfoLn "No handler registered for correlationId: $correlationId"
                     }
                 }
                 consumeChannel!!.basicConsume(DATA_RESPONSES, false, deliverCallback)  { _: String? -> }
-            } else handleConnectionFail()
+            } else State.connectedToServer = false
 
         } catch (e: Exception) {
-            handleConnectionFail()
+            State.connectedToServer = false
         }
     }
 
-    fun initializeConnection() {
+    fun initializeConnection(): String? {
         factory.apply {
             this.host = State.host
             this.username = State.credentials["RABBITMQ_USERNAME"] ?: error("RABBITMQ_USERNAME not set")
@@ -88,21 +88,20 @@ object ConnectionHandler {
             publishChannel = currentConnection?.createChannel()
             consumeChannel = currentConnection?.createChannel()
 
-            IOHandler printInfoLn "Connected to RabbitMQ established ${State.host}"
-
-            if (!preflightSucceeded()) handleConnectionFail()
+            if (!preflightSucceeded()) return "Server is not responding, try to reconnect?"
             else {
+                IOHandler.responsesThreads.add("Successfully connected to server")
                 startResponseConsumer()
-                authorize()
+                return null
             }
         } catch (e: TimeoutException) {
-            handleConnectionFail("RabbitMQ is probably offline, try to reconnect? (Y/n): ")
+            return "RabbitMQ is probably offline, try to reconnect?"
         } catch (e: Exception) {
-            handleConnectionFail()
+            return "Server is not responding, try to reconnect?"
         }
     }
 
-    private fun authorize() {
+    fun authorize(controllerLatch: CountDownLatch?) {
         if (consumeChannel != null) {
             if (State.credentials["TEMP_USERNAME"] == null ||
                 State.credentials["TEMP_PASSWORD"] == null) {
@@ -114,9 +113,8 @@ object ConnectionHandler {
                     "${State.credentials["TEMP_USERNAME"]}:${State.credentials["TEMP_PASSWORD"]}",
                 ))
             )
-            val correlationId = UUID.randomUUID().toString()
             val latch = CountDownLatch(1)
-            registerResponseHandler(correlationId) { delivery ->
+            registerResponseHandler("authorize") { delivery ->
                 latch.countDown()
                 val response = JsonSerializer.deserialize<String>(delivery.body)
                 if (!response.contains("authorize")) {
@@ -124,11 +122,12 @@ object ConnectionHandler {
                     State.credentials["ACCESS_TOKEN"] = response.split("#&#")[0]
                     State.credentials["REFRESH_TOKEN"] = response.split("#&#")[1]
                     State.isAuthenticated = true
+                    controllerLatch?.countDown()
                     IOHandler printInfoLn "Welcome back, '${State.credentials["TEMP_USERNAME"]}', GOIDA!"
                     thread { loadCommandsList() }
-                } else handleAuthorizationFail()
+                }
             }
-            sendMessage(byteData, mapOf("paramsType" to "string"), correlationId, null)
+            sendMessage(byteData, mapOf("paramsType" to "string"), "authorize", null)
             val success = latch.await(3000, TimeUnit.MILLISECONDS)
             if (!success) State.connectedToServer = false
         }
@@ -138,30 +137,47 @@ object ConnectionHandler {
         val byteData = JsonSerializer.serialize(
             ExecuteCommandDto("get_commands_list", null)
         )
-        val correlationId = UUID.randomUUID().toString()
         val latch = CountDownLatch(1)
-        registerResponseHandler(correlationId) { delivery ->
+        registerResponseHandler("get_commands_list") { delivery ->
             try {
                 val response = JsonSerializer.deserialize<ArrayList<CommandInfoDto>>(delivery.body)
                 response.forEach{ command ->
                     Invoker.commands[command.name] = ServerCmd(command.name, command.description, command.paramTypeName)
                 }
-                IOHandler printInfoLn "Commands loaded"
+                IOHandler.responsesThreads.add("Commands loaded")
             } catch (e: Exception) { checkJwt(delivery) }
             latch.countDown()
         }
-        sendMessage(byteData, mapOf("paramsType" to null), correlationId)
+        sendMessage(byteData, mapOf("paramsType" to null), "get_commands_list")
         val success = latch.await(3000, TimeUnit.MILLISECONDS)
         if (!success) State.connectedToServer = false
     }
 
-    fun sendMessage(data: ByteArray, headers: Map<String, Any?>, correlationId: String, refresh: Boolean? = false) {
-        if (!State.connectedToServer) return
-        if (!preflightSucceeded()) {
-            handleConnectionFail()
-            return
+    fun loadCollectionInfo() {
+        val byteData = JsonSerializer.serialize(
+            ExecuteCommandDto("show", null)
+        )
+        val latch = CountDownLatch(1)
+        registerResponseHandler("load_collection") { delivery ->
+            try {
+                val response = JsonSerializer.deserialize<ArrayList<StudyGroup>>(delivery.body)
+                State.localCollection.clear()
+                response.forEach{ group ->
+                    State.localCollection[group.getId()] = group
+                }
+            } catch (e: Exception) {
+                IOHandler printInfoLn e.message
+                checkJwt(delivery)
+            }
+            latch.countDown()
         }
-        State.tasks++
+        sendMessage(byteData, mapOf("paramsType" to null), "load_collection")
+        val success = latch.await(500, TimeUnit.MILLISECONDS)
+        if (!success) State.connectedToServer = false
+    }
+
+    fun sendMessage(data: ByteArray, headers: Map<String, Any?>, correlationId: String, refresh: Boolean? = false) {
+        if (!State.connectedToServer || !preflightSucceeded()) return
         val authHeaders = headers.toMutableMap()
         when {
             refresh == null -> authHeaders["authorization"] = null
@@ -177,68 +193,14 @@ object ConnectionHandler {
             publishChannel!!.queueDeclare(DATA_REQUESTS, false, false, false, null)
             publishChannel!!.basicPublish("", DATA_REQUESTS, properties, data)
         } catch (e: Exception) {
-            handleConnectionFail()
-        }
-    }
-
-
-    fun handleConnectionFail(errorMsg: String? = null) {
-        try {
-            if (currentConnection?.isOpen == true) currentConnection?.close()
-            consumeChannel = null
-            publishChannel = null
-        } catch (_: Exception) {}
-        var msg = errorMsg ?: "Server is not responding, should retry connection? (Y/n): "
-        State.connectedToServer = false
-        while (!State.connectedToServer) {
-            IOHandler printInfoLn msg
-            IOHandler printInfo "& "
-            val input = readln()
-            when (input) {
-                "Y" -> {
-                    initializeConnection()
-                    break
-                }
-                "n" -> {
-                    Invoker.commands["exit"]!!.execute(listOf())
-                    break
-                }
-                "change address" -> {
-                    State.host = null
-                    IOHandler.getServerAddress()
-                    initializeConnection()
-                    break
-                }
-                else -> {
-                    msg = "Incorrect option, should retry connection? (Y/n): "
-                }
-            }
+            State.connectedToServer = false
         }
     }
 
     private fun handleAuthorizationFail(msg: String? = null) {
-        var message = msg ?: "Authorization failed"
+        IOHandler.responsesThreads.add(msg)
         State.credentials.remove("ACCESS_TOKEN")
         State.credentials.remove("REFRESH_TOKEN")
-
-        while (State.isRunning) {
-            IOHandler printInfoLn message
-            IOHandler printInfoLn "Retry authorization? (Y/n): "
-            IOHandler printInfo "& "
-            val input = readln()
-            when (input) {
-                "Y" -> {
-                    IOHandler.getAuthCredentials()
-                    thread { authorize() }
-                    break
-                }
-                "n" -> {
-                    Invoker.commands["exit"]!!.execute(listOf())
-                    break
-                }
-                else -> message = "Incorrect option"
-            }
-        }
     }
 
     private fun checkJwt(delivery: Delivery): String? {
@@ -246,8 +208,8 @@ object ConnectionHandler {
             val response = JsonSerializer.deserialize<String>(delivery.body)
             when {
                 response.contains("JWT refresh token is expired") -> {
-                    handleAuthorizationFail("JWT refresh token is expired, need to reauthenticate")
-                    if (State.tasks > 1) State.tasks--
+                    (SceneHandler.controllers["auth"] as AuthController)
+                        .handleAuthFail("JWT refresh token is expired, need to reauthenticate")
                     return null
                 }
 
@@ -302,7 +264,7 @@ object ConnectionHandler {
                         return true
                     }
                     else -> {
-                        IOHandler.printInfoLn("Protocol mismatch")
+                        IOHandler.responsesThreads.add("Protocol mismatch")
                         return false
                     }
                 }

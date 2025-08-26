@@ -1,6 +1,5 @@
 package handlers
 
-import collection.Country
 import collection.FormOfEducation
 import java.sql.Connection
 import java.sql.DriverManager
@@ -58,34 +57,10 @@ object DatabaseHandler {
                     '${FormOfEducation.FULL_TIME_EDUCATION}',
                     '${FormOfEducation.EVENING_CLASSES}'
                 ) OR form_of_education IS NULL),
-                CHECK (
-                    (
-                        group_admin_name IS NULL AND
-                        group_admin_birthday IS NULL AND
-                        group_admin_nationality IS NULL
-                    ) 
-                    OR
-                    (
-                        group_admin_name IS NOT NULL AND
-                        group_admin_nationality IN (
-                            '${Country.RUSSIA}',
-                            '${Country.GERMANY}',
-                            '${Country.SOUTH_KOREA}'
-                        ) OR group_admin_nationality IS NULL
-                    )
-                ),
                 FOREIGN KEY (user_id) REFERENCES users(id)
             );
         """.trimIndent())
         IOHandler printInfoLn "Table 'study_groups' created or already exists."
-        statement.executeUpdate("""
-            CREATE TABLE IF NOT EXISTS $dbSchema.refresh_tokens(
-                id SERIAL PRIMARY KEY NOT NULL,
-                user_id INT NOT NULL,
-                token TEXT NOT NULL
-            );
-        """.trimIndent())
-        IOHandler printInfoLn "Table 'refresh_tokens' created or already exists."
     }
 
     /**

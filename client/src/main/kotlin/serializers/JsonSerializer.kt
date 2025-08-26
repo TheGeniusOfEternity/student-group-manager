@@ -20,6 +20,7 @@ object JsonSerializer{
     val jsonSerializer = Json {
         serializersModule = module
         classDiscriminator = "type" // optional, default is "type"
+        ignoreUnknownKeys = true
     }
     /**
      * Serializes [T] to [ByteArray] for sending to server

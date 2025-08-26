@@ -18,7 +18,7 @@ class UpdateCmd : Command {
                 if (group != null) {
                     val groupToUpdate = Receiver.getStudyGroup(group.getId())
                     responseMsg = if (groupToUpdate != null) {
-                        if (Receiver.getUser(groupToUpdate.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
+                        if (Receiver.getUser(groupToUpdate.getOwnerName())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
                             if (StudyGroupDao.update(group, (args[1] as CommandParam.LongParam).value!!.toInt()) != null) {
                                 "Successfully updated new group, type 'show' to see all groups"
                             } else {

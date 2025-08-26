@@ -2,6 +2,7 @@ package commands
 
 import core.GroupData
 import core.Property
+import core.State
 import dto.CommandParam
 import dto.ExecuteCommandDto
 import handlers.ConnectionHandler
@@ -31,7 +32,7 @@ class ServerCmd(val name: String, override val description: String, override val
         }
     }
 
-    private fun serverExecute(arg: String? = null) {
+    fun serverExecute(arg: String? = null) {
         val params: CommandParam?
         if (paramTypeName != null && arg == null) IOHandler printInfoLn "$name error - invalid count of arguments"
         else {
@@ -44,7 +45,10 @@ class ServerCmd(val name: String, override val description: String, override val
                         return
                     }
                     groupData.add(Property("id", arg))
-                    params = CommandParam.StudyGroupParam(IOHandler.handleUserInput(groupData, "collection.StudyGroup"))
+                    params = CommandParam.StudyGroupParam(
+                        if (State.tempGroup != null) State.tempGroup
+                        else IOHandler.handleUserInput(groupData, "collection.StudyGroup")
+                    )
                 }
                 "String" -> {
                     params = CommandParam.StringParam(arg)

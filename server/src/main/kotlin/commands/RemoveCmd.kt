@@ -18,7 +18,7 @@ class RemoveCmd: Command {
             if (id != null) {
                 val group = Receiver.getStudyGroup(id)
                 responseMsg = if (group != null) {
-                    if (Receiver.getUser(group.getUserId())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
+                    if (Receiver.getUser(group.getOwnerName())?.id == (args[1] as CommandParam.LongParam).value!!.toInt()) {
                         try  {
                             StudyGroupDao.delete(id.toInt())
                             "Successfully removed group #$id, type 'show' to see all groups"

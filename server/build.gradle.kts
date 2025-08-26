@@ -15,7 +15,7 @@ application {
 }
 
 group = "org.itmo"
-version = "3.0-gamma"
+version = "4.0-delta"
 
 repositories {
     mavenCentral()
@@ -37,7 +37,8 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.2")
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
     implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
-    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5") // for JSON processing
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 }
 
 tasks.test {
@@ -51,7 +52,7 @@ tasks.withType<Jar> {
     }
     // To avoid the duplicate handling strategy error
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    // To add all of the dependencies otherwise a "NoClassDefFoundError" error
+    // To add all the dependencies otherwise a "NoClassDefFoundError" error
     from(sourceSets.main.get().output)
     dependsOn(configurations.runtimeClasspath)
     from({

@@ -3,7 +3,6 @@ package collection
 import annotations.Pos
 import kotlinx.serialization.Serializable
 import serializers.DateSerializer
-import java.text.SimpleDateFormat
 import java.util.Date
 
 /**
@@ -19,12 +18,16 @@ class Person (
         require(name.isNotBlank()) { "Name must not be blank" }
     }
 
+    fun getName() = name
+    fun getBirthday() = birthday
+    fun getNationality() = nationality
+
     /**
      * @return [Person] string representation
      */
     override fun toString(): String {
         return "- Name: $name\n" +
-                "- Birthday: ${SimpleDateFormat("dd.MM.yyyy").format(birthday)}\n" +
+                "- Birthday: ${birthday}\n" +
                 "- Nationality: $nationality\n"
     }
 }

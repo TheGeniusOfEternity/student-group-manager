@@ -12,18 +12,19 @@ import java.time.LocalDate
 @Serializable
 class StudyGroup(
     @Pos(10) private var id: Long,
-    @Pos(20) var name: String,
+    @Pos(20) private var name: String,
     @Pos(30) @Nested private var coordinates: Coordinates,
     @Pos(40) private var studentsCount: Int,
     @Pos(50) private var transferredStudents: Long?,
     @Pos(60) private var averageMark: Int?,
     @Pos(70) private var formOfEducation: FormOfEducation?,
-    @Pos(80) @Nested private var groupAdmin: Person?
+    @Pos(80) @Nested private var groupAdmin: Person?,
+    @Pos(100) private var ownerName: String? = null,
 ): Comparable<StudyGroup> {
     init {
-        require(id > 0) { "id must be greater than zero" }
+        require(id > 0 || id == -1L) { "id must be greater than zero" }
         require(name.isNotBlank()) { "Name cannot be blank" }
-        require(studentsCount > 0) { "id must be greater than zero" }
+        require(studentsCount > 0) { "studentsCount must be greater than zero" }
         require(transferredStudents == null || transferredStudents!! > 0)
             { "transferredStudents must be greater than zero" }
         require(averageMark == null || averageMark!! > 0)
@@ -38,8 +39,43 @@ class StudyGroup(
     /**
      * @return id of this StudyGroup
      */
-    fun getId(): Long {
-        return id
+    fun getId() = id
+    fun getName() = name
+    fun getCoordinates() = coordinates
+    fun getStudentsCount() = studentsCount
+    fun getTransferredStudents() = transferredStudents
+    fun getAverageMark() = averageMark
+    fun getFormOfEducation() = formOfEducation
+    fun getGroupAdmin() = groupAdmin
+    fun getOwnerName() = ownerName
+
+    fun setId(id: Long) {
+        this.id = id
+    }
+
+    fun setName(name: String) {
+        this.name = name
+    }
+    fun setCoordinates(coordinates: Coordinates) {
+        this.coordinates = coordinates
+    }
+    fun setStudentsCount(studentsCount: Int) {
+        this.studentsCount = studentsCount
+    }
+    fun setTransferredStudents(transferredStudents: Long?) {
+        this.transferredStudents = transferredStudents
+    }
+    fun setAverageMark(mark: Int?) {
+        this.averageMark = mark
+    }
+    fun setFormOfEducation(formOfEducation: FormOfEducation?) {
+        this.formOfEducation = formOfEducation
+    }
+    fun setGroupAdmin(groupAdmin: Person?) {
+        this.groupAdmin = groupAdmin
+    }
+    fun setOwnerName(ownerName: String?) {
+        this.ownerName = ownerName
     }
 
     /**
@@ -54,6 +90,7 @@ class StudyGroup(
                 "Transferred Students: " + transferredStudents + "\n"  +
                 "Average mark: " + averageMark + "\n" +
                 "Form of Education: " + formOfEducation + "\n" +
-                "Group admin: \t\n" + groupAdmin
+                "Group admin: \t\n" + groupAdmin + "\n" +
+                "Owner: " + ownerName
     }
 }

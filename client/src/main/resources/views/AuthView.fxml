@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane fx:id="rootPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="600.0" minWidth="1000.0" style="-fx-background-color: white; -fx-border-radius: 100px;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.controllers.AuthController">
+   <Pane fx:id="authPane" layoutX="520.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="480.0" style="-fx-background-color: #dabfff; -fx-border-width: 1px; -fx-border-color: black;">
+      <Label fx:id="loginLabel" layoutX="70.0" layoutY="220.0" minHeight="25.0" minWidth="350.0" text="Login">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="authButton" contentDisplay="CENTER" layoutX="70.0" layoutY="400.0" minHeight="25.0" minWidth="350.0" mnemonicParsing="false" onAction="#handleAuthClick" style="-fx-border-color: black; -fx-background-color: #907ad6; -fx-text-fill: white;" text="Войти в систему">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </Button>
+      <TextField fx:id="loginInput" layoutX="70.0" layoutY="250.0" prefHeight="35.0" prefWidth="350.0" style="-fx-border-color: black;">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </TextField>
+      <Text layoutX="70.0" layoutY="180.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Авторизация" textAlignment="CENTER" wrappingWidth="350.0">
+         <font>
+            <Font name="Helvetica" size="30.0" />
+         </font>
+      </Text>
+      <Line endX="350.0" layoutX="70.0" layoutY="200.0" />
+      <Label fx:id="passwordLabel" layoutX="70.0" layoutY="290.0" minHeight="25.0" minWidth="350.0" text="Password">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </Label>
+      <TextField fx:id="passwordInput" layoutX="70.0" layoutY="320.0" prefHeight="35.0" prefWidth="350.0" style="-fx-border-color: black;">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </TextField>
+   </Pane>
+   <Pane fx:id="serverSetupPane" layoutX="520.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="480.0" style="-fx-background-color: #dabfff; -fx-border-width: 1px; -fx-border-color: black;">
+      <Label fx:id="ipLabel" layoutX="70.0" layoutY="240.0" minHeight="25.0" minWidth="350.0" text="IP-address (или localhost)">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </Label>
+      <Button fx:id="ipButton" contentDisplay="CENTER" layoutX="70.0" layoutY="350.0" minHeight="25.0" minWidth="350.0" mnemonicParsing="false" onAction="#handleIpAddressClick" style="-fx-border-color: black; -fx-background-color: #907ad6; -fx-text-fill: white;" text="Сохранить">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </Button>
+      <TextField fx:id="ipInput" layoutX="70.0" layoutY="270.0" prefHeight="35.0" prefWidth="350.0" style="-fx-border-color: black;">
+         <font>
+            <Font name="Helvetica" size="16.0" />
+         </font>
+      </TextField>
+      <Text layoutX="70.0" layoutY="200.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Конфигурация сервера" textAlignment="CENTER" wrappingWidth="350.0">
+         <font>
+            <Font name="Helvetica" size="30.0" />
+         </font>
+      </Text>
+      <Line endX="350.0" layoutX="70.0" layoutY="220.0" />
+   </Pane>
+   <Pane prefHeight="600.0" prefWidth="520.0" style="-fx-background-color: #907ad6;">
+      <Circle fill="DODGERBLUE" layoutX="351.0" layoutY="602.0" radius="103.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: #dabfff;" />
+      <Circle fill="DODGERBLUE" layoutX="29.0" layoutY="28.0" radius="103.0" stroke="BLACK" strokeType="INSIDE" style="-fx-fill: #dabfff;" />
+   </Pane>
+</AnchorPane>

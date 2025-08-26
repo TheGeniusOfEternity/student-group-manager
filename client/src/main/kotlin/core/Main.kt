@@ -1,9 +1,21 @@
 package core
 
+import gui.controllers.AuthController
+import gui.controllers.MainController
 import handlers.ConnectionHandler
 import handlers.IOHandler
+import handlers.SceneHandler
+import invoker.Invoker
+import javafx.animation.KeyFrame
+import javafx.animation.Timeline
+import javafx.application.Application
+import javafx.application.Platform
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
+import javafx.scene.Scene
+import javafx.stage.Stage
+import javafx.util.Duration
 import java.io.IOException
-import kotlin.collections.ArrayList
 import kotlin.system.exitProcess
 
 /**
@@ -16,29 +28,36 @@ typealias GroupData = ArrayList<Pair<String, String?>>
 typealias Property = Pair<String, String?>
 
 
-/**
- * Entry point of the program
- */
-fun main() {
-    loadProgram()
-    try {
-        while (State.isRunning) {
+class Main : Application() {
+    override fun start(stage: Stage) {
+        val authLoader = FXMLLoader(javaClass.getResource("/views/AuthView.fxml"))
+        val mainLoader = FXMLLoader(javaClass.getResource("/views/MainView.fxml"))
+
+        SceneHandler.init(stage)
+        SceneHandler.addSceneAndController("auth", authLoader)
+        SceneHandler.addSceneAndController("main", mainLoader)
+        SceneHandler.switchTo("auth")
+
+        stage.title = "Student Group Manager - Authorization"
+        stage.isResizable = false
+        stage.show()
+
+        val timeline = Timeline(KeyFrame(Duration.seconds(0.5), {
+            if (!State.isRunning) this.stop()
+            else if (!State.connectedToServer && State.host != null)
+                    (SceneHandler.controllers["auth"] as AuthController).handleConnectionFail()
             IOHandler.handle()
-            Thread.sleep(100)
-        }
-        exitProcess(0)
-    } catch (e: IOException) {
-        e.printStackTrace()
+        }))
+        timeline.cycleCount = Timeline.INDEFINITE  // бесконечный цикл
+        timeline.play()
     }
 }
 
 /**
- * Setups client application, initiates connection to server & enables [State.isRunning]
+ * Entry point of the program
  */
-fun loadProgram() {
+fun main() {
     State.isRunning = true
     IOHandler.loadCredentials()
-    IOHandler.getServerAddress()
-    IOHandler.getAuthCredentials()
-    ConnectionHandler.initializeConnection()
+    Application.launch(Main::class.java)
 }

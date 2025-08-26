@@ -15,6 +15,10 @@ class Coordinates (
         require(x > -357)
     }
 
+
+    fun getX() = x
+    fun getY() = y
+
     /**
      * @return Coordinates string representation
      */

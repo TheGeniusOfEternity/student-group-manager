@@ -1,9 +1,10 @@
 package commands
 import collection.StudyGroup
 import dto.CommandParam
+import handlers.ConnectionHandler
 import handlers.IOHandler
 import receiver.Receiver
-import java.util.ArrayList
+import kotlin.collections.ArrayList
 
 /**
  * Shows list of [StudyGroup]
@@ -11,19 +12,22 @@ import java.util.ArrayList
 class ShowCmd: Command {
     override val paramTypeName = null
     override fun execute(args: List<CommandParam?>, clientId: String, correlationId: String) {
-        var responseMsg = "Collection info: \n\n"
+        val responseMsg: String
         if (args.size == 1) {
             val groups = Receiver.getStudyGroups()
-            val users = Receiver.getUsers()
             if (groups.isEmpty()) {
                 responseMsg = "No groups found"
+                ConnectionHandler.handleResponse<ArrayList<StudyGroup>>(clientId, ArrayList(), correlationId)
             } else {
+                val groupsData = ArrayList<StudyGroup>()
                 groups.forEach { group ->
-                    val creatorName = users.entries.find { user -> user.value.id == group.value.getUserId() }?.value?.username
-                    responseMsg += "${group.value}\nCreated by '$creatorName'\n\n"
+                    groupsData.add(group.value)
                 }
+                ConnectionHandler.handleResponse<ArrayList<StudyGroup>>(clientId, groupsData, correlationId)
+                return
             }
         } else {
+            ConnectionHandler.handleResponse<ArrayList<StudyGroup>>(clientId, ArrayList(), correlationId)
             responseMsg = "show: Too many arguments"
         }
         IOHandler.responsesThreads.getOrPut(clientId) { ArrayList() }.add(Pair(responseMsg.removeSuffix("\n\n"), correlationId))

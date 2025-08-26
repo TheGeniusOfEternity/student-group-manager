@@ -4,6 +4,7 @@ plugins {
     id("org.jetbrains.dokka-javadoc") version "2.0.0"
     id("org.jetbrains.dokka") version "2.0.0"
     kotlin("plugin.serialization") version "2.1.20"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 tasks.dokkaHtml {
@@ -15,7 +16,7 @@ application {
 }
 
 group = "org.itmo"
-version = "3.0-gamma"
+version = "4.0-delta"
 
 repositories {
     mavenCentral()
@@ -23,8 +24,10 @@ repositories {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17)) // Set JDK version (e.g., Java 17)
+        languageVersion.set(JavaLanguageVersion.of(21)) // Set JDK version (e.g., Java 17)
     }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -53,4 +56,8 @@ tasks.withType<Jar> {
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
+}
+javafx {
+    version = "23.0.1"
+    modules = listOf("javafx.controls", "javafx.fxml", "javafx.media", "javafx.graphics")
 }
